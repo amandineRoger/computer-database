@@ -2,6 +2,8 @@ package entities;
 
 import java.time.LocalDate;
 
+import util.Utils;
+
 public class Computer {
 	private long id;
 	private String name;
@@ -9,10 +11,7 @@ public class Computer {
 	private LocalDate discontinued;
 	private Company company;
 	
-	private long company_id;
-	private String companyName;
-	
-	
+
 	public long getId(){
 		return this.id;
 	}
@@ -48,22 +47,6 @@ public class Computer {
 		this.company = company;
 	}
 	
-	public long getCompanyId(){
-		return this.company_id;
-	}
-	public void setCompanyId(long company_id){
-		this.company_id = company_id;
-	}
-	
-	public void setCompanyName(String companyName){
-		this.companyName = companyName;
-	}
-	public String getCompanyName(){
-		return this.companyName;
-	}
-	
-	
-	
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -84,13 +67,13 @@ public class Computer {
 	
 		return buffer.toString();
 	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((company == null) ? 0 : company.hashCode());
-		result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
-		result = prime * result + (int) (company_id ^ (company_id >>> 32));
 		result = prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((introduced == null) ? 0 : introduced.hashCode());
@@ -111,13 +94,6 @@ public class Computer {
 				return false;
 		} else if (!company.equals(other.company))
 			return false;
-		if (companyName == null) {
-			if (other.companyName != null)
-				return false;
-		} else if (!companyName.equals(other.companyName))
-			return false;
-		if (company_id != other.company_id)
-			return false;
 		if (discontinued == null) {
 			if (other.discontinued != null)
 				return false;
@@ -136,6 +112,47 @@ public class Computer {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+
+	public static class Builder {
+		//required parameters
+		private String name;
+		
+		//optional parameters
+		private LocalDate introduced = null;
+		private LocalDate discontinued = null;
+		private Company company = null;
+		
+		
+		public Builder(String name){
+			this.name = name;
+		}
+		
+		public Builder introduced(LocalDate date){
+			this.introduced = date;
+			return this;
+		}
+		public Builder discontinued(LocalDate date){
+			this.discontinued = date;
+			return this;
+		}
+		
+		public Builder company(Company company){
+			this.company = company;
+			return this;
+		}
+		
+		public Computer build(){
+			return new Computer(this);
+		}
+	}
+	
+	private Computer(Builder builder){
+		this.name = builder.name;
+		this.introduced = builder.introduced;
+		this.discontinued = builder.discontinued;
+		this.company = builder.company;
 	}
 	
 	
