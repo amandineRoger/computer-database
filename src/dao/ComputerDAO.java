@@ -32,6 +32,11 @@ public class ComputerDAO {
 		this.singleConnect = SingleConnect.getInstance();
 	}
 
+	/**
+	 * Get all computers from database
+	 * 
+	 * @return all computers
+	 */
 	public ArrayList<Computer> getComputerList() {
 		// Query building
 		StringBuffer query = new StringBuffer("SELECT * FROM ");
@@ -43,8 +48,8 @@ public class ComputerDAO {
 
 		try {
 			PreparedStatement ps = connect.prepareStatement(query.toString());
-
 			PreparedStatement ps_company;
+
 			String companyQuery = "SELECT name FROM company WHERE id = ";
 			ResultSet company_result;
 
@@ -82,10 +87,18 @@ public class ComputerDAO {
 		return computers;
 	}
 
+	/***********************************************************************************/
+	/**
+	 * Find a computer by its id
+	 * 
+	 * @param id
+	 *            the id of the wanted computer
+	 * @return the wanted computer
+	 */
 	public ArrayList<Computer> getComputerDetail(long id) {
 		ArrayList<Computer> computer = new ArrayList<>(1);
 
-		// Query
+		// Query building
 		StringBuffer query = new StringBuffer();
 		query.append("SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM ");
 		query.append(TABLE);
@@ -96,19 +109,21 @@ public class ComputerDAO {
 		connect = singleConnect.getConnection();
 
 		try {
-
+			// query execution
 			PreparedStatement ps = connect.prepareStatement(query.toString());
 			results = ps.executeQuery();
 
 			Computer tmp;
 			Company tmpCompany;
 			long idCompany;
+			// Mapping loop
 			while (results.next()) {
 				tmp = new Computer();
 				tmp.setId(results.getLong(COL_ID));
 				tmp.setName(results.getString(COL_NAME));
 
 				idCompany = results.getLong(COL_COMPANY_ID);
+				// Company insertion
 				if (idCompany != 0) {
 					tmpCompany = new Company();
 					tmpCompany.setId(idCompany);
@@ -125,18 +140,22 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
 		}
-
 		return computer;
 	}
 
+	/***********************************************************************************/
 	private static final String NULL_TIMESTAMP = "0000-00-00";
 
+	/**
+	 * Create a computer from user entry
+	 * 
+	 * @return arrayList with created computer
+	 */
 	public ArrayList<Computer> createComputer() {
 		ArrayList<Computer> list = new ArrayList<>(1);
-
 		Computer computer = Master.getComputerFromUser();
 
-		// Query
+		// Query building
 		StringBuffer buffer = new StringBuffer("INSERT INTO ");
 		buffer.append(TABLE);
 		buffer.append(" (name, introduced, discontinued, company_id ) VALUES ( '");
@@ -181,16 +200,21 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
 		}
-
 		return list;
 	}
 
+	/***********************************************************************************/
+	/**
+	 * Update a computer (user choice)
+	 * 
+	 * @return ArrayList with updated computer
+	 */
 	public ArrayList<Computer> updateComputer() {
 		ArrayList<Computer> list = new ArrayList<>(1);
 
 		Computer computer = Master.getComputerUpdateFromUser();
 
-		// QUERY
+		// QUERY building
 		StringBuffer buffer = new StringBuffer("UPDATE ");
 		buffer.append(TABLE);
 		buffer.append(" SET name = '");
@@ -226,19 +250,28 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : updateComputer " + e.getMessage());
 		}
-
 		return list;
 	}
 
+	/***********************************************************************************/
+
+	/**
+	 * Delete a computer by its id
+	 * 
+	 * @param id
+	 *            id of wanted computer to delete
+	 * @return deleted computer
+	 */
 	public ArrayList<Computer> deleteComputer(long id) {
 		ArrayList<Computer> computer = getComputerDetail(id);
-		
-		//QUERY
+
+		// QUERY building
 		StringBuffer buffer = new StringBuffer("DELETE FROM ");
 		buffer.append(TABLE);
 		buffer.append(" WHERE id = ");
 		buffer.append(id);
-		
+
+		// query execution
 		try {
 			connect = singleConnect.getConnection();
 			PreparedStatement ps = connect.prepareStatement(buffer.toString());
