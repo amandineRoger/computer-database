@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 public class TerminalView {
 
-	public static void displayMenu(){
-		
+	/**
+	 * Display menu on CLI
+	 */
+	public static void displayMenu() {
 		System.out.println(" ********  Menu  ******* ");
 		System.out.println(" 0 - Quit program");
 		System.out.println(" 1 - List of computers");
@@ -16,20 +18,27 @@ public class TerminalView {
 		System.out.println(" 6 - Delete a computer");
 		System.out.println(" *********************** ");
 		System.out.println(" Type command : ");
-		
 	}
-	
-	public static void displayResults(ArrayList<?> list){
+
+	/**
+	 * Display results from ArrayList (toString() of item has to be defined)
+	 * 
+	 * @param list
+	 *            an ArrayList of Objects
+	 */
+	public static void displayResults(ArrayList<?> list) {
 		int size = list.size();
-		for (int i=0; i<size; i++) {
+		for (int i = 0; i < size; i++) {
 			System.out.println(list.get(i).toString());
 		}
 	}
-	
-	public static void displayTypingError(){
-		System.out.println("Invalid command ! please retry with valid one !");;
+
+	/**
+	 * Display error message when user entry was invalid
+	 */
+	public static void displayTypingError() {
+		System.out.println("Invalid command ! please retry with valid one !");
+		;
 	}
-	
-	
-	
+
 }
