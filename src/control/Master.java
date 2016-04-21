@@ -85,7 +85,6 @@ public class Master {
 	 * @return computer entity which was just created
 	 */
 	public static Computer getComputerFromUser() {
-		Computer computer = new Computer();
 
 		System.out.println("*** Computer creation : Please insert following informations ...");
 		System.out.print(" *  computer name : ");
@@ -96,22 +95,22 @@ public class Master {
 			System.out.println("Invalid name, please retry ...");
 			name = CLI.scan.next();
 		}
-		computer.setName(name);
+		Computer.Builder builder = new Computer.Builder(name);
 
 		/* Introduced date */
 		System.out.println(" *  introduced on : (type 0 if you don't want to insert date) ");
-		computer.setIntroduced(getDateFromUser());
+		builder.introduced(getDateFromUser());
 
 		/* Discontinued date */
 		System.out.println(" *  discontinued on : (type 0 if you don't want to insert date) ");
-		computer.setDiscontinued(getDateFromUser());
+		builder.discontinued(getDateFromUser());
 
 		/* Company */
 		System.out.println(" *  Company ID : (type 0 if you don't want to insert a company");
 		getIntFromUser(COMPANY_ID);
-		computer.setCompany(tmpCompany);
+		builder.company(tmpCompany);
 
-		return computer;
+		return builder.build();
 	}
 
 	/**
