@@ -17,6 +17,10 @@ public class SingleConnect {
 	private StringBuffer sb;
 	
 	//Getters
+	/**
+	 * Open db connection, you must to close it later !
+	 * @return java.sql.Connection
+	 */
 	public Connection getConnection(){
 		try {
 			this.connect = DriverManager.getConnection(ADRESS, USERNAME, PASSWORD);
@@ -26,7 +30,6 @@ public class SingleConnect {
 			System.out.println( sb );
 			resetStringBuffer();
 		}
-		
 		return this.connect;
 	}
 	
@@ -37,8 +40,8 @@ public class SingleConnect {
 	private SingleConnect(){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			sb = new StringBuffer(LOG_TAG);
 		} catch (ClassNotFoundException e) {
+			sb = new StringBuffer(LOG_TAG);
 			sb.append(" ClassNotFoundException ! ");
 			sb.append(e.getMessage());
 			System.out.println( sb );
@@ -46,6 +49,10 @@ public class SingleConnect {
 		}
 	}
 	
+	/**
+	 * GetInstance, singleton pattern
+	 * @return the unique instance of SingleConnection
+	 */
 	public static SingleConnect getInstance(){
 		if (instance == null) {
 			instance = new SingleConnect();
