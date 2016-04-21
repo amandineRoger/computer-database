@@ -59,9 +59,7 @@ public class ComputerDAO {
 			int companyID;
 			// Mapping loop
 			while (results.next()) {
-				tmp_computer = new Computer();
-				tmp_computer.setId(results.getInt(COL_ID));
-				tmp_computer.setName(results.getString(COL_NAME));
+				Computer.Builder builder = new Computer.Builder(results.getString(COL_NAME));
 
 				companyID = results.getInt(COL_COMPANY_ID);
 				if (companyID != 0) {
@@ -72,12 +70,14 @@ public class ComputerDAO {
 					company_result = ps_company.executeQuery();
 					company_result.next();
 					tmp_company.setName(company_result.getString(1));
-					tmp_computer.setCompany(tmp_company);
+					builder.company(tmp_company);
 				}
-
-				tmp_computer.setIntroduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)));
-				tmp_computer.setDiscontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)));
-
+				
+				tmp_computer = builder.introduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
+					.discontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
+					.build();
+				
+				tmp_computer.setId(results.getInt(COL_ID));
 				computers.add(tmp_computer);
 			}
 			connect.close();
@@ -118,21 +118,20 @@ public class ComputerDAO {
 			long idCompany;
 			// Mapping loop
 			while (results.next()) {
-				tmp = new Computer();
-				tmp.setId(results.getLong(COL_ID));
-				tmp.setName(results.getString(COL_NAME));
-
+				Computer.Builder builder = new Computer.Builder(results.getString(COL_NAME));
 				idCompany = results.getLong(COL_COMPANY_ID);
 				// Company insertion
 				if (idCompany != 0) {
 					tmpCompany = new Company();
 					tmpCompany.setId(idCompany);
 					tmpCompany.setName(results.getString(COL_COMPANY_NAME));
-					tmp.setCompany(tmpCompany);
+					builder.company(tmpCompany);
 				}
 
-				tmp.setIntroduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)));
-				tmp.setDiscontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)));
+				tmp = builder.introduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
+					.discontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
+					.build();
+				tmp.setId(results.getLong(COL_ID));
 
 				computer.add(tmp);
 			}
@@ -195,7 +194,7 @@ public class ComputerDAO {
 			rs.next();
 			computer.setId(rs.getLong(1));
 
-			list.add(computer); // FIXME recup nouveau depuis bdd
+			list.add(computer);
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
