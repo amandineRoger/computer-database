@@ -11,14 +11,25 @@ import mappers.CompanyMapper;
 import util.UtilQuerySQL;
 
 public class CompanyDAO implements UtilQuerySQL {
-
+	private static CompanyDAO instance;
+	
 	private SingleConnect singleConnect;
 	private Connection connect;
 	private CompanyMapper companyMapper;
 
-	public CompanyDAO() {
+	private CompanyDAO() {
 		this.singleConnect = SingleConnect.getInstance();
 		this.companyMapper = CompanyMapper.getInstance();
+	}
+	public static CompanyDAO getInstance(){
+		if (instance == null){
+			synchronized (CompanyDAO.class) {
+				if (instance == null){
+					instance = new CompanyDAO();
+				}
+			}
+		}
+		return instance;
 	}
 
 	/**

@@ -14,14 +14,26 @@ import util.UtilDate;
 import util.UtilQuerySQL;
 
 public class ComputerDAO implements UtilQuerySQL, UtilDate{
+	private static ComputerDAO instance;
 
 	private SingleConnect singleConnect;
 	private Connection connect;
 	private ComputerMapper computerMapper;
 
-	public ComputerDAO() {
+	private ComputerDAO() {
 		this.singleConnect = SingleConnect.getInstance();
 		this.computerMapper = ComputerMapper.getInstance();
+	}
+	public static ComputerDAO getInstance(){
+		if (instance == null){
+			synchronized (ComputerDAO.class) {
+				if (instance == null){
+					instance = new ComputerDAO();
+				}
+				
+			}
+		}
+		return instance;
 	}
 
 	/**

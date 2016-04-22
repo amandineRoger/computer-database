@@ -9,8 +9,8 @@ import entities.Company;
 import entities.Computer;
 
 public class Master {
-	private static ComputerDAO computerDao = new ComputerDAO();
-	private static CompanyDAO companyDao = new CompanyDAO();
+	private static ComputerDAO computerDao = ComputerDAO.getInstance();
+	private static CompanyDAO companyDao = CompanyDAO.getInstance();
 
 	/**
 	 * Manage the entered command from menu
