@@ -1,0 +1,26 @@
+17:54:12.551 [main] DEBUG c.CLI - Enter in main
+17:54:12.554 [main] DEBUG c.TerminalView - f_displayMenu
+17:54:14.427 [main] DEBUG d.ComputerDAO - f_ComputerDAO constructor
+17:54:14.428 [main] DEBUG d.SingleConnect - f_getInstance
+17:54:14.429 [main] DEBUG d.SingleConnect - f_SingleConnect constructor
+17:54:14.453 [main] DEBUG d.CompanyDAO - f_CompanyDAO constructor
+17:54:14.453 [main] DEBUG d.SingleConnect - f_getInstance
+17:54:14.454 [main] DEBUG m.CompanyMapper - f_getInstance
+17:54:14.454 [main] DEBUG m.CompanyMapper - f_CompanyMapper constructor
+17:54:14.455 [main] DEBUG c.Master - f_menuManager( 0 )
+17:54:14.458 [main] WARN  c.CLI - TEST WARN !!
+17:54:14.459 [main] ERROR c.CLI - TEST ERROR !
+17:54:14.459 [main] DEBUG c.CLI - End of run loop, scanner closed
+18:01:36.277 [main] DEBUG c.CLI - Enter in main
+18:01:36.280 [main] DEBUG c.TerminalView - f_displayMenu
+18:01:40.987 [main] DEBUG d.ComputerDAO - f_ComputerDAO constructor
+18:01:40.988 [main] DEBUG d.SingleConnect - f_getInstance
+18:01:40.989 [main] DEBUG d.SingleConnect - f_SingleConnect constructor
+18:01:41.013 [main] DEBUG d.CompanyDAO - f_CompanyDAO constructor
+18:01:41.014 [main] DEBUG d.SingleConnect - f_getInstance
+18:01:41.014 [main] DEBUG m.CompanyMapper - f_getInstance
+18:01:41.015 [main] DEBUG m.CompanyMapper - f_CompanyMapper constructor
+18:01:41.015 [main] DEBUG c.Master - f_menuManager( 0 )
+18:01:41.018 [main] WARN  c.CLI - TEST WARN !!
+18:01:41.019 [main] ERROR c.CLI - TEST ERROR !
+18:01:41.020 [main] DEBUG c.CLI - End of run loop, scanner closed

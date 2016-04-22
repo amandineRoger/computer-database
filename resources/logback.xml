@@ -2,22 +2,54 @@
 
 <configuration>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
-    </encoder>
-  </appender>
+	<appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
+		<file>debug.log</file>
+		     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>DEBUG</level>
+        </filter>
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
 
-  <logger name="com.lordofthejars.foo" level="INFO" additivity="false">
-   <appender-ref ref="STDOUT" />
-  </logger>
+	<appender name="ERROR_FILE" class="ch.qos.logback.core.FileAppender">
+		<file>errors.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>ERROR</level>
+        </filter>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
 
-  <!-- Strictly speaking, the level attribute is not necessary since -->
-  <!-- the level of the root level is set to DEBUG by default.       -->
-  <root level="DEBUG">          
-    <appender-ref ref="STDOUT" />
-  </root>  
-  
+	<appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+	   <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>WARN</level>
+        </filter>
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+		<target>System.err</target>
+	</appender>
+
+	<logger name="warnLogger" level="WARN" additivity="false">
+		<appender-ref ref="STDERR" />
+	</logger>
+	
+	<logger name="errorLogger" level="ERROR" additivity="false">
+	   <appender-ref ref="ERROR_FILE" />
+	</logger>
+
+	<!-- Strictly speaking, the level attribute is not necessary since -->
+	<!-- the level of the root level is set to DEBUG by default. -->
+	<root level="DEBUG">
+		<appender-ref ref="DEBUG_FILE" />
+		<appender-ref ref="ERROR_FILE" />
+		<appender-ref ref="STDERR" />
+	</root>
+
 </configuration>

@@ -24,6 +24,8 @@ public class CLI {
 			}
 		}
 		scan.close();
+		logger.warn("TEST WARN !!");
+		logger.error("TEST ERROR !");
 		logger.debug("End of run loop, scanner closed");
 	}
 }

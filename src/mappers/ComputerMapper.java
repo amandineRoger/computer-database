@@ -131,8 +131,7 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 				ps.setLong(5, entity.getId());
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//throw new mapperException();
 		}
 	}
 
