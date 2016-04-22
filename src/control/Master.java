@@ -8,7 +8,7 @@ import dao.CompanyDAO;
 import dao.ComputerDAO;
 import entities.Company;
 import entities.Computer;
-import util.Utils;
+import util.UtilDate;
 import view.TerminalView;
 
 public class Master {
@@ -159,10 +159,10 @@ public class Master {
 				formatOK = true;
 				switch (type) {
 				case YEAR:
-					if ((value < 1952 && value != 0) || value > Utils.CURRENT_YEAR) {
+					if ((value < 1970 && value != 0) || value > 2037) {
 						formatOK = false;
 						System.out
-								.println("Invalid value: year must be between 1952 and current year, please retry ...");
+								.println("Invalid value: year must be between 1970 and 2037, please retry ...");
 					}
 					break;
 				case MONTH:
