@@ -1,7 +1,6 @@
 package control;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 
 import dao.CompanyDAO;
@@ -24,7 +23,7 @@ public class Master {
 	public static boolean menuManager(int command) {
 		boolean commandOk = true;
 		long id;
-		ArrayList<Computer> computer;
+		Computer computerEntity;
 
 		switch (command) {
 		case 0:
@@ -42,33 +41,33 @@ public class Master {
 			// get computer details
 			System.out.println("Computer details _ type ID of wanted computer : ");
 			id = CLI.scan.nextLong();
-			computer = computerDao.getComputerDetail(id);
-			if (computer.isEmpty()) {
+			computerEntity = computerDao.getComputerDetail(id);
+			if (computerEntity == null) {
 				commandOk = false;
 			} else {
-				TerminalView.displayResults(computer);
+				TerminalView.displayObject(computerEntity);;
 			}
 			break;
 		case 4:
 			// create computer
 			System.out.println("You just create the following computer : ");
-			TerminalView.displayResults(computerDao.createComputer());
+			TerminalView.displayObject(computerDao.createComputer());
 			break;
 		case 5:
 			// update computer
 			System.out.println("You just update the following computer : ");
-			TerminalView.displayResults(computerDao.updateComputer());
+			TerminalView.displayObject(computerDao.updateComputer());
 			break;
 		case 6:
 			// delete computer
 			System.out.println("Computer details _ type ID of wanted computer : ");
 			id = CLI.scan.nextLong();
-			computer = computerDao.deleteComputer(id);
-			if (computer.isEmpty()) {
+			computerEntity = computerDao.deleteComputer(id);
+			if (computerEntity == null) {
 				commandOk = false;
 			} else {
 				System.out.println("You just delete the following computer : ");
-				TerminalView.displayResults(computer);
+				TerminalView.displayObject(computerEntity);
 			}
 			break;
 		default:
@@ -128,7 +127,7 @@ public class Master {
 			System.out.print(" *   : day ");
 			day = getIntFromUser(DAY);
 			date = LocalDate.of(year, month, day);
-		}
+		} 
 		return date;
 	}
 
@@ -160,8 +159,7 @@ public class Master {
 				case YEAR:
 					if ((value < 1970 && value != 0) || value > 2037) {
 						formatOK = false;
-						System.out
-								.println("Invalid value: year must be between 1970 and 2037, please retry ...");
+						System.out.println("Invalid value: year must be between 1970 and 2037, please retry ...");
 					}
 					break;
 				case MONTH:
@@ -186,7 +184,7 @@ public class Master {
 					}
 					break;
 				case COMPUTER_ID:
-					tmpComputer = computerDao.getComputerDetail(value).get(0);
+					tmpComputer = computerDao.getComputerDetail(value);
 					if (tmpComputer == null) {
 						formatOK = false;
 						System.out.println("Invalid ID: this computer doesn't exist, please retry ...");

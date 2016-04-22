@@ -32,7 +32,10 @@ public class TerminalView {
 			System.out.println(list.get(i).toString());
 		}
 	}
-	
+
+	public static void displayObject(Object o) {
+		System.out.println(o.toString());
+	}
 
 	/**
 	 * Display error message when user entry was invalid

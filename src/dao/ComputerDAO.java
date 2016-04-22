@@ -4,31 +4,24 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
 
 import control.Master;
-import entities.Company;
 import entities.Computer;
+import mappers.ComputerMapper;
 import util.UtilDate;
+import util.UtilQuerySQL;
 
-public class ComputerDAO {
-
-	private static final String TABLE = "computer";
-
-	private static final int COL_ID = 1;
-	private static final int COL_NAME = 2;
-	private static final int COL_INTRODUCED = 3;
-	private static final int COL_DISCONTINUED = 4;
-	private static final int COL_COMPANY_ID = 5;
-	private static final int COL_COMPANY_NAME = 6;
+public class ComputerDAO implements UtilQuerySQL, UtilDate{
 
 	private SingleConnect singleConnect;
 	private Connection connect;
+	private ComputerMapper computerMapper;
 
 	public ComputerDAO() {
 		this.singleConnect = SingleConnect.getInstance();
+		this.computerMapper = ComputerMapper.getInstance();
 	}
 
 	/**
@@ -37,48 +30,18 @@ public class ComputerDAO {
 	 * @return all computers
 	 */
 	public ArrayList<Computer> getComputerList() {
-		// Query building
-		StringBuffer query = new StringBuffer("SELECT * FROM ");
-		query.append(TABLE);
-
 		ArrayList<Computer> computers = new ArrayList<>();
 		ResultSet results = null;
 		connect = singleConnect.getConnection();
 
 		try {
-			PreparedStatement ps = connect.prepareStatement(query.toString());
-			PreparedStatement ps_company;
-
-			String companyQuery = "SELECT name FROM company WHERE id = ";
-			ResultSet company_result;
-
+			PreparedStatement ps = connect.prepareStatement(ALL_COMPUTERS);
 			results = ps.executeQuery();
-			Computer tmp_computer;
-			Company tmp_company;
-			int companyID;
-			// Mapping loop
-			while (results.next()) {
-				Computer.Builder builder = new Computer.Builder(results.getString(COL_NAME));
-
-				companyID = results.getInt(COL_COMPANY_ID);
-				if (companyID != 0) {
-					// getCompany
-					tmp_company = new Company();
-					tmp_company.setId(companyID);
-					ps_company = connect.prepareStatement(companyQuery + companyID);
-					company_result = ps_company.executeQuery();
-					company_result.next();
-					tmp_company.setName(company_result.getString(1));
-					builder.company(tmp_company);
-				}
-				
-				tmp_computer = builder.introduced(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
-					.discontinued(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
-					.build();
-				
-				tmp_computer.setId(results.getInt(COL_ID));
-				computers.add(tmp_computer);
-			}
+			//Mapping
+			computers = (ArrayList<Computer>) computerMapper.convertResultSet(results);
+			
+			ps.close();
+			results.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
@@ -94,46 +57,22 @@ public class ComputerDAO {
 	 *            the id of the wanted computer
 	 * @return the wanted computer
 	 */
-	public ArrayList<Computer> getComputerDetail(long id) {
-		ArrayList<Computer> computer = new ArrayList<>(1);
-
-		// Query building
-		StringBuffer query = new StringBuffer();
-		query.append("SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM ");
-		query.append(TABLE);
-		query.append(" c LEFT JOIN company o ON c.company_id = o.id WHERE c.id = ");
-		query.append(id);
+	public Computer getComputerDetail(long id) {
+		Computer computer = null;
 
 		ResultSet results = null;
 		connect = singleConnect.getConnection();
 
 		try {
 			// query execution
-			PreparedStatement ps = connect.prepareStatement(query.toString());
+			PreparedStatement ps = connect.prepareStatement(COMPUTER_BY_ID);
+			ps.setLong(1, id);
 			results = ps.executeQuery();
+			//Mapping
+			computer = computerMapper.convertIntoEntity(results);
 
-			Computer tmp;
-			Company tmpCompany;
-			long idCompany;
-			// Mapping loop
-			while (results.next()) {
-				Computer.Builder builder = new Computer.Builder(results.getString(COL_NAME));
-				idCompany = results.getLong(COL_COMPANY_ID);
-				// Company insertion
-				if (idCompany != 0) {
-					tmpCompany = new Company();
-					tmpCompany.setId(idCompany);
-					tmpCompany.setName(results.getString(COL_COMPANY_NAME));
-					builder.company(tmpCompany);
-				}
-
-				tmp = builder.introduced(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
-					.discontinued(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
-					.build();
-				tmp.setId(results.getLong(COL_ID));
-
-				computer.add(tmp);
-			}
+			ps.close();
+			results.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
@@ -142,63 +81,33 @@ public class ComputerDAO {
 	}
 
 	/***********************************************************************************/
-	private static final String NULL_TIMESTAMP = "0000-00-00";
-
+	
 	/**
 	 * Create a computer from user entry
 	 * 
 	 * @return arrayList with created computer
 	 */
-	public ArrayList<Computer> createComputer() {
-		ArrayList<Computer> list = new ArrayList<>(1);
+	public Computer createComputer() {
 		Computer computer = Master.getComputerFromUser();
-
-		// Query building
-		StringBuffer buffer = new StringBuffer("INSERT INTO ");
-		buffer.append(TABLE);
-		buffer.append(" (name, introduced, discontinued, company_id ) VALUES ( '");
-		buffer.append(computer.getName());
-		buffer.append("' , '");
-		LocalDate tmp = computer.getIntroduced();
-		if (tmp != null) {
-			buffer.append(tmp);
-		} else {
-			buffer.append(NULL_TIMESTAMP);
-		}
-		buffer.append("' , '");
-		tmp = computer.getDiscontinued();
-		if (tmp != null) {
-			buffer.append(tmp);
-		} else {
-			buffer.append(NULL_TIMESTAMP);
-		}
-		buffer.append("' , ");
-		Company company = computer.getCompany();
-		if (company != null) {
-			buffer.append("'");
-			buffer.append(company.getId());
-			buffer.append("'");
-		} else {
-			buffer.append("NULL");
-		}
-		buffer.append(")");
-
 		connect = singleConnect.getConnection();
+		
 		try {
 			// Query execution
-			PreparedStatement ps = connect.prepareStatement(buffer.toString(), Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement ps = connect.prepareStatement(CREATE_COMPUTER, Statement.RETURN_GENERATED_KEYS);
+			computerMapper.attachEntityToRequest(ps, computer, true);
 			ps.executeUpdate();
 
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
 			computer.setId(rs.getLong(1));
 
-			list.add(computer);
+			ps.close();
+			rs.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : SQLException ! " + e.getMessage());
 		}
-		return list;
+		return computer;
 	}
 
 	/***********************************************************************************/
@@ -207,48 +116,22 @@ public class ComputerDAO {
 	 * 
 	 * @return ArrayList with updated computer
 	 */
-	public ArrayList<Computer> updateComputer() {
-		ArrayList<Computer> list = new ArrayList<>(1);
-
+	public Computer updateComputer() {
 		Computer computer = Master.getComputerUpdateFromUser();
-
-		// QUERY building
-		StringBuffer buffer = new StringBuffer("UPDATE ");
-		buffer.append(TABLE);
-		buffer.append(" SET name = '");
-		buffer.append(computer.getName());
-		buffer.append("' ");
-		LocalDate date = computer.getIntroduced();
-		if (date != null) {
-			buffer.append(", introduced = '");
-			buffer.append(computer.getIntroduced());
-			buffer.append("'");
-		}
-		date = computer.getDiscontinued();
-		if (date != null) {
-			buffer.append(", discontinued = '");
-			buffer.append(computer.getDiscontinued());
-			buffer.append("'");
-		}
-		Company company = computer.getCompany();
-		if (company != null) {
-			buffer.append(", company_id = ");
-			buffer.append(computer.getCompany().getId());
-		}
-		buffer.append(" WHERE id = ");
-		buffer.append(computer.getId());
 
 		// Query execution
 		connect = singleConnect.getConnection();
 		try {
-			PreparedStatement ps = connect.prepareStatement(buffer.toString());
+			PreparedStatement ps = connect.prepareStatement(UPDATE_COMPUTER);
+			computerMapper.attachEntityToRequest(ps, computer, false);
+			
 			ps.executeUpdate();
-			list.add(computer);
+			ps.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says : updateComputer " + e.getMessage());
 		}
-		return list;
+		return computer;
 	}
 
 	/***********************************************************************************/
@@ -260,20 +143,16 @@ public class ComputerDAO {
 	 *            id of wanted computer to delete
 	 * @return deleted computer
 	 */
-	public ArrayList<Computer> deleteComputer(long id) {
-		ArrayList<Computer> computer = getComputerDetail(id);
-
-		// QUERY building
-		StringBuffer buffer = new StringBuffer("DELETE FROM ");
-		buffer.append(TABLE);
-		buffer.append(" WHERE id = ");
-		buffer.append(id);
+	public Computer deleteComputer(long id) {
+		Computer computer = getComputerDetail(id);
 
 		// query execution
 		try {
 			connect = singleConnect.getConnection();
-			PreparedStatement ps = connect.prepareStatement(buffer.toString());
+			PreparedStatement ps = connect.prepareStatement(DELETE_COMPUTER);
+			ps.setLong(1, id);
 			ps.executeUpdate();
+			ps.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("ComputerDAO says: deleteComputer " + e.getMessage());
