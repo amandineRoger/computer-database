@@ -8,13 +8,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import control.CLI;
 import entities.Company;
 import entities.Computer;
 import util.UtilDate;
 import util.UtilQuerySQL;
 
 public class ComputerMapper implements AbstractMapper<Computer> {
-
+	private static final Logger logger = LoggerFactory.getLogger(ComputerMapper.class);
 	private static ComputerMapper instance = null;
 
 	public static ComputerMapper getInstance() {
@@ -30,6 +34,7 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 
 	@Override
 	public List<Computer> convertResultSet(ResultSet rs) {
+		logger.debug("f_convertResultSet");
 		long idCompany;
 		Company tmpCompany;
 		Computer tmp;
@@ -66,6 +71,7 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 
 	@Override
 	public Computer convertIntoEntity(ResultSet rs) {
+		logger.debug("f_convertIntoEntity");
 		long idCompany;
 		Company tmpCompany;
 		Computer tmpComputer = null;
@@ -99,21 +105,22 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 
 	@Override
 	public void attachEntityToRequest(PreparedStatement ps, Computer entity, boolean hasToBeCreated) {
+		logger.debug("f_attachEntityToRequest");
 		try {
 			ps.setString(1, entity.getName());
 			LocalDate date = entity.getIntroduced();
-			if (date != null){
+			if (date != null) {
 				ps.setTimestamp(2, Timestamp.valueOf(date.atStartOfDay()));
 			} else {
 				ps.setNull(2, java.sql.Types.TIMESTAMP);
 			}
-			
-			if ((date = entity.getDiscontinued()) != null){
+
+			if ((date = entity.getDiscontinued()) != null) {
 				ps.setTimestamp(3, Timestamp.valueOf(date.atStartOfDay()));
 			} else {
 				ps.setNull(3, java.sql.Types.TIMESTAMP);
 			}
-			
+
 			if (entity.getCompany() != null) {
 				ps.setLong(4, entity.getCompany().getId());
 			} else {
@@ -127,12 +134,6 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
 	}
 
 }

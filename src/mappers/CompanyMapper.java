@@ -6,16 +6,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import entities.Company;
 import util.UtilQuerySQL;
 
 public class CompanyMapper implements AbstractMapper<Company>, UtilQuerySQL {
+	private static final Logger logger = LoggerFactory.getLogger(CompanyMapper.class);
 	private static CompanyMapper instance;
 
 	private CompanyMapper() {
+		logger.debug("f_CompanyMapper constructor");
 	}
 
 	public static CompanyMapper getInstance() {
+		logger.debug("f_getInstance");
 		if (instance == null) {
 			synchronized (CompanyMapper.class) {
 				if (instance == null) {
@@ -28,6 +34,7 @@ public class CompanyMapper implements AbstractMapper<Company>, UtilQuerySQL {
 
 	@Override
 	public List<Company> convertResultSet(ResultSet rs) {
+		logger.debug("f_convertResultSet");
 		ArrayList<Company> companies = new ArrayList<>();
 		Company tmp = null;
 		try {
@@ -46,6 +53,7 @@ public class CompanyMapper implements AbstractMapper<Company>, UtilQuerySQL {
 
 	@Override
 	public Company convertIntoEntity(ResultSet rs) {
+		logger.debug("f_convertIntoEntity");
 		Company company = null;
 		try {
 			if (rs.next()) {
