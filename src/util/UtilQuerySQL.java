@@ -21,4 +21,7 @@ public interface UtilQuerySQL {
 	public static final String UPDATE_COMPUTER = "UPDATE " + COMPUTER_TABLE + " SET name = ?, introduced = ?,"
 			+ "discontinued = ?, company_id = ? WHERE id = ?";
 	public static final String DELETE_COMPUTER = "DELETE FROM " + COMPUTER_TABLE + " WHERE id = ?";
+	
+	public static final String ALL_COMPANIES = "SELECT id, name FROM "+ COMPANY_TABLE ;
+	public static final String COMPANY_BY_ID = ALL_COMPANIES + " WHERE id = ?";
 }

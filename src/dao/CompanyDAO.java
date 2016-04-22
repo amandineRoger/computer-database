@@ -7,18 +7,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import entities.Company;
+import mappers.CompanyMapper;
+import util.UtilQuerySQL;
 
-public class CompanyDAO {
-
-	private static final String TABLE = "company";
-	private static final int COL_ID = 1;
-	private static final int COL_NAME = 2;
+public class CompanyDAO implements UtilQuerySQL {
 
 	private SingleConnect singleConnect;
 	private Connection connect;
+	private CompanyMapper companyMapper;
 
 	public CompanyDAO() {
 		this.singleConnect = SingleConnect.getInstance();
+		this.companyMapper = CompanyMapper.getInstance();
 	}
 
 	/**
@@ -28,22 +28,17 @@ public class CompanyDAO {
 	 */
 	public ArrayList<Company> getCompanyList() {
 		ArrayList<Company> list = new ArrayList<>();
-
-		// Query
-		String query = "SELECT * from " + TABLE;
 		ResultSet results = null;
 		connect = singleConnect.getConnection();
 
 		try {
-			PreparedStatement ps = connect.prepareStatement(query);
+			PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
 			results = ps.executeQuery();
-			Company tmp;
-			while (results.next()) {
-				tmp = new Company();
-				tmp.setId(results.getLong(COL_ID));
-				tmp.setName(results.getString(COL_NAME));
-				list.add(tmp);
-			}
+
+			list = (ArrayList<Company>) companyMapper.convertResultSet(results);
+
+			ps.close();
+			results.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.out.println("Company DAO says : getCompanyList _ " + e.getMessage());
@@ -62,21 +57,19 @@ public class CompanyDAO {
 	public Company getCompanyById(long id) {
 		Company company = null;
 		if (id != 0) {
-			StringBuffer query = new StringBuffer("SELECT name FROM ");
-			query.append(TABLE);
-			query.append(" WHERE id = ");
-			query.append(id);
-
 			connect = singleConnect.getConnection();
 			PreparedStatement ps;
 
 			try {
-				ps = connect.prepareStatement(query.toString());
+				ps = connect.prepareStatement(COMPANY_BY_ID);
+				ps.setLong(1, id);
 				ResultSet rs = ps.executeQuery();
-				rs.next();
-				company = new Company();
-				company.setId(id);
-				company.setName(rs.getString(1));
+
+				// Mapping
+				company = companyMapper.convertIntoEntity(rs);
+
+				ps.close();
+				rs.close();
 				connect.close();
 			} catch (SQLException e) {
 				System.out.println("Company DAO says : getCompanyById " + e.getMessage());
