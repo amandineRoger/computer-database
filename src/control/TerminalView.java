@@ -1,4 +1,4 @@
-package view;
+package control;
 
 import java.util.ArrayList;
 
@@ -32,6 +32,7 @@ public class TerminalView {
 			System.out.println(list.get(i).toString());
 		}
 	}
+	
 
 	/**
 	 * Display error message when user entry was invalid

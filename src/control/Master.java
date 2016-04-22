@@ -9,7 +9,6 @@ import dao.ComputerDAO;
 import entities.Company;
 import entities.Computer;
 import util.UtilDate;
-import view.TerminalView;
 
 public class Master {
 	private static ComputerDAO computerDao = new ComputerDAO();

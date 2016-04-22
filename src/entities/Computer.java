@@ -2,7 +2,7 @@ package entities;
 
 import java.time.LocalDate;
 
-import util.Utils;
+import util.UtilDate;
 
 public class Computer {
 	private long id;

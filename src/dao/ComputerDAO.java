@@ -8,11 +8,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
 
-import bdd.SingleConnect;
 import control.Master;
 import entities.Company;
 import entities.Computer;
-import util.Utils;
+import util.UtilDate;
 
 public class ComputerDAO {
 
@@ -73,8 +72,8 @@ public class ComputerDAO {
 					builder.company(tmp_company);
 				}
 				
-				tmp_computer = builder.introduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
-					.discontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
+				tmp_computer = builder.introduced(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
+					.discontinued(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
 					.build();
 				
 				tmp_computer.setId(results.getInt(COL_ID));
@@ -128,8 +127,8 @@ public class ComputerDAO {
 					builder.company(tmpCompany);
 				}
 
-				tmp = builder.introduced(Utils.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
-					.discontinued(Utils.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
+				tmp = builder.introduced(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_INTRODUCED)))
+					.discontinued(UtilDate.timeStampToLocalDate(results.getTimestamp(COL_DISCONTINUED)))
 					.build();
 				tmp.setId(results.getLong(COL_ID));
 
