@@ -2,10 +2,15 @@ package control;
 
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CLI {
 	public static Scanner scan = new Scanner(System.in);
+	private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
 	public static void main(String[] args) {
+		logger.debug("Enter in main");
 		scan.useDelimiter("\\n");
 		int menuCommand = -1;
 
@@ -19,5 +24,6 @@ public class CLI {
 			}
 		}
 		scan.close();
+		logger.debug("End of run loop, scanner closed");
 	}
 }

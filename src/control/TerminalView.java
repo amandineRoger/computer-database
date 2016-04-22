@@ -2,12 +2,17 @@ package control;
 
 import java.util.ArrayList;
 
-public class TerminalView {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class TerminalView {
+	private static final Logger logger = LoggerFactory.getLogger(TerminalView.class);
+	
 	/**
 	 * Display menu on CLI
 	 */
 	public static void displayMenu() {
+		logger.debug("f_displayMenu");
 		System.out.println(" ********  Menu  ******* ");
 		System.out.println(" 0 - Quit program");
 		System.out.println(" 1 - List of computers");
@@ -27,6 +32,7 @@ public class TerminalView {
 	 *            an ArrayList of Objects
 	 */
 	public static void displayResults(ArrayList<?> list) {
+		logger.debug("f_displayResults");
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			System.out.println(list.get(i).toString());
@@ -34,6 +40,7 @@ public class TerminalView {
 	}
 
 	public static void displayObject(Object o) {
+		logger.debug("f_displayObject");
 		System.out.println(o.toString());
 	}
 
@@ -41,6 +48,7 @@ public class TerminalView {
 	 * Display error message when user entry was invalid
 	 */
 	public static void displayTypingError() {
+		logger.debug("f_displayTypingError");
 		System.out.println("Invalid command ! please retry with valid one !");
 		;
 	}

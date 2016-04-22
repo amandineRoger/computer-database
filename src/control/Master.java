@@ -3,6 +3,9 @@ package control;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dao.CompanyDAO;
 import dao.ComputerDAO;
 import entities.Company;
@@ -11,6 +14,7 @@ import entities.Computer;
 public class Master {
 	private static ComputerDAO computerDao = ComputerDAO.getInstance();
 	private static CompanyDAO companyDao = CompanyDAO.getInstance();
+	private static final Logger logger = LoggerFactory.getLogger(Master.class);
 
 	/**
 	 * Manage the entered command from menu
@@ -20,6 +24,7 @@ public class Master {
 	 * @return boolean true if command is valid, false otherwise
 	 */
 	public static boolean menuManager(int command) {
+		logger.debug("f_menuManager( {} )", command);
 		boolean commandOk = true;
 		long id;
 		Computer computerEntity;
@@ -44,7 +49,8 @@ public class Master {
 			if (computerEntity == null) {
 				commandOk = false;
 			} else {
-				TerminalView.displayObject(computerEntity);;
+				TerminalView.displayObject(computerEntity);
+				;
 			}
 			break;
 		case 4:
@@ -82,6 +88,7 @@ public class Master {
 	 * @return computer entity which was just created
 	 */
 	public static Computer getComputerFromUser() {
+		logger.debug("f_getComputerFromUser");
 
 		System.out.println("*** Computer creation : Please insert following informations ...");
 		System.out.print(" *  computer name : ");
@@ -116,6 +123,7 @@ public class Master {
 	 * @return LocalDate which was just created
 	 */
 	private static LocalDate getDateFromUser() {
+		logger.debug("f_getDateFromUser");
 		LocalDate date = null;
 		System.out.print(" *   : year ");
 		int year = getIntFromUser(YEAR);
@@ -126,7 +134,7 @@ public class Master {
 			System.out.print(" *   : day ");
 			day = getIntFromUser(DAY);
 			date = LocalDate.of(year, month, day);
-		} 
+		}
 		return date;
 	}
 
@@ -147,6 +155,7 @@ public class Master {
 	 * @return wanted value
 	 */
 	private static int getIntFromUser(int type) {
+		logger.debug("f_getIntFromUser");
 		int value = 0;
 		boolean formatOK = false;
 
@@ -205,6 +214,7 @@ public class Master {
 	 * @return the computer which was updated (with modifications)
 	 */
 	public static Computer getComputerUpdateFromUser() {
+		logger.debug("f_getComputerUpdateFromUser");
 		System.out.println("*** Computer update : Please insert following informations ...");
 		System.out.print(" *  ID :");
 		getIntFromUser(COMPUTER_ID);
