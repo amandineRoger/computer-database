@@ -6,11 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import control.CLI;
 import entities.Company;
 import mappers.CompanyMapper;
 import util.UtilQuerySQL;
 
 public class CompanyDAO implements UtilQuerySQL {
+	private static final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 	private static CompanyDAO instance;
 	
 	private SingleConnect singleConnect;
@@ -18,6 +23,7 @@ public class CompanyDAO implements UtilQuerySQL {
 	private CompanyMapper companyMapper;
 
 	private CompanyDAO() {
+		logger.debug("f_CompanyDAO constructor");
 		this.singleConnect = SingleConnect.getInstance();
 		this.companyMapper = CompanyMapper.getInstance();
 	}
@@ -38,6 +44,7 @@ public class CompanyDAO implements UtilQuerySQL {
 	 * @return ArrayList<Company> all companies
 	 */
 	public ArrayList<Company> getCompanyList() {
+		logger.debug("f_getCompanyList");
 		ArrayList<Company> list = new ArrayList<>();
 		ResultSet results = null;
 		connect = singleConnect.getConnection();
@@ -66,6 +73,7 @@ public class CompanyDAO implements UtilQuerySQL {
 	 * @return wanted company
 	 */
 	public Company getCompanyById(long id) {
+		logger.debug("f_getCompanyById");
 		Company company = null;
 		if (id != 0) {
 			connect = singleConnect.getConnection();

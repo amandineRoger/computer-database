@@ -5,15 +5,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.PreparedStatement;
 
+import control.CLI;
 import control.Master;
 import entities.Computer;
 import mappers.ComputerMapper;
 import util.UtilDate;
 import util.UtilQuerySQL;
 
-public class ComputerDAO implements UtilQuerySQL, UtilDate{
+public class ComputerDAO implements UtilQuerySQL, UtilDate {
+	private static final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 	private static ComputerDAO instance;
 
 	private SingleConnect singleConnect;
@@ -21,16 +27,18 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	private ComputerMapper computerMapper;
 
 	private ComputerDAO() {
+		logger.debug("f_ComputerDAO constructor");
 		this.singleConnect = SingleConnect.getInstance();
 		this.computerMapper = ComputerMapper.getInstance();
 	}
-	public static ComputerDAO getInstance(){
-		if (instance == null){
+
+	public static ComputerDAO getInstance() {
+		if (instance == null) {
 			synchronized (ComputerDAO.class) {
-				if (instance == null){
+				if (instance == null) {
 					instance = new ComputerDAO();
 				}
-				
+
 			}
 		}
 		return instance;
@@ -42,6 +50,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	 * @return all computers
 	 */
 	public ArrayList<Computer> getComputerList() {
+		logger.debug("f_getComputerList");
 		ArrayList<Computer> computers = new ArrayList<>();
 		ResultSet results = null;
 		connect = singleConnect.getConnection();
@@ -49,9 +58,9 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 		try {
 			PreparedStatement ps = connect.prepareStatement(ALL_COMPUTERS);
 			results = ps.executeQuery();
-			//Mapping
+			// Mapping
 			computers = (ArrayList<Computer>) computerMapper.convertResultSet(results);
-			
+
 			ps.close();
 			results.close();
 			connect.close();
@@ -61,7 +70,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 		return computers;
 	}
 
-	/***********************************************************************************/
+	/***************************************** getCompanyById ******************************************/
 	/**
 	 * Find a computer by its id
 	 * 
@@ -70,6 +79,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	 * @return the wanted computer
 	 */
 	public Computer getComputerDetail(long id) {
+		logger.debug("f_getComputerDetail");
 		Computer computer = null;
 
 		ResultSet results = null;
@@ -80,7 +90,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 			PreparedStatement ps = connect.prepareStatement(COMPUTER_BY_ID);
 			ps.setLong(1, id);
 			results = ps.executeQuery();
-			//Mapping
+			// Mapping
 			computer = computerMapper.convertIntoEntity(results);
 
 			ps.close();
@@ -93,16 +103,17 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	}
 
 	/***********************************************************************************/
-	
+
 	/**
 	 * Create a computer from user entry
 	 * 
 	 * @return arrayList with created computer
 	 */
 	public Computer createComputer() {
+		logger.debug("f_createComputer");
 		Computer computer = Master.getComputerFromUser();
 		connect = singleConnect.getConnection();
-		
+
 		try {
 			// Query execution
 			PreparedStatement ps = connect.prepareStatement(CREATE_COMPUTER, Statement.RETURN_GENERATED_KEYS);
@@ -129,6 +140,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	 * @return ArrayList with updated computer
 	 */
 	public Computer updateComputer() {
+		logger.debug("f_updateComputer");
 		Computer computer = Master.getComputerUpdateFromUser();
 
 		// Query execution
@@ -136,7 +148,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 		try {
 			PreparedStatement ps = connect.prepareStatement(UPDATE_COMPUTER);
 			computerMapper.attachEntityToRequest(ps, computer, false);
-			
+
 			ps.executeUpdate();
 			ps.close();
 			connect.close();
@@ -156,6 +168,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate{
 	 * @return deleted computer
 	 */
 	public Computer deleteComputer(long id) {
+		logger.debug("f_deleteComputer");
 		Computer computer = getComputerDetail(id);
 
 		// query execution

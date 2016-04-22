@@ -4,7 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import control.CLI;
+
 public class SingleConnect {
+	private static final Logger logger = LoggerFactory.getLogger(SingleConnect.class);
 	// Constants
 	private static final String ADRESS = "jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull";
 	private static final String USERNAME = "admincdb";
@@ -23,6 +29,7 @@ public class SingleConnect {
 	 * @return java.sql.Connection
 	 */
 	public Connection getConnection() {
+		logger.debug("f_getConnection");
 		try {
 			this.connect = DriverManager.getConnection(ADRESS, USERNAME, PASSWORD);
 		} catch (SQLException e) {
@@ -38,6 +45,7 @@ public class SingleConnect {
 	private static SingleConnect instance = null;
 
 	private SingleConnect() {
+		logger.debug("f_SingleConnect constructor");
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -55,6 +63,7 @@ public class SingleConnect {
 	 * @return the unique instance of SingleConnection
 	 */
 	public static SingleConnect getInstance() {
+		logger.debug("f_getInstance");
 		if (instance == null) {
 			instance = new SingleConnect();
 		}
