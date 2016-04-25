@@ -4,27 +4,27 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 
 public interface UtilDate {
+    /**
+     * Constant for insert null timestamp in db.
+     */
+    String NULL_TIMESTAMP = "0000-00-00";
 
-	public static final int CURRENT_YEAR = LocalDate.now().getYear();
+    /**
+     * Convert sql.Timestamp into time.LocalDate.
+     *
+     * @param ts
+     *            sql.Timestamp to convert
+     * @return LocalDate
+     */
+    static LocalDate timeStampToLocalDate(Timestamp ts) {
+        LocalDate date;
 
-	public static final String NULL_TIMESTAMP = "0000-00-00";
+        if (ts == null) {
+            date = null;
+        } else {
+            date = ts.toLocalDateTime().toLocalDate();
+        }
 
-	/**
-	 * Convert sql.Timestamp into time.LocalDate
-	 * 
-	 * @param ts
-	 *            sql.Timestamp to convert
-	 * @return LocalDate
-	 */
-	public static LocalDate timeStampToLocalDate(Timestamp ts) {
-		LocalDate date;
-
-		if (ts == null) {
-			date = null;
-		} else {
-			date = ts.toLocalDateTime().toLocalDate();
-		}
-
-		return date;
-	}
+        return date;
+    }
 }

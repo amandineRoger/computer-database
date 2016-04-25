@@ -12,64 +12,85 @@ import org.slf4j.LoggerFactory;
 import main.java.com.excilys.cdb.entities.Company;
 import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
-public class CompanyMapper implements AbstractMapper<Company>, UtilQuerySQL {
-	private static final Logger logger = LoggerFactory.getLogger(CompanyMapper.class);
-	private static CompanyMapper instance;
+/**
+ * CompanyMapper allows to translate results set which contains Company(ies)
+ * into Company entity(ies).
+ *
+ * @author Amandine Roger
+ *
+ */
+public final class CompanyMapper
+        implements AbstractMapper<Company>, UtilQuerySQL {
 
-	private CompanyMapper() {
-		logger.debug("f_CompanyMapper constructor");
-	}
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(CompanyMapper.class);
 
-	public static CompanyMapper getInstance() {
-		logger.debug("f_getInstance");
-		if (instance == null) {
-			synchronized (CompanyMapper.class) {
-				if (instance == null) {
-					instance = new CompanyMapper();
-				}
-			}
-		}
-		return instance;
-	}
+    private static CompanyMapper instance;
 
-	@Override
-	public List<Company> convertResultSet(ResultSet rs) {
-		logger.debug("f_convertResultSet");
-		ArrayList<Company> companies = new ArrayList<>();
-		Company tmp = null;
-		try {
-			while (rs.next()) {
-				tmp = new Company();
-				tmp.setId(rs.getLong(COL_ID));
-				tmp.setName(rs.getString(COL_NAME));
-				companies.add(tmp);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return companies;
-	}
+    /**
+     * private constructor for CompanyMapper (Singleton pattern).
+     */
+    private CompanyMapper() {
+        LOGGER.debug("f_CompanyMapper constructor");
+    }
 
-	@Override
-	public Company convertIntoEntity(ResultSet rs) {
-		logger.debug("f_convertIntoEntity");
-		Company company = null;
-		try {
-			if (rs.next()) {
-				company = new Company();
-				company.setId(rs.getLong(COL_ID));
-				company.setName(rs.getString(COL_NAME));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    /**
+     * getInstance (singleton method).
+     *
+     * @return the unique instance of company mapper
+     */
+    public static CompanyMapper getInstance() {
+        LOGGER.debug("f_getInstance");
+        if (instance == null) {
+            synchronized (CompanyMapper.class) {
+                if (instance == null) {
+                    instance = new CompanyMapper();
+                }
+            }
+        }
+        return instance;
+    }
 
-		return company;
-	}
+    @Override
+    public List<Company> convertResultSet(final ResultSet rs) {
+        LOGGER.debug("f_convertResultSet");
+        ArrayList<Company> companies = new ArrayList<>();
+        Company tmp = null;
+        try {
+            while (rs.next()) {
+                tmp = new Company();
+                tmp.setId(rs.getLong(COL_ID));
+                tmp.setName(rs.getString(COL_NAME));
+                companies.add(tmp);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return companies;
+    }
 
-	@Override
-	public void attachEntityToRequest(PreparedStatement ps, Company entity, boolean hasToBeCreated) {}
+    @Override
+    public Company convertIntoEntity(final ResultSet rs) {
+        LOGGER.debug("f_convertIntoEntity");
+        Company company = null;
+        try {
+            if (rs.next()) {
+                company = new Company();
+                company.setId(rs.getLong(COL_ID));
+                company.setName(rs.getString(COL_NAME));
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return company;
+    }
+
+    @Override
+    public void attachEntityToRequest(final PreparedStatement ps,
+            final Company entity, final boolean hasToBeCreated) {
+    }
 
 }

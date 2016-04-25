@@ -11,128 +11,152 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.excilys.cdb.control.CLI;
 import main.java.com.excilys.cdb.entities.Company;
 import main.java.com.excilys.cdb.entities.Computer;
 import main.java.com.excilys.cdb.util.UtilDate;
 import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
+/**
+ * ComputerMapper allows to translate results set which contains Computer into
+ * Computer entity.
+ *
+ * @author Amandine Roger
+ *
+ */
 public class ComputerMapper implements AbstractMapper<Computer> {
-	private static final Logger logger = LoggerFactory.getLogger(ComputerMapper.class);
-	private static ComputerMapper instance = null;
 
-	public static ComputerMapper getInstance() {
-		if (instance == null) {
-			synchronized (ComputerMapper.class) {
-				if (instance == null) {
-					instance = new ComputerMapper();
-				}
-			}
-		}
-		return instance;
-	}
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(ComputerMapper.class);
+    private static ComputerMapper instance = null;
 
-	@Override
-	public List<Computer> convertResultSet(ResultSet rs) {
-		logger.debug("f_convertResultSet");
-		long idCompany;
-		Company tmpCompany;
-		Computer tmp;
+    /**
+     * getInstance (singleton method).
+     *
+     * @return the unique instance of computer mapper
+     */
+    public static ComputerMapper getInstance() {
+        if (instance == null) {
+            synchronized (ComputerMapper.class) {
+                if (instance == null) {
+                    instance = new ComputerMapper();
+                }
+            }
+        }
+        return instance;
+    }
 
-		ArrayList<Computer> computers = new ArrayList<>();
+    @Override
+    public final List<Computer> convertResultSet(final ResultSet rs) {
+        LOGGER.debug("f_convertResultSet");
+        long idCompany;
+        Company tmpCompany;
+        Computer tmp;
 
-		try {
-			while (rs.next()) {
-				Computer.Builder builder = new Computer.Builder(rs.getString(UtilQuerySQL.COL_NAME));
-				idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
-				// Company insertion
-				if (idCompany != 0) {
-					tmpCompany = new Company();
-					tmpCompany.setId(idCompany);
-					tmpCompany.setName(rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
-					builder.company(tmpCompany);
-				}
+        ArrayList<Computer> computers = new ArrayList<>();
 
-				tmp = builder.introduced(UtilDate.timeStampToLocalDate(rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
-						.discontinued(UtilDate.timeStampToLocalDate(rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
-						.build();
-				tmp.setId(rs.getLong(UtilQuerySQL.COL_ID));
+        try {
+            while (rs.next()) {
+                Computer.Builder builder = new Computer.Builder(
+                        rs.getString(UtilQuerySQL.COL_NAME));
+                idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
+                // Company insertion
+                if (idCompany != 0) {
+                    tmpCompany = new Company();
+                    tmpCompany.setId(idCompany);
+                    tmpCompany.setName(
+                            rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
+                    builder.company(tmpCompany);
+                }
 
-				computers.add(tmp);
+                tmp = builder
+                        .introduced(UtilDate.timeStampToLocalDate(
+                                rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
+                        .discontinued(UtilDate.timeStampToLocalDate(
+                                rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
+                        .build();
+                tmp.setId(rs.getLong(UtilQuerySQL.COL_ID));
 
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+                computers.add(tmp);
 
-		return computers;
-	}
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-	@Override
-	public Computer convertIntoEntity(ResultSet rs) {
-		logger.debug("f_convertIntoEntity");
-		long idCompany;
-		Company tmpCompany;
-		Computer tmpComputer = null;
+        return computers;
+    }
 
-		try {
-			if (rs.next()) {
-				Computer.Builder builder = new Computer.Builder(rs.getString(UtilQuerySQL.COL_NAME));
-				idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
-				// Company insertion
-				if (idCompany != 0) {
-					tmpCompany = new Company();
-					tmpCompany.setId(idCompany);
-					tmpCompany.setName(rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
-					builder.company(tmpCompany);
-				}
+    @Override
+    public final Computer convertIntoEntity(final ResultSet rs) {
+        LOGGER.debug("f_convertIntoEntity");
+        long idCompany;
+        Company tmpCompany;
+        Computer tmpComputer = null;
 
-				tmpComputer = builder
-						.introduced(UtilDate.timeStampToLocalDate(rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
-						.discontinued(UtilDate.timeStampToLocalDate(rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
-						.build();
-				tmpComputer.setId(rs.getLong(UtilQuerySQL.COL_ID));
+        try {
+            if (rs.next()) {
+                Computer.Builder builder = new Computer.Builder(
+                        rs.getString(UtilQuerySQL.COL_NAME));
+                idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
+                // Company insertion
+                if (idCompany != 0) {
+                    tmpCompany = new Company();
+                    tmpCompany.setId(idCompany);
+                    tmpCompany.setName(
+                            rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
+                    builder.company(tmpCompany);
+                }
 
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+                tmpComputer = builder
+                        .introduced(UtilDate.timeStampToLocalDate(
+                                rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
+                        .discontinued(UtilDate.timeStampToLocalDate(
+                                rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
+                        .build();
+                tmpComputer.setId(rs.getLong(UtilQuerySQL.COL_ID));
 
-		return tmpComputer;
-	}
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-	@Override
-	public void attachEntityToRequest(PreparedStatement ps, Computer entity, boolean hasToBeCreated) {
-		logger.debug("f_attachEntityToRequest");
-		try {
-			ps.setString(1, entity.getName());
-			LocalDate date = entity.getIntroduced();
-			if (date != null) {
-				ps.setTimestamp(2, Timestamp.valueOf(date.atStartOfDay()));
-			} else {
-				ps.setNull(2, java.sql.Types.TIMESTAMP);
-			}
+        return tmpComputer;
+    }
 
-			if ((date = entity.getDiscontinued()) != null) {
-				ps.setTimestamp(3, Timestamp.valueOf(date.atStartOfDay()));
-			} else {
-				ps.setNull(3, java.sql.Types.TIMESTAMP);
-			}
+    @Override
+    public final void attachEntityToRequest(final PreparedStatement ps,
+            final Computer entity, final boolean hasToBeCreated) {
+        LOGGER.debug("f_attachEntityToRequest");
+        try {
+            ps.setString(1, entity.getName());
+            LocalDate date = entity.getIntroduced();
+            if (date != null) {
+                ps.setTimestamp(2, Timestamp.valueOf(date.atStartOfDay()));
+            } else {
+                ps.setNull(2, java.sql.Types.TIMESTAMP);
+            }
 
-			if (entity.getCompany() != null) {
-				ps.setLong(4, entity.getCompany().getId());
-			} else {
-				ps.setNull(4, java.sql.Types.BIGINT);
-			}
+            date = entity.getDiscontinued();
+            if (date != null) {
+                ps.setTimestamp(3, Timestamp.valueOf(date.atStartOfDay()));
+            } else {
+                ps.setNull(3, java.sql.Types.TIMESTAMP);
+            }
 
-			if (!hasToBeCreated) {
-				ps.setLong(5, entity.getId());
-			}
-		} catch (SQLException e) {
-			//throw new mapperException();
-		}
-	}
+            if (entity.getCompany() != null) {
+                ps.setLong(4, entity.getCompany().getId());
+            } else {
+                ps.setNull(4, java.sql.Types.BIGINT);
+            }
+
+            if (!hasToBeCreated) {
+                ps.setLong(5, entity.getId());
+            }
+        } catch (SQLException e) {
+            // throw new mapperException();
+        }
+    }
 
 }

@@ -10,6 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
 	</properties>
 
 	<dependencies>
@@ -55,6 +56,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -81,5 +89,6 @@
 		<finalName>cdb</finalName>
 
 	</build>
-	
+
+
 </project>

@@ -13,87 +13,105 @@ import main.java.com.excilys.cdb.entities.Company;
 import main.java.com.excilys.cdb.mappers.CompanyMapper;
 import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
+/**
+ * Data Access Object for Company objects and requests Singleton pattern.
+ *
+ * @author Amandine Roger
+ *
+ */
 public class CompanyDAO implements UtilQuerySQL {
-	private static final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
-	private static CompanyDAO instance;
-	
-	private SingleConnect singleConnect;
-	private Connection connect;
-	private CompanyMapper companyMapper;
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(CompanyDAO.class);
+    private static CompanyDAO instance;
 
-	private CompanyDAO() {
-		logger.debug("f_CompanyDAO constructor");
-		this.singleConnect = SingleConnect.getInstance();
-		this.companyMapper = CompanyMapper.getInstance();
-	}
-	public static CompanyDAO getInstance(){
-		if (instance == null){
-			synchronized (CompanyDAO.class) {
-				if (instance == null){
-					instance = new CompanyDAO();
-				}
-			}
-		}
-		return instance;
-	}
+    private SingleConnect singleConnect;
+    private Connection connect;
+    private CompanyMapper companyMapper;
 
-	/**
-	 * Get all companies from database
-	 * 
-	 * @return ArrayList<Company> all companies
-	 */
-	public ArrayList<Company> getCompanyList() {
-		logger.debug("f_getCompanyList");
-		ArrayList<Company> list = new ArrayList<>();
-		ResultSet results = null;
-		connect = singleConnect.getConnection();
+    /**
+     * private constructor for CompanyDAO (Singleton pattern).
+     */
+    private CompanyDAO() {
+        LOGGER.debug("f_CompanyDAO constructor");
+        this.singleConnect = SingleConnect.getInstance();
+        this.companyMapper = CompanyMapper.getInstance();
+    }
 
-		try {
-			PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
-			results = ps.executeQuery();
+    /**
+     * getInstance (singleton method).
+     *
+     * @return the unique instance of CompanyDAO
+     */
+    public static CompanyDAO getInstance() {
+        if (instance == null) {
+            synchronized (CompanyDAO.class) {
+                if (instance == null) {
+                    instance = new CompanyDAO();
+                }
+            }
+        }
+        return instance;
+    }
 
-			list = (ArrayList<Company>) companyMapper.convertResultSet(results);
+    /**
+     * Get all companies from database.
+     *
+     * @return ArrayList<Company> all companies
+     */
+    public ArrayList<Company> getCompanyList() {
+        LOGGER.debug("f_getCompanyList");
+        ArrayList<Company> list = new ArrayList<>();
+        ResultSet results = null;
+        connect = singleConnect.getConnection();
 
-			ps.close();
-			results.close();
-			connect.close();
-		} catch (SQLException e) {
-			System.out.println("Company DAO says : getCompanyList _ " + e.getMessage());
-		}
+        try {
+            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
+            results = ps.executeQuery();
 
-		return list;
-	}
+            list = (ArrayList<Company>) companyMapper.convertResultSet(results);
 
-	/**
-	 * Find a company by its id
-	 * 
-	 * @param id
-	 *            id of the wanted company
-	 * @return wanted company
-	 */
-	public Company getCompanyById(long id) {
-		logger.debug("f_getCompanyById");
-		Company company = null;
-		if (id != 0) {
-			connect = singleConnect.getConnection();
-			PreparedStatement ps;
+            ps.close();
+            results.close();
+            connect.close();
+        } catch (SQLException e) {
+            System.out.println(
+                    "Company DAO says : getCompanyList _ " + e.getMessage());
+        }
 
-			try {
-				ps = connect.prepareStatement(COMPANY_BY_ID);
-				ps.setLong(1, id);
-				ResultSet rs = ps.executeQuery();
+        return list;
+    }
 
-				// Mapping
-				company = companyMapper.convertIntoEntity(rs);
+    /**
+     * Find a company by its id.
+     *
+     * @param id
+     *            id of the wanted company
+     * @return wanted company
+     */
+    public Company getCompanyById(long id) {
+        LOGGER.debug("f_getCompanyById");
+        Company company = null;
+        if (id != 0) {
+            connect = singleConnect.getConnection();
+            PreparedStatement ps;
 
-				ps.close();
-				rs.close();
-				connect.close();
-			} catch (SQLException e) {
-				System.out.println("Company DAO says : getCompanyById " + e.getMessage());
-			}
-		}
-		return company;
-	}
+            try {
+                ps = connect.prepareStatement(COMPANY_BY_ID);
+                ps.setLong(1, id);
+                ResultSet rs = ps.executeQuery();
+
+                // Mapping
+                company = companyMapper.convertIntoEntity(rs);
+
+                ps.close();
+                rs.close();
+                connect.close();
+            } catch (SQLException e) {
+                System.out.println(
+                        "Company DAO says : getCompanyById " + e.getMessage());
+            }
+        }
+        return company;
+    }
 
 }
