@@ -15,6 +15,7 @@ public interface UtilQuerySQL {
     String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
             + COMPUTER_TABLE + " c LEFT JOIN " + COMPANY_TABLE
             + " o ON c.company_id = o.id ";
+    String ALL_COMPUTERS_P = ALL_COMPUTERS + " LIMIT ?, ?";
     String COMPUTER_BY_ID = ALL_COMPUTERS + " WHERE c.id = ?";
     String CREATE_COMPUTER = "INSERT INTO " + COMPUTER_TABLE
             + " (name, introduced, discontinued, company_id ) VALUES ( ?, ?, ?, ?)";
@@ -24,5 +25,6 @@ public interface UtilQuerySQL {
     String DELETE_COMPUTER = "DELETE FROM " + COMPUTER_TABLE + " WHERE id = ?";
 
     String ALL_COMPANIES = "SELECT id, name FROM " + COMPANY_TABLE;
+    String ALL_COMPANIES_P = ALL_COMPANIES + " LIMIT ?, ?";
     String COMPANY_BY_ID = ALL_COMPANIES + " WHERE id = ?";
 }

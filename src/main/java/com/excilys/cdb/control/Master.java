@@ -6,14 +6,16 @@ import java.util.InputMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.excilys.cdb.dao.CompanyDAO;
-import main.java.com.excilys.cdb.dao.ComputerDAO;
 import main.java.com.excilys.cdb.entities.Company;
 import main.java.com.excilys.cdb.entities.Computer;
+import main.java.com.excilys.cdb.services.CompanyService;
+import main.java.com.excilys.cdb.services.ComputerService;
 
 public class Master {
-    private static ComputerDAO computerDao = ComputerDAO.getInstance();
-    private static CompanyDAO companyDao = CompanyDAO.getInstance();
+    private static ComputerService computerService = ComputerService
+            .getInstance();
+    private static CompanyService companyService = CompanyService.getInstance();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 
     /**
@@ -35,18 +37,22 @@ public class Master {
                 break;
             case 1:
                 // get computers list
-                TerminalView.displayResults(computerDao.getComputerList());
+                TerminalView.displayResults(
+                        computerService.getComputerList().getList());
                 break;
             case 2:
                 // get companies list
-                TerminalView.displayResults(companyDao.getCompanyList());
+                TerminalView.displayResults(
+                        companyService.getCompanyList().getList()); // FIXME
+                                                                    // implements
+                                                                    // displayPage
                 break;
             case 3:
                 // get computer details
                 System.out.println(
                         "Computer details _ type ID of wanted computer : ");
                 id = CLI.scan.nextLong();
-                computerEntity = computerDao.getComputerDetail(id);
+                computerEntity = computerService.getComputerDetail(id);
                 if (computerEntity == null) {
                     commandOk = false;
                 } else {
@@ -56,19 +62,19 @@ public class Master {
             case 4:
                 // create computer
                 System.out.println("You just create the following computer : ");
-                TerminalView.displayObject(computerDao.createComputer());
+                TerminalView.displayObject(computerService.createComputer());
                 break;
             case 5:
                 // update computer
                 System.out.println("You just update the following computer : ");
-                TerminalView.displayObject(computerDao.updateComputer());
+                TerminalView.displayObject(computerService.updateComputer());
                 break;
             case 6:
                 // delete computer
                 System.out.println(
                         "Computer details _ type ID of wanted computer : ");
                 id = CLI.scan.nextLong();
-                computerEntity = computerDao.deleteComputer(id);
+                computerEntity = computerService.deleteComputer(id);
                 if (computerEntity == null) {
                     commandOk = false;
                 } else {
@@ -193,7 +199,7 @@ public class Master {
                         break;
                     case COMPANY_ID:
                         if (value != 0) {
-                            tmpCompany = companyDao.getCompanyById(value);
+                            tmpCompany = companyService.getCompanyById(value);
                             if (tmpCompany == null) {
                                 formatOK = false;
                                 System.out.println(
@@ -202,7 +208,7 @@ public class Master {
                         }
                         break;
                     case COMPUTER_ID:
-                        tmpComputer = computerDao.getComputerDetail(value);
+                        tmpComputer = computerService.getComputerDetail(value);
                         if (tmpComputer == null) {
                             formatOK = false;
                             System.out.println(
