@@ -1,4 +1,4 @@
-package mappers;
+package main.java.com.excilys.cdb.mappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,11 +11,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import control.CLI;
-import entities.Company;
-import entities.Computer;
-import util.UtilDate;
-import util.UtilQuerySQL;
+import main.java.com.excilys.cdb.control.CLI;
+import main.java.com.excilys.cdb.entities.Company;
+import main.java.com.excilys.cdb.entities.Computer;
+import main.java.com.excilys.cdb.util.UtilDate;
+import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
 public class ComputerMapper implements AbstractMapper<Computer> {
 	private static final Logger logger = LoggerFactory.getLogger(ComputerMapper.class);

@@ -1,4 +1,4 @@
-package util;
+package main.java.com.excilys.cdb.util;
 
 public interface UtilQuerySQL {
 	public static final String COMPUTER_TABLE = "computer";

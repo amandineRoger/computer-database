@@ -1,8 +1,8 @@
-package entities;
+package main.java.com.excilys.cdb.entities;
 
 import java.time.LocalDate;
 
-import util.UtilDate;
+
 
 public class Computer {
 	private long id;

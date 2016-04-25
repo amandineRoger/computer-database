@@ -1,4 +1,4 @@
-package mappers;
+package main.java.com.excilys.cdb.mappers;
 
 public class mapperException extends Exception {
 

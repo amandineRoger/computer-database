@@ -1,4 +1,4 @@
-package dao;
+package main.java.com.excilys.cdb.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import control.CLI;
-import entities.Company;
-import mappers.CompanyMapper;
-import util.UtilQuerySQL;
+import main.java.com.excilys.cdb.entities.Company;
+import main.java.com.excilys.cdb.mappers.CompanyMapper;
+import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
 public class CompanyDAO implements UtilQuerySQL {
 	private static final Logger logger = LoggerFactory.getLogger(CompanyDAO.class);

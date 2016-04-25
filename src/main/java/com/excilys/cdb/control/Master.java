@@ -1,4 +1,4 @@
-package control;
+package main.java.com.excilys.cdb.control;
 
 import java.time.LocalDate;
 import java.util.InputMismatchException;
@@ -6,10 +6,10 @@ import java.util.InputMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dao.CompanyDAO;
-import dao.ComputerDAO;
-import entities.Company;
-import entities.Computer;
+import main.java.com.excilys.cdb.dao.CompanyDAO;
+import main.java.com.excilys.cdb.dao.ComputerDAO;
+import main.java.com.excilys.cdb.entities.Company;
+import main.java.com.excilys.cdb.entities.Computer;
 
 public class Master {
 	private static ComputerDAO computerDao = ComputerDAO.getInstance();

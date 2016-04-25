@@ -1,4 +1,4 @@
-package entities;
+package main.java.com.excilys.cdb.entities;
 
 public class Company {
 	

@@ -1,4 +1,4 @@
-package dao;
+package main.java.com.excilys.cdb.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import control.CLI;
+import main.java.com.excilys.cdb.control.CLI;
 
 public class SingleConnect {
 	private static final Logger logger = LoggerFactory.getLogger(SingleConnect.class);

@@ -1,4 +1,4 @@
-package dao;
+package main.java.com.excilys.cdb.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,12 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 
-import control.CLI;
-import control.Master;
-import entities.Computer;
-import mappers.ComputerMapper;
-import util.UtilDate;
-import util.UtilQuerySQL;
+import main.java.com.excilys.cdb.control.CLI;
+import main.java.com.excilys.cdb.control.Master;
+import main.java.com.excilys.cdb.entities.Computer;
+import main.java.com.excilys.cdb.mappers.ComputerMapper;
+import main.java.com.excilys.cdb.util.UtilDate;
+import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
 public class ComputerDAO implements UtilQuerySQL, UtilDate {
 	private static final Logger logger = LoggerFactory.getLogger(ComputerDAO.class);

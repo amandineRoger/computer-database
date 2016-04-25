@@ -1,4 +1,4 @@
-package mappers;
+package main.java.com.excilys.cdb.mappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,8 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import entities.Company;
-import util.UtilQuerySQL;
+import main.java.com.excilys.cdb.entities.Company;
+import main.java.com.excilys.cdb.util.UtilQuerySQL;
 
 public class CompanyMapper implements AbstractMapper<Company>, UtilQuerySQL {
 	private static final Logger logger = LoggerFactory.getLogger(CompanyMapper.class);

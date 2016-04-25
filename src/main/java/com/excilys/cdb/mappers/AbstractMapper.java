@@ -1,4 +1,4 @@
-package mappers;
+package main.java.com.excilys.cdb.mappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

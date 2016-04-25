@@ -4,8 +4,10 @@
 
 	<appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
 		<file>debug.log</file>
-		     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+		     <filter class="ch.qos.logback.classic.filter.LevelFilter">
           <level>DEBUG</level>
+          <onMatch>ACCEPT</onMatch>
+          <onMismatch>DENY</onMismatch>
         </filter>
 		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
 			by default -->
@@ -17,8 +19,10 @@
 
 	<appender name="ERROR_FILE" class="ch.qos.logback.core.FileAppender">
 		<file>errors.log</file>
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
           <level>ERROR</level>
+          <onMatch>ACCEPT</onMatch>
+          <onMismatch>DENY</onMismatch>
         </filter>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
@@ -27,8 +31,10 @@
 	</appender>
 
 	<appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
-	   <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+	   <filter class="ch.qos.logback.classic.filter.LevelFilter">
           <level>WARN</level>
+          <onMatch>ACCEPT</onMatch>
+          <onMismatch>DENY</onMismatch>
         </filter>
 		<encoder>
 			<pattern>%msg%n</pattern>
