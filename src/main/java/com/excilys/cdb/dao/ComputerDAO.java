@@ -79,6 +79,31 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
         return computers;
     }
 
+    public ArrayList<Computer> getComputerList(int offset, int limit) {
+        LOGGER.debug("f_getComputerList");
+        ArrayList<Computer> computers = new ArrayList<>(limit);
+        ResultSet results = null;
+        connect = singleConnect.getConnection();
+
+        try {
+            PreparedStatement ps = connect.prepareStatement(ALL_COMPUTERS_P);
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            results = ps.executeQuery();
+            // Mapping
+            computers = (ArrayList<Computer>) computerMapper
+                    .convertResultSet(results);
+
+            ps.close();
+            results.close();
+            connect.close();
+        } catch (SQLException e) {
+            System.out.println(
+                    "ComputerDAO says : SQLException ! " + e.getMessage());
+        }
+        return computers;
+    }
+
     /***************************************** getCompanyById ******************************************/
     /**
      * Find a computer by its id.
@@ -117,7 +142,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
     /**
      * Create a computer from user entry.
      *
-     * @return arrayList with created computer
+     * @return created computer
      */
     public Computer createComputer() {
         LOGGER.debug("f_createComputer");
@@ -149,7 +174,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
     /**
      * Update a computer (user choice).
      *
-     * @return ArrayList with updated computer
+     * @return updated computer
      */
     public Computer updateComputer() {
         LOGGER.debug("f_updateComputer");

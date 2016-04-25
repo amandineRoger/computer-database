@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,18 +55,24 @@ public class CompanyDAO implements UtilQuerySQL {
     }
 
     /**
-     * Get all companies from database.
+     * Get companies from select request
      *
-     * @return ArrayList<Company> all companies
+     * @param offset
+     *            offset in request
+     * @param limit
+     *            number of results
+     * @return companies from offset+1 to offset+limit+1;
      */
-    public ArrayList<Company> getCompanyList() {
+    public List<Company> getCompanyList(final int offset, final int limit) {
         LOGGER.debug("f_getCompanyList");
-        ArrayList<Company> list = new ArrayList<>();
+        ArrayList<Company> list = new ArrayList<>(limit);
         ResultSet results = null;
         connect = singleConnect.getConnection();
 
         try {
-            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
+            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES_P);
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
             results = ps.executeQuery();
 
             list = (ArrayList<Company>) companyMapper.convertResultSet(results);
