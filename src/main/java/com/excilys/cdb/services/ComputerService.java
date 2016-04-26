@@ -9,10 +9,18 @@ public class ComputerService {
     private ComputerDAO computerDAO;
     private Page<Computer> currentPage;
 
+    /**
+     * private constructor for ComputerService (Singleton pattern).
+     */
     private ComputerService() {
         computerDAO = ComputerDAO.getInstance();
     }
 
+    /**
+     * getInstance (singleton method).
+     *
+     * @return the unique instance of ComputerService
+     */
     public static ComputerService getInstance() {
         if (instance == null) {
             synchronized (ComputerService.class) {
@@ -25,6 +33,11 @@ public class ComputerService {
         return instance;
     }
 
+    /**
+     * Get the first page of computers.
+     *
+     * @return computers from 1 to Page.NUMBER_OF_RESULTS;
+     */
     public Page<Computer> getComputerList() {
         currentPage = new Page<>();
         currentPage.setList(
@@ -33,7 +46,7 @@ public class ComputerService {
     }
 
     /**
-     * Get the next page of results
+     * Get the next page of results.
      *
      * @return the next Page.NUMBER_OF_RESULTS Companies
      */
@@ -48,7 +61,7 @@ public class ComputerService {
     }
 
     /**
-     * Get the previous page of results
+     * Get the previous page of results.
      *
      * @return the previous Page.NUMBER_OF_RESULTS Companies
      */
@@ -87,6 +100,9 @@ public class ComputerService {
 
     /**
      * Update a computer (user choice).
+     *
+     * @param computer
+     *            the updated computer (Caution! update is based on computer.id)
      *
      * @return updated computer
      */

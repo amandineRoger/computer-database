@@ -34,7 +34,7 @@ public class CompanyService {
     }
 
     /**
-     * Get paginated results of Company list
+     * Get paginated results of Company list.
      *
      * @return page which contains Page.NUMBER_OF_RESULTS Companies
      */
@@ -46,7 +46,7 @@ public class CompanyService {
     }
 
     /**
-     * Get the next page of results
+     * Get the next page of results.
      *
      * @return the next Page.NUMBER_OF_RESULTS Companies
      */
@@ -61,7 +61,7 @@ public class CompanyService {
     }
 
     /**
-     * Get the previous page of results
+     * Get the previous page of results.
      *
      * @return the previous Page.NUMBER_OF_RESULTS Companies
      */
@@ -75,9 +75,15 @@ public class CompanyService {
         return currentPage;
     }
 
+    /**
+     * find a company by its id.
+     *
+     * @param id
+     *            id of wanted company
+     * @return wanted company
+     */
     public Company getCompanyById(long id) {
         return companyDAO.getCompanyById(id);
-
     }
 
 }

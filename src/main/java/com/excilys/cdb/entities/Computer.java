@@ -2,8 +2,6 @@ package com.excilys.cdb.entities;
 
 import java.time.LocalDate;
 
-import com.excilys.cdb.entities.Company;
-
 public class Computer {
     private long id;
     private String name;

@@ -8,6 +8,9 @@ public class Page<T> {
     private int pageNumber;
     private List<T> list;
 
+    /**
+     * Constructor of a page, initialize at first page.
+     */
     public Page() {
         pageNumber = 0;
     }

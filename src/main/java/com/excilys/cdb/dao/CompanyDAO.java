@@ -55,7 +55,7 @@ public class CompanyDAO implements UtilQuerySQL {
     }
 
     /**
-     * Get companies from select request
+     * Get companies from select request.
      *
      * @param offset
      *            offset in request
