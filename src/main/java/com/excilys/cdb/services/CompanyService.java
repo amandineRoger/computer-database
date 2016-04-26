@@ -50,8 +50,8 @@ public class CompanyService {
      * @return the next Page.NUMBER_OF_RESULTS Companies
      */
     public Page<Company> getNextPage() {
+        currentPage.next();
         int i = currentPage.getPageNumber();
-        currentPage.setPageNumber(++i);
 
         currentPage
                 .setList(companyDAO.getCompanyList(i * Page.LIMIT, Page.LIMIT));
@@ -65,8 +65,8 @@ public class CompanyService {
      * @return the previous Page.NUMBER_OF_RESULTS Companies
      */
     public Page<Company> getPreviousPage() {
+        currentPage.previous();
         int i = currentPage.getPageNumber();
-        currentPage.setPageNumber(--i);
 
         currentPage
                 .setList(companyDAO.getCompanyList(i * Page.LIMIT, Page.LIMIT));
@@ -83,6 +83,15 @@ public class CompanyService {
      */
     public Company getCompanyById(long id) {
         return companyDAO.getCompanyById(id);
+    }
+
+    /**
+     * Get the number of companies in database.
+     *
+     * @return number of companies in database
+     */
+    public long getCount() {
+        return companyDAO.getCount();
     }
 
 }

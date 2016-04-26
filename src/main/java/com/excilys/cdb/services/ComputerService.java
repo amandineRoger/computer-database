@@ -119,4 +119,13 @@ public class ComputerService {
     public Computer deleteComputer(long id) {
         return computerDAO.deleteComputer(id);
     }
+
+    /**
+     * Get the number of computers in database.
+     *
+     * @return number of computers in database
+     */
+    public long getCount() {
+        return computerDAO.getCount();
+    }
 }
