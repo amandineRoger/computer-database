@@ -211,7 +211,7 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
 
     /***********************************************************************************/
     /**
-     * Get the number of computers in database
+     * Get the number of computers in database.
      *
      * @return number of computers in database
      */

@@ -122,7 +122,7 @@ public class CompanyDAO implements UtilQuerySQL {
     }
 
     /**
-     * Get the number of companies in database
+     * Get the number of companies in database.
      *
      * @return number of companies in database
      */

@@ -11,6 +11,9 @@ public class Page<T> {
 
     /**
      * Constructor of a page, initialize at first page.
+     *
+     * @param count
+     *            number of results of count request
      */
     public Page(int count) {
         this.pageNumber = 0;
@@ -37,10 +40,16 @@ public class Page<T> {
         this.list = list;
     }
 
+    /**
+     * increment pageNumber
+     */
     public void next() {
         this.pageNumber++;
     }
 
+    /**
+     * decrement pageNumber
+     */
     public void previous() {
         this.pageNumber--;
     }
