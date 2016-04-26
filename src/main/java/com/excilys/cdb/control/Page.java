@@ -41,14 +41,14 @@ public class Page<T> {
     }
 
     /**
-     * increment pageNumber
+     * increment pageNumber.
      */
     public void next() {
         this.pageNumber++;
     }
 
     /**
-     * decrement pageNumber
+     * decrement pageNumber.
      */
     public void previous() {
         this.pageNumber--;

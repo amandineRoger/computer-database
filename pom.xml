@@ -14,7 +14,7 @@
 	</properties>
 
 	<dependencies>
-
+		<!-- Unit tests -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -22,6 +22,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.10.19</version>
+		</dependency>
+
+		<!-- Logs -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -43,12 +50,14 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- Database -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.38</version>
 		</dependency>
 
+		<!-- Servlets -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -56,10 +65,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+
+
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.10.19</version>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
 
 
@@ -81,9 +92,13 @@
 		<plugins>
 
 			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<url>http://localhost:8080/manager/text</url>
+					<server>tomcatserver</server>
+				</configuration>
 			</plugin>
 
 			<!-- maven-compile-plugin to force use of java 8 -->
@@ -98,9 +113,6 @@
 			</plugin>
 		</plugins>
 
-		<finalName>cdb</finalName>
-
 	</build>
-
 
 </project>
