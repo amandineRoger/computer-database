@@ -121,4 +121,30 @@ public class CompanyDAO implements UtilQuerySQL {
         return company;
     }
 
+    /**
+     * Get the number of companies in database
+     *
+     * @return number of companies in database
+     */
+    public int getCount() {
+        int count = 0;
+
+        try {
+            connect = singleConnect.getConnection();
+            PreparedStatement ps = connect.prepareStatement(COUNT_COMPANIES);
+            ResultSet result = ps.executeQuery();
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+            ps.close();
+            result.close();
+            connect.close();
+
+        } catch (SQLException e) {
+            System.out.println("CompanyDAO says: getCount " + e.getMessage());
+        }
+
+        return count;
+    }
+
 }

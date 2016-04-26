@@ -208,4 +208,32 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
         }
         return computer;
     }
+
+    /***********************************************************************************/
+    /**
+     * Get the number of computers in database
+     *
+     * @return number of computers in database
+     */
+    public int getCount() {
+        int count = 0;
+
+        try {
+            connect = singleConnect.getConnection();
+            PreparedStatement ps = connect.prepareStatement(COUNT_COMPUTERS);
+            ResultSet result = ps.executeQuery();
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+            ps.close();
+            result.close();
+            connect.close();
+
+        } catch (SQLException e) {
+            System.out.println("ComputerDAO says: getCount " + e.getMessage());
+        }
+
+        return count;
+    }
+
 }

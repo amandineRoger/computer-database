@@ -3,7 +3,8 @@ package com.excilys.cdb.control;
 import java.util.List;
 
 public class Page<T> {
-    public static final int NUMBER_OF_RESULTS = 10;
+    public static final int LIMIT = 10;
+    private int nbResults;
 
     private int pageNumber;
     private List<T> list;
@@ -11,8 +12,13 @@ public class Page<T> {
     /**
      * Constructor of a page, initialize at first page.
      */
-    public Page() {
-        pageNumber = 0;
+    public Page(int count) {
+        this.pageNumber = 0;
+        this.nbResults = count;
+    }
+
+    public int getNbResults() {
+        return nbResults;
     }
 
     public int getPageNumber() {
@@ -31,4 +37,11 @@ public class Page<T> {
         this.list = list;
     }
 
+    public void next() {
+        this.pageNumber++;
+    }
+
+    public void previous() {
+        this.pageNumber--;
+    }
 }

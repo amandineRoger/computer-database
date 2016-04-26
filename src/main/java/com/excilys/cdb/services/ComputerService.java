@@ -39,9 +39,8 @@ public class ComputerService {
      * @return computers from 1 to Page.NUMBER_OF_RESULTS;
      */
     public Page<Computer> getComputerList() {
-        currentPage = new Page<>();
-        currentPage.setList(
-                computerDAO.getComputerList(0, Page.NUMBER_OF_RESULTS));
+        currentPage = new Page<>(computerDAO.getCount());
+        currentPage.setList(computerDAO.getComputerList(0, Page.LIMIT));
         return currentPage;
     }
 
@@ -54,8 +53,8 @@ public class ComputerService {
         int i = currentPage.getPageNumber();
         currentPage.setPageNumber(++i);
 
-        currentPage.setList(computerDAO.getComputerList(
-                i * Page.NUMBER_OF_RESULTS, Page.NUMBER_OF_RESULTS));
+        currentPage.setList(
+                computerDAO.getComputerList(i * Page.LIMIT, Page.LIMIT));
 
         return currentPage;
     }
@@ -69,8 +68,8 @@ public class ComputerService {
         int i = currentPage.getPageNumber();
         currentPage.setPageNumber(--i);
 
-        currentPage.setList(computerDAO.getComputerList(
-                i * Page.NUMBER_OF_RESULTS, Page.NUMBER_OF_RESULTS));
+        currentPage.setList(
+                computerDAO.getComputerList(i * Page.LIMIT, Page.LIMIT));
 
         return currentPage;
     }
