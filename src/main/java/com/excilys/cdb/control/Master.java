@@ -62,12 +62,18 @@ public class Master {
             case 4:
                 // create computer
                 System.out.println("You just create the following computer : ");
-                TerminalView.displayObject(computerService.createComputer());
+                computerEntity = getComputerFromUser();
+                TerminalView.displayObject(
+                        computerService.createComputer(computerEntity));
+                computerEntity = null;
                 break;
             case 5:
                 // update computer
                 System.out.println("You just update the following computer : ");
-                TerminalView.displayObject(computerService.updateComputer());
+                computerEntity = getComputerUpdateFromUser();
+                TerminalView.displayObject(
+                        computerService.updateComputer(computerEntity));
+                computerEntity = null;
                 break;
             case 6:
                 // delete computer

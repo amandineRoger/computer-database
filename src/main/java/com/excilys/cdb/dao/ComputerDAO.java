@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.control.Master;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.util.UtilDate;
@@ -142,11 +141,14 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
     /**
      * Create a computer from user entry.
      *
+     * @param computer
+     *            TODO
+     *
      * @return created computer
      */
-    public Computer createComputer() {
+    public Computer createComputer(Computer computer) {
         LOGGER.debug("f_createComputer");
-        Computer computer = Master.getComputerFromUser();
+        // Computer computer = Master.getComputerFromUser();
         connect = singleConnect.getConnection();
 
         try {
@@ -176,9 +178,8 @@ public class ComputerDAO implements UtilQuerySQL, UtilDate {
      *
      * @return updated computer
      */
-    public Computer updateComputer() {
+    public Computer updateComputer(Computer computer) {
         LOGGER.debug("f_updateComputer");
-        Computer computer = Master.getComputerUpdateFromUser();
 
         // Query execution
         connect = singleConnect.getConnection();

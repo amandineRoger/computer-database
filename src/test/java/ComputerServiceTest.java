@@ -95,25 +95,61 @@ public class ComputerServiceTest {
 
     @Test
     public void testCreateComputer() {
+        initialize();
         LocalDate intro = LocalDate.of(2016, 4, 4);
         LocalDate disco = LocalDate.of(2016, 9, 30);
         computer = new Computer.Builder("testComputer").introduced(intro)
                 .discontinued(disco).build();
-        // Impossible to test service because of create method depend of user
-        // typing _ refactoring required !
+
+        another = service.createComputer(computer);
+        assertEquals(computer.getName(), another.getName());
+        assertEquals(computer.getIntroduced(), another.getIntroduced());
+        assertEquals(computer.getDiscontinued(), another.getDiscontinued());
+        assertEquals(computer.getCompany(), another.getCompany());
+
+        computer = service.getComputerDetail(another.getId());
+        assertEquals(computer, another);
     }
 
     @Test
     public void testUpdateComputer() {
-        // Impossible to test service because of create method depend of user
-        // typing_ refactoring required !
+        initialize();
+        LocalDate intro = LocalDate.of(2016, 4, 4);
+        LocalDate disco = LocalDate.of(2016, 9, 30);
+        computer = new Computer.Builder("testComputer").introduced(intro)
+                .discontinued(disco).build();
+
+        computer = service.createComputer(computer);
+
+        computer.setName("Updated name");
+        intro = LocalDate.of(2016, 4, 26);
+        computer.setIntroduced(intro);
+        another = service.updateComputer(computer);
+        assertEquals("Updated name", another.getName());
+        assertEquals(intro, another.getIntroduced());
+        assertEquals(computer, another);
+
     }
 
     @Test
     public void testDeleteComputer() {
-        // fail("Not yet implemented");
-        // Impossible to test service because of create method depend of user
-        // typing_ refactoring required !
+        initialize();
+        LocalDate intro = LocalDate.of(2016, 4, 4);
+        LocalDate disco = LocalDate.of(2016, 9, 30);
+        computer = new Computer.Builder("ComputerTest").introduced(intro)
+                .discontinued(disco).build();
+
+        computer = service.createComputer(computer);
+        another = service.deleteComputer(computer.getId());
+
+        assertEquals(computer, another);
+
+        another = service.deleteComputer(computer.getId());
+        assertNull(another);
+
+        another = service.deleteComputer(-1);
+        assertNull(another);
+
     }
 
 }

@@ -76,10 +76,13 @@ public class ComputerService {
     /**
      * Create a computer from user entry.
      *
+     * @param computer
+     *            TODO
+     *
      * @return created computer
      */
-    public Computer createComputer() {
-        return computerDAO.createComputer();
+    public Computer createComputer(Computer computer) {
+        return computerDAO.createComputer(computer);
     }
 
     /**
@@ -87,8 +90,8 @@ public class ComputerService {
      *
      * @return updated computer
      */
-    public Computer updateComputer() {
-        return computerDAO.updateComputer();
+    public Computer updateComputer(Computer computer) {
+        return computerDAO.updateComputer(computer);
     }
 
     /**
