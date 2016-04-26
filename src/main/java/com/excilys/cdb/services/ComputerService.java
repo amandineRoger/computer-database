@@ -1,8 +1,8 @@
-package main.java.com.excilys.cdb.services;
+package com.excilys.cdb.services;
 
-import main.java.com.excilys.cdb.control.Page;
-import main.java.com.excilys.cdb.dao.ComputerDAO;
-import main.java.com.excilys.cdb.entities.Computer;
+import com.excilys.cdb.control.Page;
+import com.excilys.cdb.dao.ComputerDAO;
+import com.excilys.cdb.entities.Computer;
 
 public class ComputerService {
     private static ComputerService instance;

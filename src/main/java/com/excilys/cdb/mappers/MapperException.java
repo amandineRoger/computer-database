@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.mappers;
+package com.excilys.cdb.mappers;
 
 /**
  * Exception to throw all exceptions met in *Mapper classes.

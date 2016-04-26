@@ -1,8 +1,8 @@
-package main.java.com.excilys.cdb.services;
+package com.excilys.cdb.services;
 
-import main.java.com.excilys.cdb.control.Page;
-import main.java.com.excilys.cdb.dao.CompanyDAO;
-import main.java.com.excilys.cdb.entities.Company;
+import com.excilys.cdb.control.Page;
+import com.excilys.cdb.dao.CompanyDAO;
+import com.excilys.cdb.entities.Company;
 
 public class CompanyService {
 

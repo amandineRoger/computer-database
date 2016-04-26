@@ -1,11 +1,9 @@
-package main.java.com.excilys.cdb.entities;
+package com.excilys.cdb.entities;
 
 public class Company {
 
     private long id;
     private String name;
-
-    // TODO constructeur ?
 
     public long getId() {
         return this.id;

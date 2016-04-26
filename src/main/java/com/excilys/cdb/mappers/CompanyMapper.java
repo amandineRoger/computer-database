@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.mappers;
+package com.excilys.cdb.mappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,8 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.excilys.cdb.entities.Company;
-import main.java.com.excilys.cdb.util.UtilQuerySQL;
+import com.excilys.cdb.entities.Company;
+import com.excilys.cdb.util.UtilQuerySQL;
 
 /**
  * CompanyMapper allows to translate results set which contains Company(ies)

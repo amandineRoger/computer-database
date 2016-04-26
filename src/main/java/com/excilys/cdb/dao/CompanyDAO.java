@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.dao;
+package com.excilys.cdb.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.excilys.cdb.entities.Company;
-import main.java.com.excilys.cdb.mappers.CompanyMapper;
-import main.java.com.excilys.cdb.util.UtilQuerySQL;
+import com.excilys.cdb.entities.Company;
+import com.excilys.cdb.mappers.CompanyMapper;
+import com.excilys.cdb.util.UtilQuerySQL;
 
 /**
  * Data Access Object for Company objects and requests Singleton pattern.

@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.control;
+package com.excilys.cdb.control;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.control;
+package com.excilys.cdb.control;
 
 import java.time.LocalDate;
 import java.util.InputMismatchException;
@@ -6,10 +6,10 @@ import java.util.InputMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.excilys.cdb.entities.Company;
-import main.java.com.excilys.cdb.entities.Computer;
-import main.java.com.excilys.cdb.services.CompanyService;
-import main.java.com.excilys.cdb.services.ComputerService;
+import com.excilys.cdb.entities.Company;
+import com.excilys.cdb.entities.Computer;
+import com.excilys.cdb.services.CompanyService;
+import com.excilys.cdb.services.ComputerService;
 
 public class Master {
     private static ComputerService computerService = ComputerService

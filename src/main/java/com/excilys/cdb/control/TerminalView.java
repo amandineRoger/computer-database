@@ -1,6 +1,6 @@
-package main.java.com.excilys.cdb.control;
+package com.excilys.cdb.control;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class TerminalView {
      * @param list
      *            an ArrayList of Objects
      */
-    public static void displayResults(ArrayList<?> list) {
+    public static void displayResults(List<?> list) {
         LOGGER.debug("f_displayResults");
         int size = list.size();
         for (int i = 0; i < size; i++) {

@@ -1,4 +1,4 @@
-package main.java.com.excilys.cdb.util;
+package com.excilys.cdb.util;
 
 public interface UtilQuerySQL {
     String COMPUTER_TABLE = "computer";
