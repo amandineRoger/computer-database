@@ -8,6 +8,19 @@ public class Page<T> {
     private int nbPages;
 
     private int pageNumber;
+
+    public int getNbPages() {
+        return nbPages;
+    }
+
+    public void setNbPages(int nbPages) {
+        this.nbPages = nbPages;
+    }
+
+    public void setNbResults(int nbResults) {
+        this.nbResults = nbResults;
+    }
+
     private List<T> list;
 
     /**
