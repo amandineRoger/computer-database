@@ -41,17 +41,23 @@ public class Home extends HttpServlet {
 
         if (parameters.isEmpty()) {
             page = computerService.getComputerList();
-        } else if (parameters.containsKey("page")) {
-            page.setPageNumber(Integer.parseInt(parameters.get("page")[0]));
-            if (parameters.containsKey("prev")) {
-                if ((parameters.get("prev")[0]).equals("true")) {
-                    page = computerService.getPreviousPage();
+        } else {
+            if (parameters.containsKey("limit")) {
+                page.setLimit(Integer.parseInt(parameters.get("limit")[0]));
+            }
+            if (parameters.containsKey("page")) {
+
+                page.setPageNumber(Integer.parseInt(parameters.get("page")[0]));
+                if (parameters.containsKey("prev")) {
+                    if ((parameters.get("prev")[0]).equals("true")) {
+                        page = computerService.getPreviousPage();
+                    } else {
+                        page = computerService.getNextPage();
+                    }
                 } else {
-                    page = computerService.getNextPage();
+                    computerService.getPageContent();
+                    page = computerService.getCurrentPage();
                 }
-            } else {
-                computerService.getPageContent();
-                page = computerService.getCurrentPage();
             }
 
         }

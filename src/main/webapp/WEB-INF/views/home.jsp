@@ -101,9 +101,9 @@
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default">10</button>
-				<button type="button" class="btn btn-default">50</button>
-				<button type="button" class="btn btn-default">100</button>
+				<a href="?limit=10&page=${ page.pageNumber }" class="btn btn-default">10</a>
+				<a href="?limit=50&page=${ page.pageNumber }" class="btn btn-default">50</a>
+				<a href="?limit=100&page=${ page.pageNumber }" class="btn btn-default">100</a>
 			</div>
 	</footer>
 	<script src="resources/js/jquery.min.js"></script>
