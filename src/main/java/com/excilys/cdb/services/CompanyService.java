@@ -1,5 +1,7 @@
 package com.excilys.cdb.services;
 
+import java.util.List;
+
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.entities.Company;
@@ -42,6 +44,16 @@ public class CompanyService {
         currentPage = new Page<>(companyDAO.getCount());
         getPageContent();
         return currentPage;
+    }
+
+    /**
+     * Get all companies.
+     *
+     * @return List of all companies in DB
+     */
+    public List<Company> getAllCompanies() {
+        List<Company> companies = companyDAO.getAllCompanyList();
+        return companies;
     }
 
     /**

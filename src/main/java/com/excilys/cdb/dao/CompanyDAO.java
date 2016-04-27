@@ -89,6 +89,33 @@ public class CompanyDAO implements UtilQuerySQL {
     }
 
     /**
+     * Get companies from select * request.
+     *
+     * @return List of all companies
+     */
+    public List<Company> getAllCompanyList() {
+        LOGGER.debug("f_getAllCompanyList");
+        ArrayList<Company> list = new ArrayList<>();
+        ResultSet results = null;
+        connect = singleConnect.getConnection();
+
+        try {
+            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
+            results = ps.executeQuery();
+
+            list = (ArrayList<Company>) companyMapper.convertResultSet(results);
+
+            ps.close();
+            results.close();
+            connect.close();
+        } catch (SQLException e) {
+            System.out.println(
+                    "Company DAO says : getAllCompanyList _ " + e.getMessage());
+        }
+        return list;
+    }
+
+    /**
      * Find a company by its id.
      *
      * @param id

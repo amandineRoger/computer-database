@@ -90,8 +90,8 @@ public class Home extends HttpServlet {
     }
 
     /**
-     * Convert the computer list of the page into ComputerDTO list
-     * 
+     * Convert the computer list of the page into ComputerDTO list.
+     *
      * @param computers
      *            List of computers
      * @return List of computerDTO
