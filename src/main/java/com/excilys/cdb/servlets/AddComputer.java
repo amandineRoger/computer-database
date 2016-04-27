@@ -9,7 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.cdb.entities.Company;
+import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.services.CompanyService;
+import com.excilys.cdb.services.ComputerService;
+import com.excilys.cdb.util.UtilDate;
 
 /**
  * Servlet implementation class AddComputer.
@@ -18,6 +21,7 @@ public class AddComputer extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private List<Company> companies;
     private CompanyService companyService;
+    private ComputerService computerService;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -25,6 +29,7 @@ public class AddComputer extends HttpServlet {
     public AddComputer() {
         super();
         companyService = CompanyService.getInstance();
+        computerService = ComputerService.getInstance();
         companies = companyService.getAllCompanies();
     }
 
@@ -49,8 +54,27 @@ public class AddComputer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        doGet(request, response);
+        // TODO Must add validation to not null name !
+        Computer.Builder builder = new Computer.Builder(
+                request.getParameter("computerName"));
+        String tmp = request.getParameter("introduced");
+        if (!tmp.equals("")) {
+            builder.introduced(UtilDate.StringToLocalDate(tmp));
+        }
+        tmp = request.getParameter("discontinued");
+        if (!tmp.equals("")) {
+            builder.discontinued(UtilDate.StringToLocalDate(tmp));
+        }
+        long id = Long.parseLong(request.getParameter("companyId"));
+        if (id > 0) {
+            Company company = companyService.getCompanyById(id);
+            builder.company(company);
+        }
+
+        computerService.createComputer(builder.build());
+
+        // doGet(request, response);
+
     }
 
 }
