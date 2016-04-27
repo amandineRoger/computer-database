@@ -2,6 +2,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
@@ -42,7 +43,7 @@ public class ComputerServiceTest {
         initialize();
         page = service.getComputerList();
         assertNotNull(page.getList());
-        assertEquals(10, page.getList().size());
+        assertTrue(page.getList().size() <= page.getLimit());
         assertEquals(0, page.getPageNumber());
     }
 
@@ -50,14 +51,16 @@ public class ComputerServiceTest {
     public void testGetNextPage() {
         initialize();
         page = service.getComputerList();
-        computer = page.getList().get(0);
+        if (page.getNbPages() > 1) {
+            computer = page.getList().get(0);
 
-        page = service.getNextPage();
-        assertNotNull(page.getList());
-        assertEquals(10, page.getList().size());
-        assertEquals(1, page.getPageNumber());
-        another = page.getList().get(0);
-        assertNotEquals(computer, another);
+            page = service.getNextPage();
+            assertNotNull(page.getList());
+            assertTrue(page.getList().size() <= page.getLimit());
+            assertEquals(1, page.getPageNumber());
+            another = page.getList().get(0);
+            assertNotEquals(computer, another);
+        }
     }
 
     @Test
@@ -67,9 +70,11 @@ public class ComputerServiceTest {
         page = service.getPreviousPage();
         assertNotNull(page.getList());
         assertEquals(0, page.getPageNumber());
-        assertNotEquals(computer, another);
-        another = page.getList().get(0);
-        assertEquals(computer, another);
+        if (page.getNbPages() > 1) {
+            assertNotEquals(computer, another);
+            another = page.getList().get(0);
+            assertEquals(computer, another);
+        }
     }
 
     @Test
@@ -109,6 +114,8 @@ public class ComputerServiceTest {
 
         computer = service.getComputerDetail(another.getId());
         assertEquals(computer, another);
+
+        service.deleteComputer(another.getId());
     }
 
     @Test
@@ -128,6 +135,8 @@ public class ComputerServiceTest {
         assertEquals("Updated name", another.getName());
         assertEquals(intro, another.getIntroduced());
         assertEquals(computer, another);
+
+        service.deleteComputer(computer.getId());
 
     }
 
