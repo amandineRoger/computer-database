@@ -89,6 +89,13 @@ public class Home extends HttpServlet {
         doGet(request, response);
     }
 
+    /**
+     * Convert the computer list of the page into ComputerDTO list
+     * 
+     * @param computers
+     *            List of computers
+     * @return List of computerDTO
+     */
     private List<ComputerDTO> convertPageList(List<Computer> computers) {
         ArrayList<ComputerDTO> dtos = null;
 

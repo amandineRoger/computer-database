@@ -162,7 +162,7 @@ public class ComputerMapper implements AbstractMapper<Computer> {
     }
 
     /**
-     * Convert a computer into computerDTO
+     * Convert a computer into computerDTO.
      *
      * @param computer
      *            computer to convert
