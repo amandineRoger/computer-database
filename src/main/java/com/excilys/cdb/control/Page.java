@@ -3,8 +3,9 @@ package com.excilys.cdb.control;
 import java.util.List;
 
 public class Page<T> {
-    public static final int LIMIT = 10;
+    private int limit = 10;
     private int nbResults;
+    private int nbPages;
 
     private int pageNumber;
     private List<T> list;
@@ -18,6 +19,7 @@ public class Page<T> {
     public Page(int count) {
         this.pageNumber = 0;
         this.nbResults = count;
+        updateNbPages();
     }
 
     public int getNbResults() {
@@ -40,17 +42,46 @@ public class Page<T> {
         this.list = list;
     }
 
+    public int getLimit() {
+        return this.limit;
+    }
+
+    /**
+     * change the number of results per page.
+     *
+     * @param limit
+     *            number of results
+     */
+    public void setLimit(int limit) {
+        this.limit = limit;
+        updateNbPages();
+    }
+
     /**
      * increment pageNumber.
      */
     public void next() {
-        this.pageNumber++;
+        if (pageNumber < nbPages) {
+            pageNumber++;
+        }
+
     }
 
     /**
      * decrement pageNumber.
      */
     public void previous() {
-        this.pageNumber--;
+        if (pageNumber > 0) {
+            this.pageNumber--;
+        }
+
     }
+
+    /**
+     * Calculate the number of pages required to display all results.
+     */
+    private void updateNbPages() {
+        this.nbPages = (int) Math.ceil(nbResults / limit);
+    }
+
 }

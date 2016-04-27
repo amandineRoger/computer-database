@@ -40,7 +40,7 @@ public class CompanyService {
      */
     public Page<Company> getCompanyList() {
         currentPage = new Page<>(companyDAO.getCount());
-        currentPage.setList(companyDAO.getCompanyList(0, Page.LIMIT));
+        getPageContent();
         return currentPage;
     }
 
@@ -51,11 +51,7 @@ public class CompanyService {
      */
     public Page<Company> getNextPage() {
         currentPage.next();
-        int i = currentPage.getPageNumber();
-
-        currentPage
-                .setList(companyDAO.getCompanyList(i * Page.LIMIT, Page.LIMIT));
-
+        getPageContent();
         return currentPage;
     }
 
@@ -66,12 +62,21 @@ public class CompanyService {
      */
     public Page<Company> getPreviousPage() {
         currentPage.previous();
-        int i = currentPage.getPageNumber();
-
-        currentPage
-                .setList(companyDAO.getCompanyList(i * Page.LIMIT, Page.LIMIT));
-
+        getPageContent();
         return currentPage;
+    }
+
+    /**
+     * set companies in page list.
+     */
+    public void getPageContent() {
+        int i = currentPage.getPageNumber();
+        int limit = currentPage.getLimit();
+        currentPage.setList(companyDAO.getCompanyList(i * limit, limit));
+    }
+
+    public Page<Company> getCurrentPage() {
+        return this.currentPage;
     }
 
     /**

@@ -40,7 +40,7 @@ public class ComputerService {
      */
     public Page<Computer> getComputerList() {
         currentPage = new Page<>(computerDAO.getCount());
-        currentPage.setList(computerDAO.getComputerList(0, Page.LIMIT));
+        getPageContent();
         return currentPage;
     }
 
@@ -50,12 +50,8 @@ public class ComputerService {
      * @return the next Page.NUMBER_OF_RESULTS Companies
      */
     public Page<Computer> getNextPage() {
-        int i = currentPage.getPageNumber();
-        currentPage.setPageNumber(++i);
-
-        currentPage.setList(
-                computerDAO.getComputerList(i * Page.LIMIT, Page.LIMIT));
-
+        currentPage.next();
+        getPageContent();
         return currentPage;
     }
 
@@ -65,13 +61,22 @@ public class ComputerService {
      * @return the previous Page.NUMBER_OF_RESULTS Companies
      */
     public Page<Computer> getPreviousPage() {
-        int i = currentPage.getPageNumber();
-        currentPage.setPageNumber(--i);
-
-        currentPage.setList(
-                computerDAO.getComputerList(i * Page.LIMIT, Page.LIMIT));
-
+        currentPage.previous();
+        getPageContent();
         return currentPage;
+    }
+
+    /**
+     * set companies in page list.
+     */
+    public void getPageContent() {
+        int i = currentPage.getPageNumber();
+        int limit = currentPage.getLimit();
+        currentPage.setList(computerDAO.getComputerList(i * limit, limit));
+    }
+
+    public Page<Computer> getCurrentPage() {
+        return this.currentPage;
     }
 
     /**
