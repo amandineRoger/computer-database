@@ -33,11 +33,11 @@
 	        </c:otherwise>
         </c:choose>
     </c:when>
-    <c:otherwise>
-        <c:forEach begin="1" end="${ count - 1 }" var="i">
-            <li><a href="?page=${ i }"><c:out value="${ i+1 }"/></a></li>
+    <c:when test = "${ count > 2}">
+        <c:forEach begin="1" end="${ count - 2 }" var="i">
+            <li><a href="?page=${ i }"><c:out value="${ i + 1 }"/></a></li>
         </c:forEach>
-    </c:otherwise>
+    </c:when>
     
     
 </c:choose>

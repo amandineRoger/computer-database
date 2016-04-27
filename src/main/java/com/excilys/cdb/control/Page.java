@@ -94,7 +94,7 @@ public class Page<T> {
      * Calculate the number of pages required to display all results.
      */
     private void updateNbPages() {
-        this.nbPages = (int) Math.ceil(nbResults / limit);
+        this.nbPages = (int) Math.ceil((double) nbResults / (double) limit);
     }
 
 }
