@@ -46,4 +46,4 @@
     <li><a href="?page=${ count - 1}"><c:out value="${ count }"/></a></li>
 </c:if>
 
-<li><a href="?page=${ current }&prev=false" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+<li><a href="?page=${ current }&prev=false" aria-label="Next"> <span aria-hidden="true">&raquo;</span></a></li>
