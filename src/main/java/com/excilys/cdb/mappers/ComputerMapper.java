@@ -163,7 +163,7 @@ public class ComputerMapper implements AbstractMapper<Computer> {
 
     /**
      * Convert a computer into computerDTO
-     * 
+     *
      * @param computer
      *            computer to convert
      * @return computerDTO based on computer
@@ -175,13 +175,20 @@ public class ComputerMapper implements AbstractMapper<Computer> {
             dto = new ComputerDTO();
             dto.setId(((Long) computer.getId()).toString());
             dto.setName(computer.getName());
-            dto.setIntroduced(computer.getIntroduced().toString());
-            dto.setDiscontinued(computer.getDiscontinued().toString());
+            LocalDate date = computer.getIntroduced();
+            if (date != null) {
+                dto.setIntroduced(date.toString());
+            }
+            date = computer.getDiscontinued();
+            if (date != null) {
+                dto.setDiscontinued(date.toString());
+            }
             Company company = computer.getCompany();
-            dto.setCompanyId(((Long) company.getId()).toString());
-            dto.setCompanyName(company.getName());
+            if (company != null) {
+                dto.setCompanyId(((Long) company.getId()).toString());
+                dto.setCompanyName(company.getName());
+            }
         }
-
         return dto;
     }
 

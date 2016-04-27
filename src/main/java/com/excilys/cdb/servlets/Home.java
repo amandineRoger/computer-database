@@ -1,6 +1,8 @@
 package com.excilys.cdb.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -9,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.cdb.control.Page;
+import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Computer;
+import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.services.ComputerService;
 
 /**
@@ -62,8 +66,13 @@ public class Home extends HttpServlet {
 
         }
 
+        Page<ComputerDTO> dtoPage = new Page<>(page.getNbResults());
+        dtoPage.setPageNumber(page.getPageNumber());
+        dtoPage.setLimit(page.getLimit());
+        dtoPage.setList(convertPageList(page.getList()));
+
         request.setAttribute(COUNT, computerService.getCount());
-        request.setAttribute("page", page);
+        request.setAttribute("page", dtoPage);
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
                 response);
 
@@ -78,6 +87,23 @@ public class Home extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         doGet(request, response);
+    }
+
+    private List<ComputerDTO> convertPageList(List<Computer> computers) {
+        ArrayList<ComputerDTO> dtos = null;
+
+        if (computers != null && (!computers.isEmpty())) {
+            ComputerMapper mapper = ComputerMapper.getInstance();
+            dtos = new ArrayList<>(computers.size());
+            ComputerDTO tmp;
+
+            for (Computer computer : computers) {
+                tmp = mapper.computerToDTO(computer);
+                dtos.add(tmp);
+            }
+        }
+
+        return dtos;
     }
 
 }
