@@ -11,6 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.util.UtilDate;
@@ -156,7 +157,32 @@ public class ComputerMapper implements AbstractMapper<Computer> {
             }
         } catch (SQLException e) {
             // throw new mapperException();
+            LOGGER.error(e.getMessage());
         }
+    }
+
+    /**
+     * Convert a computer into computerDTO
+     * 
+     * @param computer
+     *            computer to convert
+     * @return computerDTO based on computer
+     */
+    public ComputerDTO computerToDTO(Computer computer) {
+        ComputerDTO dto = null;
+
+        if (computer != null) {
+            dto = new ComputerDTO();
+            dto.setId(((Long) computer.getId()).toString());
+            dto.setName(computer.getName());
+            dto.setIntroduced(computer.getIntroduced().toString());
+            dto.setDiscontinued(computer.getDiscontinued().toString());
+            Company company = computer.getCompany();
+            dto.setCompanyId(((Long) company.getId()).toString());
+            dto.setCompanyName(company.getName());
+        }
+
+        return dto;
     }
 
 }
