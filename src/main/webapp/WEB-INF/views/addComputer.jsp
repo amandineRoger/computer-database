@@ -34,17 +34,17 @@
 								    <span style="color: red;">*</span>
 								</label>
 								<input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name">
-								<span class="help-block sr-only" id="errorComputerName" >You must specify a name !</span>
+								<span class="help-block hide" id="errorComputerName">You must specify a name !</span>
                             </div>
 							<div class="form-group ">
 								<label class="control-label" for="introduced">Introduced date</label> 
 								<input type="date" class="form-control" id="introduced"	name="introduced" placeholder="Introduced date">
-                                <span class="help-block sr-only" id="errorIntroduced" >Date format must be like YYYY-MM-DD</span>
+                                <span class="help-block hide" id="errorIntroduced" >Date format must be like YYYY-MM-DD</span>
 							</div>
 							<div class="form-group">
 								<label class="control-label" for="discontinued">Discontinued date</label>
 								<input type="date" class="form-control" id="discontinued" name="discontinued" placeholder="Discontinued date">
-                                <span class="help-block sr-only" id="errorDiscontinued" >Date format must be like YYYY-MM-DD</span>
+                                <span class="help-block hide" id="errorDiscontinued" >Date format must be like YYYY-MM-DD</span>
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label>

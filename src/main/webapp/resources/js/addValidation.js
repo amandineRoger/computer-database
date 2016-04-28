@@ -110,7 +110,7 @@ function showError(inputId, errorId){
 	
 	$(input).parent().first().addClass("has-error");
     $(input).parent().first().removeClass("has-success");
-    $(error).removeClass("sr-only");
+    $(error).removeClass("hide");
 	
 }
 
@@ -120,6 +120,6 @@ function hideError(inputId, errorId){
 	
 	$(input).parent().first().addClass("has-success");
 	$(input).parent().first().removeClass("has-error");
-	$(error).addClass("sr-only");
+	$(error).addClass("hide");
 }
 
