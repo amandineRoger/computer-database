@@ -11,7 +11,7 @@ var regex = "(19[7-9][0-9]|20[0-3][0-9])[\-](0[1-9]|1[012])[\-](0[1-9]|[12][0-9]
 $("#computerName").keyup( function() {     
 	validateNameField();
 });
-$("#computerName").blur(function(){
+$("#computerName").blur(function() {
 	validateNameField();
 });
 
@@ -19,11 +19,11 @@ $("#computerName").blur(function(){
 $("#introduced").keyup( function() {
 	validateIntroducedField();
 });
-$("#introduced").blur(function(){
+$("#introduced").blur(function() {
 	validateIntroducedField();
 });
 
-//input disontinued
+//input discontinued
 $("#discontinued").keyup( function() {
 	validateDiscontinuedField();
 });
@@ -34,8 +34,8 @@ $("#discontinued").blur(function(){
 
 /**************** VALIDATION ***************/
 //check the name field (not null)
-function validateNameField(){
-    var str = $.trim($(this).val());
+function validateNameField() {
+    var str = $.trim($("#computerName").val());
     if(str != "") {
     	hideError("computerName", "errorComputerName");
     	nameOK = true;
@@ -47,10 +47,10 @@ function validateNameField(){
 }
 
 //check the introduced date format
-function validateIntroducedField(){
-	var str = $.trim($(this).val());
+function validateIntroducedField() {
+	var str = $.trim($("#introduced").val());
 	if(str != "") {
-		 if (!$("#introduced").val().match(regex)) {
+		 if (!str.match(regex) || !checkDateCompat(str)) {
 			 showError("introduced", "errorIntroduced");
 			 introOK = false;
 		 } else {
@@ -66,9 +66,9 @@ function validateIntroducedField(){
 
 //check the discontinued date format
 function validateDiscontinuedField(){
-	var str = $.trim($(this).val());
+	var str = $.trim($("#discontinued").val());
 	if(str != "") {
-		 if (!$("#discontinued").val().match(regex)) {
+		 if (!str.match(regex) || !checkDateCompat(str)) {
 		       showError("discontinued", "errorDiscontinued");
 		       discoOK = false;
 		 } else {
@@ -80,6 +80,18 @@ function validateDiscontinuedField(){
 		discoOK = true;
 	}
 	checkForm();
+}
+
+//check date compatibility
+function checkDateCompat(dateString) {
+	 var start = new Date("1970-01-01");
+     var end = new Date("2037-12-31");
+     var date = Date.parse(dateString);
+     
+     if (isNaN(date) || date > end || date < start ) {
+    	 return false;
+     }
+     return true;
 }
 
 //check all fields validation
