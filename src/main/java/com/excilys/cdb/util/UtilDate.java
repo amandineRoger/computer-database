@@ -46,4 +46,39 @@ public interface UtilDate {
         }
         return date;
     }
+
+    /**
+     * Check if discontinued is after introduced and if both dates are
+     * compatible with sql.Timestamp
+     *
+     * @param introduced
+     *            introduced date
+     * @param discontinued
+     *            discontinued date
+     * @return true if dates are valid, false if they are not
+     */
+    static boolean checkDates(LocalDate introduced, LocalDate discontinued) {
+        if (discontinued.isAfter(introduced) && checkDBCompat(introduced)
+                && checkDBCompat(discontinued)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * check if the date if compatible with sql.Timestamp
+     * 
+     * @param date
+     *            the date to check
+     * @return true if date is compatible, false if it is not
+     */
+    static boolean checkDBCompat(LocalDate date) {
+        LocalDate start = LocalDate.of(1970, 01, 01);
+        LocalDate end = LocalDate.of(2037, 12, 31);
+
+        if (date.isAfter(start) && date.isBefore(end)) {
+            return true;
+        }
+        return false;
+    }
 }

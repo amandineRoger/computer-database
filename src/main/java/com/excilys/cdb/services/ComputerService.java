@@ -1,8 +1,11 @@
 package com.excilys.cdb.services;
 
+import java.time.LocalDate;
+
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.entities.Computer;
+import com.excilys.cdb.util.UtilDate;
 
 public class ComputerService {
     private static ComputerService instance;
@@ -133,4 +136,37 @@ public class ComputerService {
     public long getCount() {
         return computerDAO.getCount();
     }
+
+    public boolean validateComputer(Computer computer) {
+        boolean check = true;
+        // Validate name
+        String name = computer.getName();
+        if (name == null || name.equals("")) {
+            check = false;
+        }
+
+        // validate dates
+        LocalDate intro = computer.getIntroduced();
+        LocalDate disco = computer.getDiscontinued();
+
+        if (intro != null && disco != null) {
+            if (!UtilDate.checkDates(intro, disco)) {
+                check = false;
+            }
+        } else {
+            if (intro != null) {
+                if (!UtilDate.checkDBCompat(intro)) {
+                    check = false;
+                }
+            }
+            if (disco != null) {
+                if (!UtilDate.checkDBCompat(disco)) {
+                    check = false;
+                }
+            }
+        }
+
+        return check;
+    }
+
 }

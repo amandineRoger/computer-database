@@ -72,7 +72,7 @@ public class AddComputer extends HttpServlet {
         }
 
         Computer computer = computerService.createComputer(builder.build());
-        if (computer != null) {
+        if (computer != null && computerService.validateComputer(computer)) {
             response.sendRedirect(request.getContextPath() + "/home");
         } else {
             request.getRequestDispatcher("/WEB-INF/views/500.html")
