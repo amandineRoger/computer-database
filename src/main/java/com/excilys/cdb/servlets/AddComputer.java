@@ -54,7 +54,7 @@ public class AddComputer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        // TODO Must add validation to not null name !
+
         Computer.Builder builder = new Computer.Builder(
                 request.getParameter("computerName"));
         String tmp = request.getParameter("introduced");
@@ -71,10 +71,13 @@ public class AddComputer extends HttpServlet {
             builder.company(company);
         }
 
-        computerService.createComputer(builder.build());
-
-        // doGet(request, response);
-
+        Computer computer = computerService.createComputer(builder.build());
+        if (computer != null) {
+            response.sendRedirect(request.getContextPath() + "/home");
+        } else {
+            request.getRequestDispatcher("/WEB-INF/views/500.html")
+                    .forward(request, response);
+        }
     }
 
 }
