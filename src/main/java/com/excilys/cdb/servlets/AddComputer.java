@@ -59,11 +59,11 @@ public class AddComputer extends HttpServlet {
                 request.getParameter("computerName"));
         String tmp = request.getParameter("introduced");
         if (!tmp.equals("")) {
-            builder.introduced(UtilDate.StringToLocalDate(tmp));
+            builder.introduced(UtilDate.stringToLocalDate(tmp));
         }
         tmp = request.getParameter("discontinued");
         if (!tmp.equals("")) {
-            builder.discontinued(UtilDate.StringToLocalDate(tmp));
+            builder.discontinued(UtilDate.stringToLocalDate(tmp));
         }
         long id = Long.parseLong(request.getParameter("companyId"));
         if (id > 0) {

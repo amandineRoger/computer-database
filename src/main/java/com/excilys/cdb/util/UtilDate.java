@@ -30,7 +30,14 @@ public interface UtilDate {
         return date;
     }
 
-    static LocalDate StringToLocalDate(final String str) {
+    /**
+     * convert a string into a local date.
+     *
+     * @param str
+     *            a date in string
+     * @return a local date
+     */
+    static LocalDate stringToLocalDate(final String str) {
         LocalDate date = null;
         if (!str.equals("")) {
             final DateTimeFormatter formatter = DateTimeFormatter
