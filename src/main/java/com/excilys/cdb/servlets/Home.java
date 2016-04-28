@@ -50,8 +50,10 @@ public class Home extends HttpServlet {
                 page.setLimit(Integer.parseInt(parameters.get("limit")[0]));
             }
             if (parameters.containsKey("page")) {
-
-                page.setPageNumber(Integer.parseInt(parameters.get("page")[0]));
+                int pageNumber = Integer.parseInt(parameters.get("page")[0]);
+                if (pageNumber > 0 && pageNumber < page.getNbPages()) {
+                    page.setPageNumber(pageNumber);
+                }
                 if (parameters.containsKey("prev")) {
                     if ((parameters.get("prev")[0]).equals("true")) {
                         page = computerService.getPreviousPage();
