@@ -137,6 +137,13 @@ public class ComputerService {
         return computerDAO.getCount();
     }
 
+    /**
+     * Back validation to add or update a computer in DB.
+     *
+     * @param computer
+     *            the computer to test
+     * @return true if the computer is valid, false else
+     */
     public boolean validateComputer(Computer computer) {
         boolean check = true;
         // Validate name

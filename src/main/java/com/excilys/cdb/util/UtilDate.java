@@ -49,7 +49,7 @@ public interface UtilDate {
 
     /**
      * Check if discontinued is after introduced and if both dates are
-     * compatible with sql.Timestamp
+     * compatible with sql.Timestamp.
      *
      * @param introduced
      *            introduced date
@@ -66,8 +66,8 @@ public interface UtilDate {
     }
 
     /**
-     * check if the date if compatible with sql.Timestamp
-     * 
+     * check if the date if compatible with sql.Timestamp.
+     *
      * @param date
      *            the date to check
      * @return true if date is compatible, false if it is not
