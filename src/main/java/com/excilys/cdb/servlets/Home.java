@@ -48,6 +48,7 @@ public class Home extends HttpServlet {
         } else {
             if (parameters.containsKey("limit")) {
                 page.setLimit(Integer.parseInt(parameters.get("limit")[0]));
+                page.setPageNumber(0);
             }
             if (parameters.containsKey("page")) {
                 int pageNumber = Integer.parseInt(parameters.get("page")[0]);

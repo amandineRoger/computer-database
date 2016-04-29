@@ -22,11 +22,26 @@
 		</div>
 	</header>
 
+
+
 	<section id="main">
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-8 col-xs-offset-2 box">
-					<h1>Add Computer</h1>
+
+                    <c:if test="${postMessage}">
+                        <div class="alert alert-${messageLevel} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>${messageHeader}</strong> ${messageBody}
+                        </div>
+                    </c:if>
+					
+					
+                    
+                    <h1>Add Computer</h1>
+					
 					<form action="newComputer" method="POST">
 						<fieldset>
 							<div class="form-group ">
@@ -67,6 +82,7 @@
 		</div>
 	</section>
 	<script src="resources/js/jquery.min.js"></script>
+	<script src="resources/js/bootstrap.min.js"></script>
 	<script src="resources/js/addValidation.js"></script>
 	
 </body>

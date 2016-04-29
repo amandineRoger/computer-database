@@ -71,9 +71,18 @@ public class AddComputer extends HttpServlet {
             builder.company(company);
         }
 
-        Computer computer = computerService.createComputer(builder.build());
+        Computer computer = builder.build();
         if (computer != null && computerService.validateComputer(computer)) {
-            response.sendRedirect(request.getContextPath() + "/home");
+            computerService.createComputer(computer);
+
+            request.setAttribute("postMessage", "true");
+            request.setAttribute("messageLevel", "success");
+            request.setAttribute("messageHeader", "Computer added");
+            request.setAttribute("messageBody", "The computer \""
+                    + computer.getName() + "\" has been successfully added.");
+
+            request.getRequestDispatcher("/WEB-INF/views/addComputer.jsp")
+                    .forward(request, response);
         } else {
             request.getRequestDispatcher("/WEB-INF/views/500.html")
                     .forward(request, response);
