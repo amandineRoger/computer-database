@@ -13,6 +13,14 @@ import java.util.List;
  *            type of entity
  */
 public interface AbstractMapper<T> {
+
+    int COL_ID = 1;
+    int COL_NAME = 2;
+    int COL_INTRODUCED = 3;
+    int COL_DISCONTINUED = 4;
+    int COL_COMPANY_ID = 5;
+    int COL_COMPANY_NAME = 6;
+
     /**
      * Convert resultSet into list of T entities.
      *
@@ -29,7 +37,7 @@ public interface AbstractMapper<T> {
      *            ResultSet from DB request
      * @return T entity
      */
-    T convertIntoEntity(ResultSet rs);
+    T toEntity(ResultSet rs);
 
     /**
      * Set parameters into PreparedStatement to request DB (use for update or

@@ -71,7 +71,7 @@ public final class CompanyMapper
     }
 
     @Override
-    public Company convertIntoEntity(final ResultSet rs) {
+    public Company toEntity(final ResultSet rs) {
         LOGGER.debug("f_convertIntoEntity");
         Company company = null;
         try {

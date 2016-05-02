@@ -15,7 +15,6 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.util.UtilDate;
-import com.excilys.cdb.util.UtilQuerySQL;
 
 /**
  * ComputerMapper allows to translate results set which contains Computer into
@@ -24,27 +23,11 @@ import com.excilys.cdb.util.UtilQuerySQL;
  * @author Amandine Roger
  *
  */
-public class ComputerMapper implements AbstractMapper<Computer> {
+public enum ComputerMapper implements AbstractMapper<Computer> {
+    INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerMapper.class);
-    private static ComputerMapper instance = null;
-
-    /**
-     * getInstance (singleton method).
-     *
-     * @return the unique instance of computer mapper
-     */
-    public static ComputerMapper getInstance() {
-        if (instance == null) {
-            synchronized (ComputerMapper.class) {
-                if (instance == null) {
-                    instance = new ComputerMapper();
-                }
-            }
-        }
-        return instance;
-    }
 
     @Override
     public final List<Computer> convertResultSet(final ResultSet rs) {
@@ -54,42 +37,38 @@ public class ComputerMapper implements AbstractMapper<Computer> {
         Computer tmp;
 
         ArrayList<Computer> computers = new ArrayList<>();
-
         try {
             while (rs.next()) {
                 Computer.Builder builder = new Computer.Builder(
-                        rs.getString(UtilQuerySQL.COL_NAME));
-                idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
+                        rs.getString(COL_NAME));
+                idCompany = rs.getLong(COL_COMPANY_ID);
                 // Company insertion
                 if (idCompany != 0) {
                     tmpCompany = new Company();
                     tmpCompany.setId(idCompany);
-                    tmpCompany.setName(
-                            rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
+                    tmpCompany.setName(rs.getString(COL_COMPANY_NAME));
                     builder.company(tmpCompany);
                 }
-
                 tmp = builder
                         .introduced(UtilDate.timeStampToLocalDate(
-                                rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
+                                rs.getTimestamp(COL_INTRODUCED)))
                         .discontinued(UtilDate.timeStampToLocalDate(
-                                rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
+                                rs.getTimestamp(COL_DISCONTINUED)))
                         .build();
-                tmp.setId(rs.getLong(UtilQuerySQL.COL_ID));
-
+                tmp.setId(rs.getLong(COL_ID));
                 computers.add(tmp);
-
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(
+                    "ComputerMapper says : SQLException in convertResultSet "
+                            + e.getMessage());
+            // TODO wrap and throw new mapperException();
         }
-
         return computers;
     }
 
     @Override
-    public final Computer convertIntoEntity(final ResultSet rs) {
+    public final Computer toEntity(final ResultSet rs) {
         LOGGER.debug("f_convertIntoEntity");
         long idCompany;
         Company tmpCompany;
@@ -98,31 +77,29 @@ public class ComputerMapper implements AbstractMapper<Computer> {
         try {
             if (rs.next()) {
                 Computer.Builder builder = new Computer.Builder(
-                        rs.getString(UtilQuerySQL.COL_NAME));
-                idCompany = rs.getLong(UtilQuerySQL.COL_COMPANY_ID);
+                        rs.getString(COL_NAME));
+                idCompany = rs.getLong(COL_COMPANY_ID);
                 // Company insertion
                 if (idCompany != 0) {
                     tmpCompany = new Company();
                     tmpCompany.setId(idCompany);
-                    tmpCompany.setName(
-                            rs.getString(UtilQuerySQL.COL_COMPANY_NAME));
+                    tmpCompany.setName(rs.getString(COL_COMPANY_NAME));
                     builder.company(tmpCompany);
                 }
 
                 tmpComputer = builder
                         .introduced(UtilDate.timeStampToLocalDate(
-                                rs.getTimestamp(UtilQuerySQL.COL_INTRODUCED)))
+                                rs.getTimestamp(COL_INTRODUCED)))
                         .discontinued(UtilDate.timeStampToLocalDate(
-                                rs.getTimestamp(UtilQuerySQL.COL_DISCONTINUED)))
+                                rs.getTimestamp(COL_DISCONTINUED)))
                         .build();
-                tmpComputer.setId(rs.getLong(UtilQuerySQL.COL_ID));
-
+                tmpComputer.setId(rs.getLong(COL_ID));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("ComputerMapper says : SQLException in toEntity "
+                    + e.getMessage());
+            // TODO wrap and throw new mapperException();
         }
-
         return tmpComputer;
     }
 
@@ -191,5 +168,4 @@ public class ComputerMapper implements AbstractMapper<Computer> {
         }
         return dto;
     }
-
 }
