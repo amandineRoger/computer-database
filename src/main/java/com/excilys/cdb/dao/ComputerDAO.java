@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.util.UtilDate;
-import com.excilys.cdb.util.UtilQuerySQL;
 
 public enum ComputerDAO implements UtilDate {
 
@@ -22,7 +21,7 @@ public enum ComputerDAO implements UtilDate {
     // QUERIES
     private final String COMPUTER_TABLE = "computer";
     private final String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
-            + COMPUTER_TABLE + " c LEFT JOIN " + UtilQuerySQL.COMPANY_TABLE
+            + COMPUTER_TABLE + " c LEFT JOIN company"
             + " o ON c.company_id = o.id ";
     private final String ALL_COMPUTERS_P = ALL_COMPUTERS + " LIMIT ?, ?";
     private final String COMPUTER_BY_ID = ALL_COMPUTERS + " WHERE c.id = ?";

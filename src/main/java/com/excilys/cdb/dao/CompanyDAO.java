@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.mappers.CompanyMapper;
-import com.excilys.cdb.util.UtilQuerySQL;
 
 /**
  * Data Access Object for Company objects and requests Singleton pattern.
@@ -20,38 +19,26 @@ import com.excilys.cdb.util.UtilQuerySQL;
  * @author Amandine Roger
  *
  */
-public class CompanyDAO implements UtilQuerySQL {
+public enum CompanyDAO {
+    INSTANCE;
+
+    // Queries
+    String COMPANY_TABLE = "company";
+    String ALL_COMPANIES = "SELECT id, name FROM " + COMPANY_TABLE;
+    String ALL_COMPANIES_P = ALL_COMPANIES + " LIMIT ?, ?";
+    String COMPANY_BY_ID = ALL_COMPANIES + " WHERE id = ?";
+    String COUNT_COMPANIES = "SELECT COUNT(*) FROM " + COMPANY_TABLE;
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyDAO.class);
-    private static CompanyDAO instance;
 
-    private SingleConnect singleConnect;
-    private Connection connect;
-    private CompanyMapper companyMapper;
+    private static SingleConnect singleConnect;
+    private static Connection connect;
+    private static CompanyMapper companyMapper;
 
-    /**
-     * private constructor for CompanyDAO (Singleton pattern).
-     */
-    private CompanyDAO() {
-        LOGGER.debug("f_CompanyDAO constructor");
-        this.singleConnect = SingleConnect.getInstance();
-        this.companyMapper = CompanyMapper.getInstance();
-    }
-
-    /**
-     * getInstance (singleton method).
-     *
-     * @return the unique instance of CompanyDAO
-     */
-    public static CompanyDAO getInstance() {
-        if (instance == null) {
-            synchronized (CompanyDAO.class) {
-                if (instance == null) {
-                    instance = new CompanyDAO();
-                }
-            }
-        }
-        return instance;
+    static {
+        singleConnect = SingleConnect.INSTANCE;
+        companyMapper = CompanyMapper.INSTANCE;
     }
 
     /**
@@ -66,11 +53,12 @@ public class CompanyDAO implements UtilQuerySQL {
     public List<Company> getCompanyList(final int offset, final int limit) {
         LOGGER.debug("f_getCompanyList");
         ArrayList<Company> list = new ArrayList<>(limit);
+        PreparedStatement ps = null;
         ResultSet results = null;
         connect = singleConnect.getConnection();
 
         try {
-            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES_P);
+            ps = connect.prepareStatement(ALL_COMPANIES_P);
             ps.setInt(1, offset);
             ps.setInt(2, limit);
             results = ps.executeQuery();
@@ -81,10 +69,14 @@ public class CompanyDAO implements UtilQuerySQL {
             results.close();
             connect.close();
         } catch (SQLException e) {
-            System.out.println(
-                    "Company DAO says : getCompanyList _ " + e.getMessage());
+            LOGGER.error("CompanyDAO says : SQLException in getCompanyList "
+                    + e.getMessage());
+            // TODO wrap in CompanyDAOException
+        } finally {
+            singleConnect.closeObject(ps);
+            singleConnect.closeObject(results);
+            singleConnect.closeObject(connect);
         }
-
         return list;
     }
 
@@ -96,21 +88,22 @@ public class CompanyDAO implements UtilQuerySQL {
     public List<Company> getAllCompanyList() {
         LOGGER.debug("f_getAllCompanyList");
         ArrayList<Company> list = new ArrayList<>();
+        PreparedStatement ps = null;
         ResultSet results = null;
         connect = singleConnect.getConnection();
 
         try {
-            PreparedStatement ps = connect.prepareStatement(ALL_COMPANIES);
+            ps = connect.prepareStatement(ALL_COMPANIES);
             results = ps.executeQuery();
-
             list = (ArrayList<Company>) companyMapper.convertResultSet(results);
-
-            ps.close();
-            results.close();
-            connect.close();
         } catch (SQLException e) {
-            System.out.println(
-                    "Company DAO says : getAllCompanyList _ " + e.getMessage());
+            LOGGER.error("CompanyDAO says : SQLException in getAllCompanyList "
+                    + e.getMessage());
+            // TODO wrap in CompanyDAOException
+        } finally {
+            singleConnect.closeObject(ps);
+            singleConnect.closeObject(results);
+            singleConnect.closeObject(connect);
         }
         return list;
     }
@@ -127,22 +120,22 @@ public class CompanyDAO implements UtilQuerySQL {
         Company company = null;
         if (id != 0) {
             connect = singleConnect.getConnection();
-            PreparedStatement ps;
-
+            PreparedStatement ps = null;
+            ResultSet rs = null;
             try {
                 ps = connect.prepareStatement(COMPANY_BY_ID);
                 ps.setLong(1, id);
-                ResultSet rs = ps.executeQuery();
-
+                rs = ps.executeQuery();
                 // Mapping
-                company = companyMapper.convertIntoEntity(rs);
-
-                ps.close();
-                rs.close();
-                connect.close();
+                company = companyMapper.toEntity(rs);
             } catch (SQLException e) {
                 System.out.println(
-                        "Company DAO says : getCompanyById " + e.getMessage());
+                        "Company DAO says : SQLException in getCompanyById "
+                                + e.getMessage());
+            } finally {
+                singleConnect.closeObject(ps);
+                singleConnect.closeObject(rs);
+                singleConnect.closeObject(connect);
             }
         }
         return company;
@@ -155,22 +148,24 @@ public class CompanyDAO implements UtilQuerySQL {
      */
     public int getCount() {
         int count = 0;
+        PreparedStatement ps = null;
+        ResultSet results = null;
 
         try {
             connect = singleConnect.getConnection();
-            PreparedStatement ps = connect.prepareStatement(COUNT_COMPANIES);
-            ResultSet result = ps.executeQuery();
-            if (result.next()) {
-                count = result.getInt(1);
+            ps = connect.prepareStatement(COUNT_COMPANIES);
+            results = ps.executeQuery();
+            if (results.next()) {
+                count = results.getInt(1);
             }
-            ps.close();
-            result.close();
-            connect.close();
-
         } catch (SQLException e) {
-            System.out.println("CompanyDAO says: getCount " + e.getMessage());
+            System.out.println("Company DAO says : SQLException in getCount "
+                    + e.getMessage());
+        } finally {
+            singleConnect.closeObject(ps);
+            singleConnect.closeObject(results);
+            singleConnect.closeObject(connect);
         }
-
         return count;
     }
 

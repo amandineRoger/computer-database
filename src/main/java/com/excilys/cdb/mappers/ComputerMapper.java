@@ -133,8 +133,10 @@ public enum ComputerMapper implements AbstractMapper<Computer> {
                 ps.setLong(5, entity.getId());
             }
         } catch (SQLException e) {
-            // throw new mapperException();
-            LOGGER.error(e.getMessage());
+            LOGGER.error(
+                    "ComputerMapper says : SQLException in attachEntityToRequest "
+                            + e.getMessage());
+            // TODO wrap and throw new mapperException();
         }
     }
 

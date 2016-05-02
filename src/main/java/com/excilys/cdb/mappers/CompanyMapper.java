@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.entities.Company;
-import com.excilys.cdb.util.UtilQuerySQL;
 
 /**
  * CompanyMapper allows to translate results set which contains Company(ies)
@@ -19,37 +18,11 @@ import com.excilys.cdb.util.UtilQuerySQL;
  * @author Amandine Roger
  *
  */
-public final class CompanyMapper
-        implements AbstractMapper<Company>, UtilQuerySQL {
+public enum CompanyMapper implements AbstractMapper<Company> {
+    INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyMapper.class);
-
-    private static CompanyMapper instance;
-
-    /**
-     * private constructor for CompanyMapper (Singleton pattern).
-     */
-    private CompanyMapper() {
-        LOGGER.debug("f_CompanyMapper constructor");
-    }
-
-    /**
-     * getInstance (singleton method).
-     *
-     * @return the unique instance of company mapper
-     */
-    public static CompanyMapper getInstance() {
-        LOGGER.debug("f_getInstance");
-        if (instance == null) {
-            synchronized (CompanyMapper.class) {
-                if (instance == null) {
-                    instance = new CompanyMapper();
-                }
-            }
-        }
-        return instance;
-    }
 
     @Override
     public List<Company> convertResultSet(final ResultSet rs) {
@@ -64,8 +37,10 @@ public final class CompanyMapper
                 companies.add(tmp);
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(
+                    "CompanyMapper says : SQLException in convertResultSet "
+                            + e.getMessage());
+            // TODO wrap and throw new mapperException();
         }
         return companies;
     }
@@ -81,10 +56,10 @@ public final class CompanyMapper
                 company.setName(rs.getString(COL_NAME));
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("CompanyMapper says : SQLException in toEntity "
+                    + e.getMessage());
+            // TODO wrap and throw new mapperException();
         }
-
         return company;
     }
 
