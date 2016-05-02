@@ -1,25 +1,57 @@
 package com.excilys.cdb.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SingleConnect {
+public enum SingleConnect {
+    INSTANCE;
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SingleConnect.class);
-    // Constants
-    private static final String ADRESS = "jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull";
-    private static final String USERNAME = "admincdb";
-    private static final String PASSWORD = "qwerty1234";
 
-    private static final String LOG_TAG = "SingleConnect says : ";
+    private static final String PROPERTIES_FILE = "sql.properties";
+    private static String url;
+    private static String user;
+    private static String password;
 
     // Attributes
     private Connection connect;
-    private StringBuffer sb;
+
+    static {
+        try {
+            // Load driver jdbc
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            LOGGER.error(
+                    "SingleConnect says : ClassNotFoundException in static initialization "
+                            + e.getMessage());
+            // TODO wrap in ConnectionException
+        }
+        // Open properties file
+        Properties properties = new Properties();
+        InputStream propertiesFile = SingleConnect.class.getClassLoader()
+                .getResourceAsStream(SingleConnect.PROPERTIES_FILE);
+        try {
+            properties.load(propertiesFile);
+        } catch (IOException e) {
+            LOGGER.error(
+                    "SingleConnect says : IOException in static initialization "
+                            + e.getMessage());
+            // TODO wrap in ConnectionException
+        }
+        // load properties
+        url = properties.getProperty("URL") + properties.getProperty("DB_NAME")
+                + properties.getProperty("PARAMS");
+        user = properties.getProperty("USER");
+        password = properties.getProperty("PASSWORD");
+    }
 
     // Getters
     /**
@@ -30,55 +62,30 @@ public class SingleConnect {
     public Connection getConnection() {
         LOGGER.debug("f_getConnection");
         try {
-            this.connect = DriverManager.getConnection(ADRESS, USERNAME,
-                    PASSWORD);
+            this.connect = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            sb.append(" SQLException ");
-            sb.append(e.getMessage());
-            System.out.println(sb);
-            resetStringBuffer();
+            LOGGER.error("SingleConnect says : SQLException in getConnection "
+                    + e.getMessage());
+            // TODO wrap in ConnectionException
         }
         return this.connect;
     }
 
-    // Singleton
-    private static SingleConnect instance = null;
-
     /**
-     * private constructor for SingleConnect (Singleton pattern).
-     */
-    private SingleConnect() {
-        LOGGER.debug("f_SingleConnect constructor");
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            sb = new StringBuffer(LOG_TAG);
-            sb.append(" ClassNotFoundException ! ");
-            sb.append(e.getMessage());
-            System.out.println(sb);
-            resetStringBuffer();
-        }
-    }
-
-    /**
-     * GetInstance, singleton pattern.
+     * Close an Autocloseable object like Statement, ResultSet or Connection.
      *
-     * @return the unique instance of SingleConnection
+     * @param o
+     *            an autocloseable object
      */
-    public static SingleConnect getInstance() {
-        LOGGER.debug("f_getInstance");
-        if (instance == null) {
-            instance = new SingleConnect();
+    public void closeObject(AutoCloseable o) {
+        LOGGER.debug("f_closeObject");
+        try {
+            if (o != null) {
+                o.close();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Impossible to close object! _ " + e.getMessage());
         }
-        return instance;
-    }
-
-    // Methods
-    /**
-     * Method to delete //TODO.
-     */
-    private void resetStringBuffer() {
-        sb.delete(LOG_TAG.length(), sb.length());
     }
 
 }
