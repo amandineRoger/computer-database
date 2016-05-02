@@ -6,33 +6,14 @@ import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.entities.Company;
 
-public class CompanyService {
+public enum CompanyService {
+    INSTANCE;
 
-    private static CompanyService instance;
-    private CompanyDAO companyDAO;
-    private Page<Company> currentPage;
+    private static CompanyDAO companyDAO;
+    private static Page<Company> currentPage;
 
-    /**
-     * private constructor for CompanyService (Singleton pattern).
-     */
-    private CompanyService() {
-        companyDAO = CompanyDAO.getInstance();
-    }
-
-    /**
-     * getInstance (singleton method).
-     *
-     * @return the unique instance of CompanyService
-     */
-    public static CompanyService getInstance() {
-        if (instance == null) {
-            synchronized (CompanyService.class) {
-                if (instance == null) {
-                    instance = new CompanyService();
-                }
-            }
-        }
-        return instance;
+    static {
+        companyDAO = CompanyDAO.INSTANCE;
     }
 
     /**
@@ -88,7 +69,7 @@ public class CompanyService {
     }
 
     public Page<Company> getCurrentPage() {
-        return this.currentPage;
+        return currentPage;
     }
 
     /**

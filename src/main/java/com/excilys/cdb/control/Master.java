@@ -12,9 +12,8 @@ import com.excilys.cdb.services.CompanyService;
 import com.excilys.cdb.services.ComputerService;
 
 public class Master {
-    private static ComputerService computerService = ComputerService
-            .getInstance();
-    private static CompanyService companyService = CompanyService.getInstance();
+    private static ComputerService computerService = ComputerService.INSTANCE;
+    private static CompanyService companyService = CompanyService.INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 

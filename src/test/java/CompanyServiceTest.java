@@ -27,7 +27,7 @@ public class CompanyServiceTest {
     }
 
     private void initialize() {
-        service = CompanyService.getInstance();
+        service = CompanyService.INSTANCE;
     }
 
     @Test

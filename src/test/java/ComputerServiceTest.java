@@ -20,7 +20,7 @@ public class ComputerServiceTest {
     Computer another;
 
     private void initialize() {
-        service = ComputerService.getInstance();
+        service = ComputerService.INSTANCE;
     }
 
     @After

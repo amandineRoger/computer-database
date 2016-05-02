@@ -28,8 +28,9 @@ public class AddComputer extends HttpServlet {
      */
     public AddComputer() {
         super();
-        companyService = CompanyService.getInstance();
-        computerService = ComputerService.getInstance();
+        // companyService = CompanyService.getInstance();
+        companyService = CompanyService.INSTANCE;
+        computerService = ComputerService.INSTANCE;
         companies = companyService.getAllCompanies();
     }
 

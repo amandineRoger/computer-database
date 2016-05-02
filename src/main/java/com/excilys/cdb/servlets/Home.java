@@ -31,7 +31,7 @@ public class Home extends HttpServlet {
      */
     public Home() {
         super();
-        computerService = ComputerService.getInstance();
+        computerService = ComputerService.INSTANCE;
     }
 
     /**
@@ -103,7 +103,8 @@ public class Home extends HttpServlet {
         ArrayList<ComputerDTO> dtos = null;
 
         if (computers != null && (!computers.isEmpty())) {
-            ComputerMapper mapper = ComputerMapper.getInstance();
+            // ComputerMapper mapper = ComputerMapper.getInstance();
+            ComputerMapper mapper = ComputerMapper.INSTANCE;
             dtos = new ArrayList<>(computers.size());
             ComputerDTO tmp;
 

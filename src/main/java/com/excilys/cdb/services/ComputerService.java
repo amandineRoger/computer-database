@@ -7,33 +7,17 @@ import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.util.UtilDate;
 
-public class ComputerService {
-    private static ComputerService instance;
-    private ComputerDAO computerDAO;
+public enum ComputerService {
+    INSTANCE;
+
+    private static ComputerDAO computerDAO;
     private Page<Computer> currentPage;
 
     /**
      * private constructor for ComputerService (Singleton pattern).
      */
-    private ComputerService() {
-        computerDAO = ComputerDAO.getInstance();
-    }
-
-    /**
-     * getInstance (singleton method).
-     *
-     * @return the unique instance of ComputerService
-     */
-    public static ComputerService getInstance() {
-        if (instance == null) {
-            synchronized (ComputerService.class) {
-                if (instance == null) {
-                    instance = new ComputerService();
-                }
-
-            }
-        }
-        return instance;
+    static {
+        computerDAO = ComputerDAO.INSTANCE;
     }
 
     /**
@@ -97,7 +81,7 @@ public class ComputerService {
      * Create a computer from user entry.
      *
      * @param computer
-     *            TODO
+     *            computer entity which represents the computer to insert in DB
      *
      * @return created computer
      */
@@ -172,7 +156,6 @@ public class ComputerService {
                 }
             }
         }
-
         return check;
     }
 
