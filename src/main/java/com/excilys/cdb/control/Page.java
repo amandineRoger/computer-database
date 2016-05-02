@@ -6,8 +6,7 @@ public class Page<T> {
     private int limit = 10;
     private int nbResults;
     private int nbPages;
-
-    private int pageNumber;
+    private int pageNumber = 0;
 
     public int getNbPages() {
         return nbPages;
@@ -22,18 +21,6 @@ public class Page<T> {
     }
 
     private List<T> list;
-
-    /**
-     * Constructor of a page, initialize at first page.
-     *
-     * @param count
-     *            number of results of count request
-     */
-    public Page(int count) {
-        this.pageNumber = 0;
-        this.nbResults = count;
-        updateNbPages();
-    }
 
     public int getNbResults() {
         return nbResults;
@@ -95,6 +82,74 @@ public class Page<T> {
      */
     private void updateNbPages() {
         this.nbPages = (int) Math.ceil((double) nbResults / (double) limit);
+    }
+
+    public static class Builder<T> {
+        // params
+        private int limit = 10;
+        private int nbResults;
+        private int pageNumber = 0;
+
+        /**
+         * Page Builder constructor.
+         *
+         * @param count
+         *            required param to build a page
+         */
+        public Builder(int count) {
+            this.nbResults = count;
+        }
+
+        /**
+         * setter for limit.
+         *
+         * @param limit
+         *            the number of results per page
+         * @return builder instance
+         */
+        public Builder<T> limit(int limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        /**
+         * setter for page number.
+         *
+         * @param pageNumber
+         *            the number of the page to build
+         * @return builder instance
+         */
+        public Builder<T> pageNumber(int pageNumber) {
+
+            this.pageNumber = pageNumber;
+            return this;
+        }
+
+        /**
+         * build a new instance of a page, already fill with right content
+         * (depends of pageNumber and Limit).
+         *
+         * @return instance of Page<T>
+         */
+        public Page<T> build() {
+            return new Page<T>(this);
+        }
+
+    }
+
+    /**
+     * private constructor, called by builder.
+     *
+     * @param builder
+     *            the builder which call this constructor
+     */
+    private Page(Builder<T> builder) {
+        this.nbResults = builder.nbResults;
+        this.limit = builder.limit;
+        updateNbPages();
+        if (builder.pageNumber > 0 && builder.pageNumber < this.nbPages) {
+            this.pageNumber = builder.pageNumber;
+        }
     }
 
 }

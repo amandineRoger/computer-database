@@ -170,4 +170,26 @@ public enum ComputerMapper implements AbstractMapper<Computer> {
         }
         return dto;
     }
+
+    /**
+     * Convert the computer list of the page into ComputerDTO list.
+     *
+     * @param computers
+     *            List of computers
+     * @return List of computerDTO
+     */
+    public List<ComputerDTO> convertPageList(List<Computer> computers) {
+        ArrayList<ComputerDTO> dtos = null;
+
+        if (computers != null && (!computers.isEmpty())) {
+            dtos = new ArrayList<>(computers.size());
+            ComputerDTO tmp;
+
+            for (Computer computer : computers) {
+                tmp = computerToDTO(computer);
+                dtos.add(tmp);
+            }
+        }
+        return dtos;
+    }
 }

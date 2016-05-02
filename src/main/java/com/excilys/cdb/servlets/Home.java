@@ -1,8 +1,6 @@
 package com.excilys.cdb.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -23,8 +21,7 @@ import com.excilys.cdb.services.ComputerService;
 public class Home extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static ComputerService computerService;
-    private Page<Computer> page;
-    private static final String COUNT = "computersCount";
+    private static ComputerMapper computerMapper;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -32,6 +29,7 @@ public class Home extends HttpServlet {
     public Home() {
         super();
         computerService = ComputerService.INSTANCE;
+        computerMapper = ComputerMapper.INSTANCE;
     }
 
     /**
@@ -41,40 +39,28 @@ public class Home extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        Page<Computer> page;
+        int pageNumber = 0;
+        int limit = 10;
         Map<String, String[]> parameters = request.getParameterMap();
 
-        if (parameters.isEmpty()) {
-            page = computerService.getComputerList();
-        } else {
-            if (parameters.containsKey("limit")) {
-                page.setLimit(Integer.parseInt(parameters.get("limit")[0]));
-                page.setPageNumber(0);
-            }
-            if (parameters.containsKey("page")) {
-                int pageNumber = Integer.parseInt(parameters.get("page")[0]);
-                if (pageNumber > 0 && pageNumber < page.getNbPages()) {
-                    page.setPageNumber(pageNumber);
-                }
-                if (parameters.containsKey("prev")) {
-                    if ((parameters.get("prev")[0]).equals("true")) {
-                        page = computerService.getPreviousPage();
-                    } else {
-                        page = computerService.getNextPage();
-                    }
-                } else {
-                    computerService.getPageContent();
-                    page = computerService.getCurrentPage();
-                }
-            }
-
+        if (parameters.containsKey("limit")) {
+            limit = Integer.parseInt(parameters.get("limit")[0]);
         }
+        if (parameters.containsKey("page")) {
+            pageNumber = Integer.parseInt(parameters.get("page")[0]);
+        }
+        // page construction
+        page = computerService.getComputerList(pageNumber, limit);
 
-        Page<ComputerDTO> dtoPage = new Page<>(page.getNbResults());
-        dtoPage.setPageNumber(page.getPageNumber());
-        dtoPage.setLimit(page.getLimit());
-        dtoPage.setList(convertPageList(page.getList()));
+        // Mapping into DTO
+        Page.Builder<ComputerDTO> dtoPageBuilder = new Page.Builder<ComputerDTO>(
+                page.getNbResults()).pageNumber(pageNumber).limit(limit);
+        Page<ComputerDTO> dtoPage = dtoPageBuilder.build();
+        dtoPage.setList(computerMapper.convertPageList(page.getList()));
 
-        request.setAttribute(COUNT, computerService.getCount());
+        // attach attributes to request
+        request.setAttribute("computersCount", computerService.getNbItem());
         request.setAttribute("page", dtoPage);
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
                 response);
@@ -90,31 +76,6 @@ public class Home extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         doGet(request, response);
-    }
-
-    /**
-     * Convert the computer list of the page into ComputerDTO list.
-     *
-     * @param computers
-     *            List of computers
-     * @return List of computerDTO
-     */
-    private List<ComputerDTO> convertPageList(List<Computer> computers) {
-        ArrayList<ComputerDTO> dtos = null;
-
-        if (computers != null && (!computers.isEmpty())) {
-            // ComputerMapper mapper = ComputerMapper.getInstance();
-            ComputerMapper mapper = ComputerMapper.INSTANCE;
-            dtos = new ArrayList<>(computers.size());
-            ComputerDTO tmp;
-
-            for (Computer computer : computers) {
-                tmp = mapper.computerToDTO(computer);
-                dtos.add(tmp);
-            }
-        }
-
-        return dtos;
     }
 
 }

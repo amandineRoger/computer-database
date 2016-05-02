@@ -41,7 +41,7 @@ public class ComputerServiceTest {
     @Test
     public void testGetComputerList() {
         initialize();
-        page = service.getComputerList();
+        page = service.getComputerList(0, 10);
         assertNotNull(page.getList());
         assertTrue(page.getList().size() <= page.getLimit());
         assertEquals(0, page.getPageNumber());
@@ -50,24 +50,24 @@ public class ComputerServiceTest {
     @Test
     public void testGetNextPage() {
         initialize();
-        page = service.getComputerList();
+        page = service.getComputerList(0, 10);
         if (page.getNbPages() > 1) {
             computer = page.getList().get(0);
-
-            page = service.getNextPage();
+            page = service.getComputerList(1, 10);
             assertNotNull(page.getList());
             assertTrue(page.getList().size() <= page.getLimit());
             assertEquals(1, page.getPageNumber());
             another = page.getList().get(0);
             assertNotEquals(computer, another);
         }
+
     }
 
     @Test
     public void testGetPreviousPage() {
         initialize();
         testGetNextPage();
-        page = service.getPreviousPage();
+        page = service.getComputerList(0, 10);
         assertNotNull(page.getList());
         assertEquals(0, page.getPageNumber());
         if (page.getNbPages() > 1) {

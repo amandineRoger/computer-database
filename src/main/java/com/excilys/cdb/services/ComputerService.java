@@ -11,59 +11,48 @@ public enum ComputerService {
     INSTANCE;
 
     private static ComputerDAO computerDAO;
-    private Page<Computer> currentPage;
+    private int nbItem;
+
+    public int getNbItem() {
+        return nbItem;
+    }
 
     /**
      * private constructor for ComputerService (Singleton pattern).
      */
     static {
         computerDAO = ComputerDAO.INSTANCE;
+        INSTANCE.nbItem = computerDAO.getCount();
     }
 
     /**
      * Get the first page of computers.
      *
-     * @return computers from 1 to Page.NUMBER_OF_RESULTS;
+     * @param pageNumber
+     *            number of the page to construct
+     * @param limit
+     *            number of item in the page
+     * @return computers from pageNumber*limit to (pageNumber+1)*limit;
      */
-    public Page<Computer> getComputerList() {
-        currentPage = new Page<>(computerDAO.getCount());
-        getPageContent();
-        return currentPage;
+
+    public Page<Computer> getComputerList(int pageNumber, int limit) {
+        Page.Builder<Computer> pageBuilder = new Page.Builder<Computer>(nbItem)
+                .pageNumber(pageNumber).limit(limit);
+        Page<Computer> page = pageBuilder.build();
+        setPageContent(page);
+        return page;
     }
 
     /**
-     * Get the next page of results.
+     * fill the page list of computer.
      *
-     * @return the next Page.NUMBER_OF_RESULTS Companies
+     * @param page
+     *            the page to fill
      */
-    public Page<Computer> getNextPage() {
-        currentPage.next();
-        getPageContent();
-        return currentPage;
-    }
-
-    /**
-     * Get the previous page of results.
-     *
-     * @return the previous Page.NUMBER_OF_RESULTS Companies
-     */
-    public Page<Computer> getPreviousPage() {
-        currentPage.previous();
-        getPageContent();
-        return currentPage;
-    }
-
-    /**
-     * set companies in page list.
-     */
-    public void getPageContent() {
-        int i = currentPage.getPageNumber();
-        int limit = currentPage.getLimit();
-        currentPage.setList(computerDAO.getComputerList(i * limit, limit));
-    }
-
-    public Page<Computer> getCurrentPage() {
-        return this.currentPage;
+    public void setPageContent(Page<Computer> page) {
+        int i = page.getPageNumber();
+        int limit = page.getLimit();
+        page.setList(computerDAO.getComputerList(i * limit, limit));
     }
 
     /**
@@ -86,6 +75,7 @@ public enum ComputerService {
      * @return created computer
      */
     public Computer createComputer(Computer computer) {
+        nbItem++;
         return computerDAO.createComputer(computer);
     }
 
@@ -109,6 +99,7 @@ public enum ComputerService {
      * @return deleted computer
      */
     public Computer deleteComputer(long id) {
+        nbItem--;
         return computerDAO.deleteComputer(id);
     }
 

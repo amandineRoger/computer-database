@@ -11,9 +11,15 @@ public enum CompanyService {
 
     private static CompanyDAO companyDAO;
     private static Page<Company> currentPage;
+    private int nbItems;
+
+    public int getNbItems() {
+        return nbItems;
+    }
 
     static {
         companyDAO = CompanyDAO.INSTANCE;
+        INSTANCE.nbItems = companyDAO.getCount();
     }
 
     /**
@@ -22,7 +28,7 @@ public enum CompanyService {
      * @return page which contains Page.NUMBER_OF_RESULTS Companies
      */
     public Page<Company> getCompanyList() {
-        currentPage = new Page<>(companyDAO.getCount());
+        // currentPage = new Page<>(companyDAO.getCount());
         getPageContent();
         return currentPage;
     }
