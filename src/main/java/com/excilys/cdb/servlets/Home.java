@@ -1,7 +1,6 @@
 package com.excilys.cdb.servlets;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +21,8 @@ public class Home extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static ComputerService computerService;
     private static ComputerMapper computerMapper;
+    private int limit;
+    private int pageNumber;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -40,16 +41,25 @@ public class Home extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         Page<Computer> page;
-        int pageNumber = 0;
-        int limit = 10;
-        Map<String, String[]> parameters = request.getParameterMap();
 
-        if (parameters.containsKey("limit")) {
-            limit = Integer.parseInt(parameters.get("limit")[0]);
+        // get request parameters
+        String paramLimit = request.getParameter("limit");
+        String paramPage = request.getParameter("page");
+        String paramSearch = request.getParameter("search");
+        String paramOrder = request.getParameter("order");
+
+        if (paramLimit != null && !paramLimit.equals("")) {
+            limit = Integer.parseInt(paramLimit);
+        } else {
+            limit = 10;
         }
-        if (parameters.containsKey("page")) {
-            pageNumber = Integer.parseInt(parameters.get("page")[0]);
+
+        if (paramPage != null && !paramPage.equals("")) {
+            pageNumber = Integer.parseInt(paramPage);
+        } else {
+            pageNumber = 0;
         }
+
         // page construction
         page = computerService.getComputerList(pageNumber, limit);
 
@@ -60,6 +70,8 @@ public class Home extends HttpServlet {
         dtoPage.setList(computerMapper.convertPageList(page.getList()));
 
         // attach attributes to request
+        request.setAttribute("pageNumber", pageNumber);
+        request.setAttribute("limit", limit);
         request.setAttribute("computersCount", computerService.getNbItem());
         request.setAttribute("page", dtoPage);
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
