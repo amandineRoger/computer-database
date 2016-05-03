@@ -2,6 +2,7 @@
 var nameOK=false;
 var introOK=true;
 var discoOK=true;
+var datesOK = true;
 
 //date regex
 var regex = "(19[7-9][0-9]|20[0-3][0-9])[\-](0[1-9]|1[012])[\-](0[1-9]|[12][0-9]|3[01])";
@@ -50,7 +51,7 @@ function validateNameField() {
 function validateIntroducedField() {
 	var str = $.trim($("#introduced").val());
 	if(str != "") {
-		 if (!str.match(regex) || !checkDateCompat(str)) {
+		 if (!str.match(regex) || !checkDateCompat(str) || !checkDates()) {
 			 showError("introduced", "errorIntroduced");
 			 introOK = false;
 		 } else {
@@ -68,7 +69,7 @@ function validateIntroducedField() {
 function validateDiscontinuedField(){
 	var str = $.trim($("#discontinued").val());
 	if(str != "") {
-		 if (!str.match(regex) || !checkDateCompat(str)) {
+		 if (!str.match(regex) || !checkDateCompat(str) || !checkDates()) {
 		       showError("discontinued", "errorDiscontinued");
 		       discoOK = false;
 		 } else {
@@ -94,12 +95,30 @@ function checkDateCompat(dateString) {
      return true;
 }
 
+function checkDates(){
+    var introStr = $.trim($("#introduced").val());
+    var discoStr = $.trim($("#discontinued").val());
+    if (introStr != "" && discoStr != ""){
+        datesOK = false;
+        var intro = Date.parse(introStr);
+        var disco = Date.parse(discoStr);
+        
+        if (intro <= disco){
+            datesOK = true;
+        }
+    }
+    return datesOK;
+}
+
 //check all fields validation
 function checkForm(){
-	if (nameOK && introOK && discoOK){
+	if (nameOK && introOK && discoOK && datesOK){
 		$("#submitButton").removeAttr("disabled")
+		$("#editButton").removeAttr("disabled")
+		
 	} else {
 		$("#submitButton").attr('disabled', 'disabled');
+		$("#editButton").attr('disabled', 'disabled');
 	}
 }
 
