@@ -37,7 +37,8 @@ public class Master {
             case 1:
                 // get computers list
                 TerminalView.displayResults(
-                        computerService.getComputerList().getList());
+                        computerService.getComputerList(0, 10).getList()); // FIXME
+                                                                          // pagination
                 break;
             case 2:
                 // get companies list

@@ -17,7 +17,7 @@ import com.excilys.cdb.services.ComputerService;
 import com.excilys.cdb.util.UtilDate;
 
 /**
- * Servlet implementation class EditComputer
+ * Servlet implementation class EditComputer.
  */
 
 public class EditComputer extends HttpServlet {
