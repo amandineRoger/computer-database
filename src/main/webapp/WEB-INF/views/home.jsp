@@ -80,7 +80,7 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${ computer.id }"></td>
-							<td><a href="editComputer.html?id=${ computer.id }"
+							<td><a href="${ pageContext.request.contextPath }/edit?id=${ computer.id }"
 								onclick=""><c:out value="${ computer.name }" /></a></td>
 							<td><c:out value="${ computer.introduced }" /></td>
 							<td><c:out value="${ computer.discontinued }" /></td>
