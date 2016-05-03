@@ -47,6 +47,7 @@ public class Home extends HttpServlet {
         String paramPage = request.getParameter("page");
         String paramSearch = request.getParameter("search");
         String paramOrder = request.getParameter("order");
+        String paramAsc = request.getParameter("asc");
 
         if (paramLimit != null && !paramLimit.equals("")) {
             limit = Integer.parseInt(paramLimit);
@@ -60,8 +61,22 @@ public class Home extends HttpServlet {
             pageNumber = 0;
         }
 
+        if (paramSearch == null) {
+            paramSearch = "";
+        }
+        if (paramOrder == null) {
+            paramOrder = "";
+        }
+        if (paramAsc == null || paramAsc.equals("true")) {
+            page = computerService.searchByName(paramSearch, pageNumber * limit,
+                    limit, paramOrder, true);
+        } else {
+            page = computerService.searchByName(paramSearch, pageNumber * limit,
+                    limit, paramOrder, false);
+        }
+
         // page construction
-        page = computerService.getComputerList(pageNumber, limit);
+        // page = computerService.getComputerList(pageNumber, limit);
 
         // Mapping into DTO
         Page.Builder<ComputerDTO> dtoPageBuilder = new Page.Builder<ComputerDTO>(
@@ -72,7 +87,10 @@ public class Home extends HttpServlet {
         // attach attributes to request
         request.setAttribute("pageNumber", pageNumber);
         request.setAttribute("limit", limit);
-        request.setAttribute("computersCount", computerService.getNbItem());
+        request.setAttribute("search", paramSearch);
+        request.setAttribute("order", paramOrder);
+        request.setAttribute("computersCount",
+                computerService.getSearchedCount(paramSearch));
         request.setAttribute("page", dtoPage);
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
                 response);

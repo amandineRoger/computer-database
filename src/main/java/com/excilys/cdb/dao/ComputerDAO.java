@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,10 @@ public enum ComputerDAO implements UtilDate {
             + " WHERE id = ?";
     private final String COUNT_COMPUTERS = "SELECT COUNT(*) FROM "
             + COMPUTER_TABLE;
+    private final String FIND_BY_NAME = ALL_COMPUTERS
+            + " WHERE c.name LIKE ? ORDER BY %s %s LIMIT ?, ?";
+    private final String COUNT_SEARCH_RESULT = "SELECT COUNT(*) FROM "
+            + COMPUTER_TABLE + " WHERE name LIKE ?";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);
@@ -214,6 +219,7 @@ public enum ComputerDAO implements UtilDate {
      * @return number of computers in database
      */
     public int getCount() {
+        LOGGER.debug("f_getCount");
         int count = 0;
         PreparedStatement ps = null;
         ResultSet results = null;
@@ -226,6 +232,111 @@ public enum ComputerDAO implements UtilDate {
             }
         } catch (SQLException e) {
             LOGGER.error("ComputerDAO says : SQLException in getCount "
+                    + e.getMessage());
+            // TODO wrap in computerDAOException
+        } finally {
+            singleConnect.closeObject(ps);
+            singleConnect.closeObject(results);
+            singleConnect.closeObject(connect);
+        }
+        return count;
+    }
+
+    /**
+     * Search computers by name.
+     *
+     * @param search
+     *            the name to search
+     * @param offset
+     *            offset to put in query
+     * @param limit
+     *            number of results
+     * @param order
+     *            field used for order results
+     * @param asc
+     *            true if ascendant order, false else
+     * @return all computers which name contains search
+     */
+    public List<Computer> findByName(String search, int offset, int limit,
+            String order, boolean asc) {
+        LOGGER.debug("f_findByName");
+        List<Computer> computers = new ArrayList<>();
+
+        // prepare query
+        String request = null;
+        switch (order) {
+            case "name":
+                request = "c.name";
+                break;
+            case "introduced":
+                request = "c.introduced";
+                break;
+            case "discontinued":
+                request = "c.discontinued";
+                break;
+            case "company_id":
+                request = "o.id";
+                break;
+            case "id":
+            default:
+                request = "c.id";
+                break;
+        }
+        if (!asc) {
+            request = String.format(FIND_BY_NAME, request, "DESC");
+        } else {
+            request = String.format(FIND_BY_NAME, request, "ASC");
+        }
+
+        connect = singleConnect.getConnection();
+        PreparedStatement ps = null;
+        ResultSet results = null;
+
+        try {
+            // query execution
+            ps = connect.prepareStatement(request);
+            ps.setString(1, "%" + search + "%");
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+
+            results = ps.executeQuery();
+            // Mapping
+            computers = computerMapper.convertResultSet(results);
+        } catch (SQLException e) {
+            LOGGER.error("ComputerDAO says : SQLException in findByName "
+                    + e.getMessage());
+            // TODO wrap in computerDAOException
+        } finally {
+            singleConnect.closeObject(ps);
+            singleConnect.closeObject(results);
+            singleConnect.closeObject(connect);
+        }
+        return computers;
+    }
+
+    /**
+     * Get the number of computers which correspond to search
+     *
+     * @param search
+     *            search parameter
+     * @return the number of computers
+     */
+    public int getSearchCount(String search) {
+        LOGGER.debug("f_getSearchCount");
+        int count = 0;
+        PreparedStatement ps = null;
+        ResultSet results = null;
+
+        try {
+            connect = singleConnect.getConnection();
+            ps = connect.prepareStatement(COUNT_SEARCH_RESULT);
+            ps.setString(1, "%" + search + "%");
+            results = ps.executeQuery();
+            if (results.next()) {
+                count = results.getInt(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("ComputerDAO says : SQLException in getSearchCount "
                     + e.getMessage());
             // TODO wrap in computerDAOException
         } finally {

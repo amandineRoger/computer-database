@@ -1,6 +1,7 @@
 package com.excilys.cdb.services;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.ComputerDAO;
@@ -148,6 +149,37 @@ public enum ComputerService {
             }
         }
         return check;
+    }
+
+    /**
+     * Search computers by name.
+     *
+     * @param search
+     *            the name to search
+     * @return all computers which name contains search
+     */
+    public Page<Computer> searchByName(String search, int offset, int limit,
+            String order, boolean asc) {
+        List<Computer> computers = computerDAO.findByName(search, offset, limit,
+                order, asc);
+        Page.Builder<Computer> builder = new Page.Builder<Computer>(
+                computerDAO.getSearchCount(search)).limit(limit);
+
+        Page<Computer> page = builder.build();
+        page.setList(computers);
+
+        return page;
+    }
+
+    /**
+     * Get the number of results of search
+     *
+     * @param search
+     *            search parameter
+     * @return the number of results
+     */
+    public int getSearchedCount(String search) {
+        return computerDAO.getSearchCount(search);
     }
 
 }
