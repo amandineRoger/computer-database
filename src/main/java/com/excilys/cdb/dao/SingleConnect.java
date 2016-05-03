@@ -3,12 +3,13 @@ package com.excilys.cdb.dao;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.zaxxer.hikari.HikariDataSource;
 
 public enum SingleConnect {
     INSTANCE;
@@ -22,7 +23,7 @@ public enum SingleConnect {
     private static String password;
 
     // Attributes
-    private Connection connect;
+    private static HikariDataSource poolSql;
 
     static {
         try {
@@ -51,6 +52,19 @@ public enum SingleConnect {
                 + properties.getProperty("PARAMS");
         user = properties.getProperty("USER");
         password = properties.getProperty("PASSWORD");
+
+        // init connection pool
+        SingleConnect.poolSql = new HikariDataSource();
+        SingleConnect.poolSql.setJdbcUrl(url);
+        SingleConnect.poolSql.setUsername(user);
+        SingleConnect.poolSql.setPassword(password);
+        // set chache of prepStmts (with recommended value from Hikari)
+        SingleConnect.poolSql.addDataSourceProperty("cachePrepStmts", "true");
+        // the default is 25
+        SingleConnect.poolSql.addDataSourceProperty("prepStmtCacheSize", "10");
+        // the default is 256
+        SingleConnect.poolSql.addDataSourceProperty("prepStmtCacheSqlLimit",
+                "2048");
     }
 
     // Getters
@@ -58,17 +72,18 @@ public enum SingleConnect {
      * Open db connection, you must to close it later !.
      *
      * @return java.sql.Connection
+     * @throws SQLException
      */
     public Connection getConnection() {
         LOGGER.debug("f_getConnection");
         try {
-            this.connect = DriverManager.getConnection(url, user, password);
+            return SingleConnect.poolSql.getConnection();
         } catch (SQLException e) {
             LOGGER.error("SingleConnect says : SQLException in getConnection "
                     + e.getMessage());
             // TODO wrap in ConnectionException
         }
-        return this.connect;
+        return null; // FIXME to delete when throw exception
     }
 
     /**
