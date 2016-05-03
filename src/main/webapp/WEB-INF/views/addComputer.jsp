@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="my" tagdir="/WEB-INF/tags/mytags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,9 +17,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand"
-				href="${ pageContext.request.contextPath }/home"> Application -
-				Computer Database </a>
+			<a <my:link target="${ pageContext.request.contextPath }/home"/>  class="navbar-brand">
+			Application - Computer Database </a>
 		</div>
 	</header>
 
@@ -74,7 +74,7 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="Add" id="submitButton" class="btn btn-primary" disabled="disabled" >
-							or <a href="${ pageContext.request.contextPath }/home" class="btn btn-default">Cancel</a>
+							or <a <my:link target="${ pageContext.request.contextPath }/home"/> class="btn btn-default">Cancel</a>
 						</div>
 					</form>
 				</div>

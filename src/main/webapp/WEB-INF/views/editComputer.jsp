@@ -14,7 +14,7 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="${ pageContext.request.contextPath }/home"> Application - Computer Database </a>
+            <a <my:link target="${ pageContext.request.contextPath }/home"/> class="navbar-brand" > Application - Computer Database </a>
         </div>
     </header>
     <section id="main">
@@ -60,7 +60,7 @@
                         <div class="actions pull-right">
                             <input type="submit" value="Edit" id="editButton" class="btn btn-primary" disabled="disabled" >
                             or
-                            <a href="${ pageContext.request.contextPath }/home" class="btn btn-default">Cancel</a>
+                            <a <my:link target="${ pageContext.request.contextPath }/home"/> class="btn btn-default">Cancel</a>
                         </div>
                     </form>
                 </div>

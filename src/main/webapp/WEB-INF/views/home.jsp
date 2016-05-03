@@ -18,8 +18,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="${ pageContext.request.contextPath }/home"> Application -
-				Computer Database </a>
+			<a <my:link target="${ pageContext.request.contextPath }/home" page="${ pageNumber }" limit="${ limit }"/> class="navbar-brand">
+			     Application - Computer Database </a>
 		</div>
 	</header>
 
@@ -40,8 +40,11 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="${ pageContext.request.contextPath }/newComputer">Add
-						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
+					<a class="btn btn-success" 
+					   <my:link target="${ pageContext.request.contextPath }/newComputer"/> id="addComputer">
+					   Add Computer
+					</a>
+					<a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
 			</div>
@@ -80,7 +83,7 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${ computer.id }"></td>
-							<td><a href="${ pageContext.request.contextPath }/edit?id=${ computer.id }"
+							<td><a <my:link target="${ pageContext.request.contextPath }/edit" id="${ computer.id }"/> 
 								onclick=""><c:out value="${ computer.name }" /></a></td>
 							<td><c:out value="${ computer.introduced }" /></td>
 							<td><c:out value="${ computer.discontinued }" /></td>
@@ -101,9 +104,9 @@
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<a href="?limit=10&page=${ page.pageNumber }" class="btn btn-default">10</a>
-				<a href="?limit=50&page=${ page.pageNumber }" class="btn btn-default">50</a>
-				<a href="?limit=100&page=${ page.pageNumber }" class="btn btn-default">100</a>
+				<a <my:link target="" limit="10" page="${ page.pageNumber }"/> class="btn btn-default">10</a>
+				<a <my:link target="" limit="50" page="${ page.pageNumber }"/> class="btn btn-default">50</a>
+				<a <my:link target="" limit="100" page="${ page.pageNumber }"/> class="btn btn-default">100</a>
 			</div>
 	   </div>
 	</footer>
