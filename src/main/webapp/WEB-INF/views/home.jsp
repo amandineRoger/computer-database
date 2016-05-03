@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
+		<form id="deleteForm" action="delete" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
@@ -105,6 +105,7 @@
 				<a href="?limit=50&page=${ page.pageNumber }" class="btn btn-default">50</a>
 				<a href="?limit=100&page=${ page.pageNumber }" class="btn btn-default">100</a>
 			</div>
+	   </div>
 	</footer>
 	<script src="resources/js/jquery.min.js"></script>
 	<script src="resources/js/bootstrap.min.js"></script>
