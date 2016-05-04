@@ -30,6 +30,18 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- Selenium -->
+		<dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.53.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>htmlunit-driver</artifactId>
+            <version>2.20</version>
+        </dependency>
 
 		<!-- Logs -->
 		<dependency>
