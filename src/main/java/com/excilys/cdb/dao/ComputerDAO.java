@@ -315,7 +315,7 @@ public enum ComputerDAO implements UtilDate {
     }
 
     /**
-     * Get the number of computers which correspond to search
+     * Get the number of computers which correspond to search.
      *
      * @param search
      *            search parameter

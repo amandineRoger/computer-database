@@ -156,6 +156,14 @@ public enum ComputerService {
      *
      * @param search
      *            the name to search
+     * @param offset
+     *            offset from which start to search
+     * @param limit
+     *            number of results
+     * @param order
+     *            column filter
+     * @param asc
+     *            direction of order; true if ascendant, false if descendant
      * @return all computers which name contains search
      */
     public Page<Computer> searchByName(String search, int offset, int limit,
@@ -172,7 +180,7 @@ public enum ComputerService {
     }
 
     /**
-     * Get the number of results of search
+     * Get the number of results of search.
      *
      * @param search
      *            search parameter
