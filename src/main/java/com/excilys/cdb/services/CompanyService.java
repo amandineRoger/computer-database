@@ -98,4 +98,14 @@ public enum CompanyService {
         return companyDAO.getCount();
     }
 
+    /**
+     * Call transaction to delete a company by its id and delete all computers from this company.
+     *
+     * @param id
+     *            id of the company to delete
+     */
+    public void deleteCompany(long id) {
+        companyDAO.deleteCompany(id);
+    }
+
 }

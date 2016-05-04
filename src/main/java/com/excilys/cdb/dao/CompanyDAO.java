@@ -28,6 +28,7 @@ public enum CompanyDAO {
     String ALL_COMPANIES_P = ALL_COMPANIES + " LIMIT ?, ?";
     String COMPANY_BY_ID = ALL_COMPANIES + " WHERE id = ?";
     String COUNT_COMPANIES = "SELECT COUNT(*) FROM " + COMPANY_TABLE;
+    String DELETE_COMPANY = "DELETE FROM " + COMPANY_TABLE + " WHERE id = ?";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyDAO.class);
@@ -147,6 +148,7 @@ public enum CompanyDAO {
      * @return number of companies in database
      */
     public int getCount() {
+        LOGGER.debug("f_getCount");
         int count = 0;
         PreparedStatement ps = null;
         ResultSet results = null;
@@ -169,4 +171,67 @@ public enum CompanyDAO {
         return count;
     }
 
+    /**
+     * delete a company by its id and delete all computers from this company.
+     * Transaction handling !
+     * @param id
+     *            id of the company to delete
+     */
+    public void deleteCompany(long id) {
+        LOGGER.debug("f_deleteCompany");
+        connect = singleConnect.getConnection();
+        PreparedStatement psCompany = null;
+        PreparedStatement psComputers = null;
+        int count = 0;
+
+        try {
+            connect.setAutoCommit(false);
+
+            psComputers = connect
+                    .prepareStatement(ComputerDAO.DELETE_BY_COMPANY);
+            psComputers.setLong(1, id);
+            count = psComputers.executeUpdate();
+            if (count > 0) {
+                System.out.println(count + " computers deleted !");
+                LOGGER.debug(count + " computers deleted !");
+            } else {
+                System.out.println(
+                        "Fail to delete computers with company_id = " + id);
+                LOGGER.error(
+                        "Fail to delete computers with company_id = " + id);
+            }
+
+            psCompany = connect.prepareStatement(DELETE_COMPANY);
+            psCompany.setLong(1, id);
+            count = psCompany.executeUpdate();
+            if (count > 0) {
+                System.out
+                        .println("Company " + id + " was successfully deleted");
+                LOGGER.debug("company " + id + " was successfully deleted");
+            } else {
+                System.out.println("Fail to delete company " + id);
+                LOGGER.error("Fail to delete company " + id);
+            }
+
+            connect.commit();
+        } catch (SQLException e) {
+            LOGGER.error("Company DAO says : SQLException in deleteCompany "
+                    + e.getMessage());
+            // TODO wrap in DAOException and throw it
+            try {
+                connect.rollback();
+                LOGGER.debug("rollback executed !");
+            } catch (SQLException e1) {
+                LOGGER.error(
+                        "Company DAO says : SQLException in deleteCompany _ rollback fail !! "
+                                + e.getMessage());
+                // TODO wrap in DAOException and throw it
+                e1.printStackTrace();
+            }
+        } finally {
+            singleConnect.closeObject(psComputers);
+            singleConnect.closeObject(psCompany);
+            singleConnect.closeObject(connect);
+        }
+    }
 }

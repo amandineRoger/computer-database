@@ -20,7 +20,7 @@ public enum ComputerDAO implements UtilDate {
     INSTANCE;
 
     // QUERIES
-    private final String COMPUTER_TABLE = "computer";
+    private static final String COMPUTER_TABLE = "computer";
     private final String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
             + COMPUTER_TABLE + " c LEFT JOIN company"
             + " o ON c.company_id = o.id ";
@@ -39,6 +39,8 @@ public enum ComputerDAO implements UtilDate {
             + " WHERE c.name LIKE ? ORDER BY %s %s LIMIT ?, ?";
     private final String COUNT_SEARCH_RESULT = "SELECT COUNT(*) FROM "
             + COMPUTER_TABLE + " WHERE name LIKE ?";
+    public static final String DELETE_BY_COMPANY = "DELETE FROM "
+            + COMPUTER_TABLE + " WHERE company_id = ?";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);

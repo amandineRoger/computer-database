@@ -38,7 +38,7 @@ public class Master {
                 // get computers list
                 TerminalView.displayResults(
                         computerService.getComputerList(0, 10).getList()); // FIXME
-                                                                          // pagination
+                                                                           // pagination
                 break;
             case 2:
                 // get companies list
@@ -61,16 +61,16 @@ public class Master {
                 break;
             case 4:
                 // create computer
-                System.out.println("You just create the following computer : ");
                 computerEntity = getComputerFromUser();
+                System.out.println("You just create the following computer : ");
                 TerminalView.displayObject(
                         computerService.createComputer(computerEntity));
                 computerEntity = null;
                 break;
             case 5:
                 // update computer
-                System.out.println("You just update the following computer : ");
                 computerEntity = getComputerUpdateFromUser();
+                System.out.println("You just update the following computer : ");
                 TerminalView.displayObject(
                         computerService.updateComputer(computerEntity));
                 computerEntity = null;
@@ -78,7 +78,7 @@ public class Master {
             case 6:
                 // delete computer
                 System.out.println(
-                        "Computer details _ type ID of wanted computer : ");
+                        "Delete a computer _ type ID of wanted computer : ");
                 id = CLI.scan.nextLong();
                 computerEntity = computerService.deleteComputer(id);
                 if (computerEntity == null) {
@@ -88,6 +88,14 @@ public class Master {
                             "You just delete the following computer : ");
                     TerminalView.displayObject(computerEntity);
                 }
+                break;
+            case 7:
+                // delete a company
+                System.out.println(
+                        "Delete a company _ type ID of wanted computer : ");
+                id = getIntFromUser(COMPANY_ID);
+                companyService.deleteCompany(id);
+
                 break;
             default:
                 commandOk = false;

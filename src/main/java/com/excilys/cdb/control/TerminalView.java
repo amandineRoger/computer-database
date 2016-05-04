@@ -22,6 +22,7 @@ public class TerminalView {
         System.out.println(" 4 - Create new computer");
         System.out.println(" 5 - Update a computer");
         System.out.println(" 6 - Delete a computer");
+        System.out.println(" 7 - Delete a company");
         System.out.println(" *********************** ");
         System.out.println(" Type command : ");
     }

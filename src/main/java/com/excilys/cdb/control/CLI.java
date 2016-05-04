@@ -30,8 +30,6 @@ public class CLI {
             }
         }
         scan.close();
-        LOGGER.warn("TEST WARN !!");
-        LOGGER.error("TEST ERROR !");
         LOGGER.debug("End of run loop, scanner closed");
     }
 }
