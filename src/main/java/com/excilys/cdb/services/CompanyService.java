@@ -120,7 +120,7 @@ public enum CompanyService {
 
             ComputerDAO computerDAO = ComputerDAO.INSTANCE;
             computerDAO.deleteComputersByCompany(id, connect);
-            companyDAO.deleteCompany(id);
+            companyDAO.deleteCompany(id, connect);
 
             connect.commit();
         } catch (DAOException | SQLException e) {
