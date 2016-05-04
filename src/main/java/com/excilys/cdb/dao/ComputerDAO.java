@@ -349,6 +349,15 @@ public enum ComputerDAO implements UtilDate {
         return count;
     }
 
+    /**
+     * Delete all computers which are provided by a company
+     *
+     * @param companyId
+     *            the id of the company
+     * @param connection
+     *            connection provided by service, (autocommit has to be set to
+     *            false if you want to roll back!)
+     */
     public void deleteComputersByCompany(long companyId,
             Connection connection) {
         PreparedStatement ps = null;

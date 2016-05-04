@@ -236,6 +236,15 @@ public enum CompanyDAO {
         }
     }
 
+    /**
+     * Delete a company by its id
+     * 
+     * @param id
+     *            the id of the company to delete
+     * @param connection
+     *            connection provided by service, (autocommit has to be set to
+     *            false if you want to roll back!)
+     */
     public void deleteCompany(long id, Connection connection) {
         PreparedStatement ps = null;
         try {
