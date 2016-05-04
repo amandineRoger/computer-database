@@ -18,7 +18,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a <my:link target="${ pageContext.request.contextPath }/home" page="${ pageNumber }" limit="${ limit }"/> class="navbar-brand">
+			<a <my:link target="${ pageContext.request.contextPath }/home" currentPageNumber="0" limit="${ limit }"/> class="navbar-brand">
 			     Application - Computer Database </a>
 		</div>
 	</header>
@@ -68,13 +68,12 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
+						<th> <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="name" asc="${ asc }"/> > Computer name </a>  </th>
+						<th> <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="introduced" asc="${ asc }"/> > Introduced date </a></th>
 						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
+						<th>  <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="discontinued" asc="${ asc }"/> > Discontinued date</a> </th>
 						<!-- Table header for Company -->
-						<th>Company</th>
-
+						<th>  <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="company_id" asc="${ asc }"/> > Company </a></th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
@@ -88,7 +87,6 @@
 							<td><c:out value="${ computer.introduced }" /></td>
 							<td><c:out value="${ computer.discontinued }" /></td>
 							<td><c:out value="${ computer.companyName }" /></td>
-
 						</tr>
 					</c:forEach>
 
@@ -104,9 +102,9 @@
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<a <my:link target="" limit="10" page="${ page.pageNumber }"/> class="btn btn-default">10</a>
-				<a <my:link target="" limit="50" page="${ page.pageNumber }"/> class="btn btn-default">50</a>
-				<a <my:link target="" limit="100" page="${ page.pageNumber }"/> class="btn btn-default">100</a>
+				<a <my:link target="" limit="10" /> class="btn btn-default">10</a>
+				<a <my:link target="" limit="50" /> class="btn btn-default">50</a>
+				<a <my:link target="" limit="100" /> class="btn btn-default">100</a>
 			</div>
 	   </div>
 	</footer>

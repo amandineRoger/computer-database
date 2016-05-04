@@ -23,6 +23,7 @@ public class Home extends HttpServlet {
     private static ComputerMapper computerMapper;
     private int limit;
     private int pageNumber;
+    private boolean asc;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -70,9 +71,11 @@ public class Home extends HttpServlet {
         if (paramAsc == null || paramAsc.equals("true")) {
             page = computerService.searchByName(paramSearch, pageNumber * limit,
                     limit, paramOrder, true);
+            asc = false;
         } else {
             page = computerService.searchByName(paramSearch, pageNumber * limit,
                     limit, paramOrder, false);
+            asc = true;
         }
 
         // page construction
@@ -89,6 +92,7 @@ public class Home extends HttpServlet {
         request.setAttribute("limit", limit);
         request.setAttribute("search", paramSearch);
         request.setAttribute("order", paramOrder);
+        request.setAttribute("asc", asc);
         request.setAttribute("computersCount",
                 computerService.getSearchedCount(paramSearch));
         request.setAttribute("page", dtoPage);
