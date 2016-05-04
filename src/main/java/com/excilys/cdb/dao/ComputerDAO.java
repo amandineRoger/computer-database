@@ -348,4 +348,29 @@ public enum ComputerDAO implements UtilDate {
         }
         return count;
     }
+
+    public void deleteComputersByCompany(long companyId,
+            Connection connection) {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(DELETE_BY_COMPANY);
+            ps.setLong(1, companyId);
+            int count = ps.executeUpdate();
+            if (count > 0) {
+                System.out.println(count + " computers deleted !");
+                LOGGER.debug(count + " computers deleted !");
+            } else {
+                System.out.println("Fail to delete computers with company_id = "
+                        + companyId);
+                LOGGER.error("Fail to delete computers with company_id = "
+                        + companyId);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException in deleteComputersByCompany "
+                    + e.getMessage());
+            throw new DAOException();
+        } finally {
+            singleConnect.closeObject(ps);
+        }
+    }
 }

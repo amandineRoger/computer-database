@@ -174,6 +174,7 @@ public enum CompanyDAO {
     /**
      * delete a company by its id and delete all computers from this company.
      * Transaction handling !
+     *
      * @param id
      *            id of the company to delete
      */
@@ -233,5 +234,28 @@ public enum CompanyDAO {
             singleConnect.closeObject(psCompany);
             singleConnect.closeObject(connect);
         }
+    }
+
+    public void deleteCompany(long id, Connection connection) {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(DELETE_COMPANY);
+            ps.setLong(1, id);
+            int count = ps.executeUpdate();
+            if (count > 0) {
+                System.out
+                        .println("Company " + id + " was successfully deleted");
+                LOGGER.debug("company " + id + " was successfully deleted");
+            } else {
+                System.out.println("Fail to delete company " + id);
+                LOGGER.error("Fail to delete company " + id);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException in deleteCompany " + e.getMessage());
+            throw new DAOException();
+        } finally {
+            singleConnect.closeObject(ps);
+        }
+
     }
 }

@@ -1,9 +1,14 @@
 package com.excilys.cdb.services;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.CompanyDAO;
+import com.excilys.cdb.dao.ComputerDAO;
+import com.excilys.cdb.dao.DAOException;
+import com.excilys.cdb.dao.SingleConnect;
 import com.excilys.cdb.entities.Company;
 
 public enum CompanyService {
@@ -99,13 +104,35 @@ public enum CompanyService {
     }
 
     /**
-     * Call transaction to delete a company by its id and delete all computers from this company.
+     * Call transaction to delete a company by its id and delete all computers
+     * from this company.
      *
      * @param id
      *            id of the company to delete
      */
     public void deleteCompany(long id) {
-        companyDAO.deleteCompany(id);
+        // companyDAO.deleteCompany(id);
+        SingleConnect singleConnect = SingleConnect.INSTANCE;
+        Connection connect = singleConnect.getConnection();
+
+        try {
+            connect.setAutoCommit(false);
+
+            ComputerDAO computerDAO = ComputerDAO.INSTANCE;
+            computerDAO.deleteComputersByCompany(id, connect);
+            companyDAO.deleteCompany(id);
+
+            connect.commit();
+        } catch (DAOException | SQLException e) {
+            try {
+                connect.rollback();
+            } catch (SQLException e1) {
+                System.out.println("ERROR _ fail to rollback" + e.getMessage());
+            }
+        } finally {
+            singleConnect.closeObject(connect);
+        }
+
     }
 
 }
