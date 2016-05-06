@@ -11,6 +11,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.control.ConnectionFactory;
+import com.excilys.cdb.control.ConnectionManager;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.util.UtilDate;
@@ -45,13 +47,15 @@ public enum ComputerDAO implements UtilDate {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);
 
-    private static SingleConnect singleConnect;
+    private static ConnectionFactory singleConnect;
     private static Connection connect;
     private static ComputerMapper computerMapper;
+    private static ConnectionManager manager;
 
     static {
-        singleConnect = SingleConnect.INSTANCE;
+        singleConnect = ConnectionFactory.INSTANCE;
         computerMapper = ComputerMapper.INSTANCE;
+        manager = ConnectionManager.INSTANCE;
     }
 
     /**
@@ -65,7 +69,9 @@ public enum ComputerDAO implements UtilDate {
      */
     public ArrayList<Computer> getComputerList(int offset, int limit) {
         LOGGER.debug("f_getComputerList");
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         ArrayList<Computer> computers = new ArrayList<>(limit);
         ResultSet results = null;
         PreparedStatement ps = null;
@@ -75,6 +81,7 @@ public enum ComputerDAO implements UtilDate {
             ps.setInt(1, offset);
             ps.setInt(2, limit);
             results = ps.executeQuery();
+            manager.commit();
             // Mapping
             computers = (ArrayList<Computer>) computerMapper
                     .convertResultSet(results);
@@ -85,7 +92,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computers;
     }
@@ -99,7 +107,9 @@ public enum ComputerDAO implements UtilDate {
      */
     public Computer getComputerDetail(long id) {
         LOGGER.debug("f_getComputerDetail");
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         Computer computer = null;
         ResultSet results = null;
         PreparedStatement ps = null;
@@ -109,6 +119,7 @@ public enum ComputerDAO implements UtilDate {
             ps = connect.prepareStatement(COMPUTER_BY_ID);
             ps.setLong(1, id);
             results = ps.executeQuery();
+            manager.commit();
             // Mapping
             computer = computerMapper.toEntity(results);
         } catch (SQLException e) {
@@ -118,7 +129,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computer;
     }
@@ -133,7 +145,9 @@ public enum ComputerDAO implements UtilDate {
      */
     public Computer createComputer(Computer computer) {
         LOGGER.debug("f_createComputer");
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         PreparedStatement ps = null;
         ResultSet results = null;
         try {
@@ -142,6 +156,7 @@ public enum ComputerDAO implements UtilDate {
                     Statement.RETURN_GENERATED_KEYS);
             computerMapper.attachEntityToRequest(ps, computer, true);
             ps.executeUpdate();
+            manager.commit();
             results = ps.getGeneratedKeys();
             results.next();
             computer.setId(results.getLong(1));
@@ -152,7 +167,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computer;
     }
@@ -168,13 +184,15 @@ public enum ComputerDAO implements UtilDate {
     public Computer updateComputer(Computer computer) {
         LOGGER.debug("f_updateComputer");
         // Query execution
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         PreparedStatement ps = null;
         try {
             ps = connect.prepareStatement(UPDATE_COMPUTER);
             computerMapper.attachEntityToRequest(ps, computer, false);
             ps.executeUpdate();
-            ps.close();
+            manager.commit();
             connect.close();
         } catch (SQLException e) {
             LOGGER.error("ComputerDAO says : SQLException in updateComputer "
@@ -182,7 +200,8 @@ public enum ComputerDAO implements UtilDate {
             // TODO wrap in computerDAOException
         } finally {
             singleConnect.closeObject(ps);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computer;
     }
@@ -200,17 +219,21 @@ public enum ComputerDAO implements UtilDate {
         PreparedStatement ps = null;
         // query execution
         try {
-            connect = singleConnect.getConnection();
+            // connect = singleConnect.getConnection();
+            manager.init();
+            connect = manager.get();
             ps = connect.prepareStatement(DELETE_COMPUTER);
             ps.setLong(1, id);
             ps.executeUpdate();
+            manager.commit();
         } catch (SQLException e) {
             LOGGER.error("ComputerDAO says : SQLException in deleteComputer "
                     + e.getMessage());
             // TODO wrap in computerDAOException
         } finally {
             singleConnect.closeObject(ps);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computer;
     }
@@ -226,9 +249,12 @@ public enum ComputerDAO implements UtilDate {
         PreparedStatement ps = null;
         ResultSet results = null;
         try {
-            connect = singleConnect.getConnection();
+            // connect = singleConnect.getConnection();
+            manager.init();
+            connect = manager.get();
             ps = connect.prepareStatement(COUNT_COMPUTERS);
             results = ps.executeQuery();
+            manager.commit();
             if (results.next()) {
                 count = results.getInt(1);
             }
@@ -239,7 +265,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return count;
     }
@@ -290,7 +317,9 @@ public enum ComputerDAO implements UtilDate {
             request = String.format(FIND_BY_NAME, request, "ASC");
         }
 
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         PreparedStatement ps = null;
         ResultSet results = null;
 
@@ -302,6 +331,7 @@ public enum ComputerDAO implements UtilDate {
             ps.setInt(3, limit);
 
             results = ps.executeQuery();
+            manager.commit();
             // Mapping
             computers = computerMapper.convertResultSet(results);
         } catch (SQLException e) {
@@ -311,7 +341,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return computers;
     }
@@ -330,10 +361,13 @@ public enum ComputerDAO implements UtilDate {
         ResultSet results = null;
 
         try {
-            connect = singleConnect.getConnection();
+            // connect = singleConnect.getConnection();
+            manager.init();
+            connect = manager.get();
             ps = connect.prepareStatement(COUNT_SEARCH_RESULT);
             ps.setString(1, "%" + search + "%");
             results = ps.executeQuery();
+            manager.commit();
             if (results.next()) {
                 count = results.getInt(1);
             }
@@ -344,7 +378,8 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return count;
     }

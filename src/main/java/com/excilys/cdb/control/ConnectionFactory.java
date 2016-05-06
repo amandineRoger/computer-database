@@ -1,4 +1,4 @@
-package com.excilys.cdb.dao;
+package com.excilys.cdb.control;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-public enum SingleConnect {
+public enum ConnectionFactory {
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(SingleConnect.class);
+            .getLogger(ConnectionFactory.class);
 
     private static final String PROPERTIES_FILE = "sql.properties";
     private static String url;
@@ -37,8 +37,8 @@ public enum SingleConnect {
         }
         // Open properties file
         Properties properties = new Properties();
-        InputStream propertiesFile = SingleConnect.class.getClassLoader()
-                .getResourceAsStream(SingleConnect.PROPERTIES_FILE);
+        InputStream propertiesFile = ConnectionFactory.class.getClassLoader()
+                .getResourceAsStream(ConnectionFactory.PROPERTIES_FILE);
         try {
             properties.load(propertiesFile);
         } catch (IOException e) {
@@ -54,16 +54,18 @@ public enum SingleConnect {
         password = properties.getProperty("PASSWORD");
 
         // init connection pool
-        SingleConnect.poolSql = new HikariDataSource();
-        SingleConnect.poolSql.setJdbcUrl(url);
-        SingleConnect.poolSql.setUsername(user);
-        SingleConnect.poolSql.setPassword(password);
+        ConnectionFactory.poolSql = new HikariDataSource();
+        ConnectionFactory.poolSql.setJdbcUrl(url);
+        ConnectionFactory.poolSql.setUsername(user);
+        ConnectionFactory.poolSql.setPassword(password);
         // set chache of prepStmts (with recommended value from Hikari)
-        SingleConnect.poolSql.addDataSourceProperty("cachePrepStmts", "true");
+        ConnectionFactory.poolSql.addDataSourceProperty("cachePrepStmts",
+                "true");
         // the default is 25
-        SingleConnect.poolSql.addDataSourceProperty("prepStmtCacheSize", "10");
+        ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSize",
+                "25");
         // the default is 256
-        SingleConnect.poolSql.addDataSourceProperty("prepStmtCacheSqlLimit",
+        ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSqlLimit",
                 "2048");
     }
 
@@ -77,7 +79,7 @@ public enum SingleConnect {
     public Connection getConnection() {
         LOGGER.debug("f_getConnection");
         try {
-            return SingleConnect.poolSql.getConnection();
+            return ConnectionFactory.poolSql.getConnection();
         } catch (SQLException e) {
             LOGGER.error("SingleConnect says : SQLException in getConnection "
                     + e.getMessage());

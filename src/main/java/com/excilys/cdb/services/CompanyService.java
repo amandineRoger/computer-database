@@ -1,22 +1,22 @@
 package com.excilys.cdb.services;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
+import com.excilys.cdb.control.ConnectionManager;
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.DAOException;
-import com.excilys.cdb.dao.SingleConnect;
 import com.excilys.cdb.entities.Company;
 
 public enum CompanyService {
     INSTANCE;
 
     private static CompanyDAO companyDAO;
-    private static Page<Company> currentPage;
+    private Page<Company> currentPage;
     private int nbItems;
+    private static ConnectionManager manager;
 
     public int getNbItems() {
         return nbItems;
@@ -25,6 +25,7 @@ public enum CompanyService {
     static {
         companyDAO = CompanyDAO.INSTANCE;
         INSTANCE.nbItems = companyDAO.getCount();
+        manager = ConnectionManager.INSTANCE;
     }
 
     /**
@@ -112,27 +113,24 @@ public enum CompanyService {
      */
     public void deleteCompany(long id) {
         // companyDAO.deleteCompany(id);
-        SingleConnect singleConnect = SingleConnect.INSTANCE;
-        Connection connect = singleConnect.getConnection();
-
+        // ConnectionFactory singleConnect = ConnectionFactory.INSTANCE;
+        // Connection connect = singleConnect.getConnection();
+        manager.init();
+        Connection connect = manager.get();
         try {
-            connect.setAutoCommit(false);
+            // connect.setAutoCommit(false);
 
             ComputerDAO computerDAO = ComputerDAO.INSTANCE;
             computerDAO.deleteComputersByCompany(id, connect);
             companyDAO.deleteCompany(id, connect);
-
-            connect.commit();
-        } catch (DAOException | SQLException e) {
-            try {
-                connect.rollback();
-            } catch (SQLException e1) {
-                System.out.println("ERROR _ fail to rollback" + e.getMessage());
-            }
+            manager.commit();
+            // connect.commit();
+        } catch (DAOException e) {
+            manager.rollback();
         } finally {
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
-
     }
 
 }

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="my" tagdir="/WEB-INF/tags/mytags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,8 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <a <my:link target="${ pageContext.request.contextPath }/home"/> class="navbar-brand" > Application - Computer Database </a>
+             <a href="home" class="navbar-brand">Application - Computer Database</a>
+             
         </div>
     </header>
     <section id="main">
@@ -27,7 +29,7 @@
                     <h1>Edit Computer</h1>
 
                     <form action="edit" method="POST">
-                        <input type="hidden" name="computerId" value="${ computer.id }"/>
+                        <input id="id" type="hidden" name="computerId" value="${ computer.id }"/>
                         <fieldset>
                             <div class="form-group ">
                                 <label class="control-label" for="computerName">Computer name
@@ -60,7 +62,7 @@
                         <div class="actions pull-right">
                             <input type="submit" value="Edit" id="editButton" class="btn btn-primary" disabled="disabled" >
                             or
-                            <a <my:link target="${ pageContext.request.contextPath }/home"/> class="btn btn-default">Cancel</a>
+                             <my:link target="${ pageContext.request.contextPath }/home" baliseClass="btn btn-default">Cancel</my:link>
                         </div>
                     </form>
                 </div>

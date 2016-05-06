@@ -10,6 +10,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.control.ConnectionFactory;
+import com.excilys.cdb.control.ConnectionManager;
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.mappers.CompanyMapper;
 
@@ -33,13 +35,15 @@ public enum CompanyDAO {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyDAO.class);
 
-    private static SingleConnect singleConnect;
+    private static ConnectionFactory singleConnect;
     private static Connection connect;
     private static CompanyMapper companyMapper;
+    private static ConnectionManager manager;
 
     static {
-        singleConnect = SingleConnect.INSTANCE;
+        singleConnect = ConnectionFactory.INSTANCE;
         companyMapper = CompanyMapper.INSTANCE;
+        manager = ConnectionManager.INSTANCE;
     }
 
     /**
@@ -56,19 +60,18 @@ public enum CompanyDAO {
         ArrayList<Company> list = new ArrayList<>(limit);
         PreparedStatement ps = null;
         ResultSet results = null;
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
 
         try {
             ps = connect.prepareStatement(ALL_COMPANIES_P);
             ps.setInt(1, offset);
             ps.setInt(2, limit);
             results = ps.executeQuery();
-
+            manager.commit();
             list = (ArrayList<Company>) companyMapper.convertResultSet(results);
 
-            ps.close();
-            results.close();
-            connect.close();
         } catch (SQLException e) {
             LOGGER.error("CompanyDAO says : SQLException in getCompanyList "
                     + e.getMessage());
@@ -76,7 +79,8 @@ public enum CompanyDAO {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return list;
     }
@@ -91,11 +95,14 @@ public enum CompanyDAO {
         ArrayList<Company> list = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet results = null;
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
 
         try {
             ps = connect.prepareStatement(ALL_COMPANIES);
             results = ps.executeQuery();
+            manager.commit();
             list = (ArrayList<Company>) companyMapper.convertResultSet(results);
         } catch (SQLException e) {
             LOGGER.error("CompanyDAO says : SQLException in getAllCompanyList "
@@ -104,7 +111,8 @@ public enum CompanyDAO {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return list;
     }
@@ -120,13 +128,16 @@ public enum CompanyDAO {
         LOGGER.debug("f_getCompanyById");
         Company company = null;
         if (id != 0) {
-            connect = singleConnect.getConnection();
+            // connect = singleConnect.getConnection();
+            manager.init();
+            connect = manager.get();
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
                 ps = connect.prepareStatement(COMPANY_BY_ID);
                 ps.setLong(1, id);
                 rs = ps.executeQuery();
+                manager.commit();
                 // Mapping
                 company = companyMapper.toEntity(rs);
             } catch (SQLException e) {
@@ -136,7 +147,8 @@ public enum CompanyDAO {
             } finally {
                 singleConnect.closeObject(ps);
                 singleConnect.closeObject(rs);
-                singleConnect.closeObject(connect);
+                // singleConnect.closeObject(connect);
+                manager.close();
             }
         }
         return company;
@@ -154,9 +166,12 @@ public enum CompanyDAO {
         ResultSet results = null;
 
         try {
-            connect = singleConnect.getConnection();
+            // connect = singleConnect.getConnection();
+            manager.init();
+            connect = manager.get();
             ps = connect.prepareStatement(COUNT_COMPANIES);
             results = ps.executeQuery();
+            manager.commit();
             if (results.next()) {
                 count = results.getInt(1);
             }
@@ -166,7 +181,8 @@ public enum CompanyDAO {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
         return count;
     }
@@ -180,18 +196,21 @@ public enum CompanyDAO {
      */
     public void deleteCompany(long id) {
         LOGGER.debug("f_deleteCompany");
-        connect = singleConnect.getConnection();
+        // connect = singleConnect.getConnection();
+        manager.init();
+        connect = manager.get();
         PreparedStatement psCompany = null;
         PreparedStatement psComputers = null;
         int count = 0;
 
         try {
-            connect.setAutoCommit(false);
+            // connect.setAutoCommit(false);
 
             psComputers = connect
                     .prepareStatement(ComputerDAO.DELETE_BY_COMPANY);
             psComputers.setLong(1, id);
             count = psComputers.executeUpdate();
+
             if (count > 0) {
                 System.out.println(count + " computers deleted !");
                 LOGGER.debug(count + " computers deleted !");
@@ -214,31 +233,26 @@ public enum CompanyDAO {
                 LOGGER.error("Fail to delete company " + id);
             }
 
-            connect.commit();
+            manager.commit();
         } catch (SQLException e) {
             LOGGER.error("Company DAO says : SQLException in deleteCompany "
                     + e.getMessage());
             // TODO wrap in DAOException and throw it
-            try {
-                connect.rollback();
-                LOGGER.debug("rollback executed !");
-            } catch (SQLException e1) {
-                LOGGER.error(
-                        "Company DAO says : SQLException in deleteCompany _ rollback fail !! "
-                                + e.getMessage());
-                // TODO wrap in DAOException and throw it
-                e1.printStackTrace();
-            }
+
+            manager.rollback();
+            LOGGER.debug("rollback executed !");
+
         } finally {
             singleConnect.closeObject(psComputers);
             singleConnect.closeObject(psCompany);
-            singleConnect.closeObject(connect);
+            // singleConnect.closeObject(connect);
+            manager.close();
         }
     }
 
     /**
      * Delete a company by its id
-     * 
+     *
      * @param id
      *            the id of the company to delete
      * @param connection

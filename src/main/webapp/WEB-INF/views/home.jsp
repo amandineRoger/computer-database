@@ -18,8 +18,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a <my:link target="${ pageContext.request.contextPath }/home" currentPageNumber="0" limit="${ limit }"/> class="navbar-brand">
-			     Application - Computer Database </a>
+		<a href="home" class="navbar-brand">Application - Computer Database</a>
+			
 		</div>
 	</header>
 
@@ -40,10 +40,9 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" 
-					   <my:link target="${ pageContext.request.contextPath }/newComputer"/> id="addComputer">
+					   <my:link baliseClass="btn btn-success" target="${ pageContext.request.contextPath }/newComputer" baliseId="addComputer"> 
 					   Add Computer
-					</a>
+					</my:link>
 					<a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
@@ -60,7 +59,6 @@
 					<tr>
 						<!-- Variable declarations for passing labels as parameters -->
 						<!-- Table header for Computer Name -->
-
 						<th class="editMode" style="width: 60px; height: 22px;"><input
 							type="checkbox" id="selectall" /> <span
 							style="vertical-align: top;"> - <a href="#"
@@ -68,22 +66,32 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th> <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="name" asc="${ asc }"/> > Computer name </a>  </th>
-						<th> <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="introduced" asc="${ asc }"/> > Introduced date </a></th>
+						<th>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="name" asc="${ asc }">Computer name</my:link>
+                        </th>
+						<th> 
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="introduced" asc="${ asc }">Introduced date</my:link>
+						</th>
 						<!-- Table header for Discontinued Date -->
-						<th>  <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="discontinued" asc="${ asc }"/> > Discontinued date</a> </th>
+						<th>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="discontinued" asc="${ asc }">Discontinued date</my:link>
+						</th>
 						<!-- Table header for Company -->
-						<th>  <a <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="company_id" asc="${ asc }"/> > Company </a></th>
+						<th>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="company_id" asc="${ asc }">Company</my:link>
+						</th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
 				<tbody id="results">
 					<c:forEach items="${ page.list }" var="computer">
 						<tr>
-							<td class="editMode"><input type="checkbox" name="cb"
+
+							<td class="editMode"><input type="checkbox" id="${ computer.name }_id" name="cb"
 								class="cb" value="${ computer.id }"></td>
-							<td><a <my:link target="${ pageContext.request.contextPath }/edit" id="${ computer.id }"/> 
-								onclick=""><c:out value="${ computer.name }" /></a></td>
+							<td>
+							 <my:link target="http://localhost:8080/computer-database/edit" baliseId="${ computer.name }_name" id="${ computer.id }"><c:out value="${ computer.name }" /></my:link>
+							</td>
 							<td><c:out value="${ computer.introduced }" /></td>
 							<td><c:out value="${ computer.discontinued }" /></td>
 							<td><c:out value="${ computer.companyName }" /></td>
@@ -102,9 +110,10 @@
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<a <my:link target="" limit="10" /> class="btn btn-default">10</a>
-				<a <my:link target="" limit="50" /> class="btn btn-default">50</a>
-				<a <my:link target="" limit="100" /> class="btn btn-default">100</a>
+			
+				 <my:link target="" limit="10" baliseClass="btn btn-default">10</my:link>
+				<my:link target="" limit="50" baliseClass="btn btn-default" >50</my:link>
+				<my:link target="" limit="100" baliseClass="btn btn-default">100</my:link>
 			</div>
 	   </div>
 	</footer>
