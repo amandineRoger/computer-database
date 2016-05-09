@@ -63,7 +63,7 @@ public enum ConnectionFactory {
                 "true");
         // the default is 25
         ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSize",
-                "25");
+                "10");
         // the default is 256
         ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSqlLimit",
                 "2048");
