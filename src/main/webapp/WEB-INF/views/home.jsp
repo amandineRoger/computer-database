@@ -106,7 +106,7 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<my:pagination count="${ page.nbPages }" current="${ page.pageNumber }"/>
+				<my:pagination count="${ page.nbPages }" current="${ pageNumber }"/>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">

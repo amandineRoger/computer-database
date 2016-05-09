@@ -76,6 +76,7 @@ public class AddComputer extends HttpServlet {
         if (computer != null && computerService.validateComputer(computer)) {
             computerService.createComputer(computer);
 
+            request.setAttribute("companiesList", companies);
             request.setAttribute("postMessage", "true");
             request.setAttribute("messageLevel", "success");
             request.setAttribute("messageHeader", "Computer added");

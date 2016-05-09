@@ -17,8 +17,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a <my:link target="${ pageContext.request.contextPath }/home"/>  class="navbar-brand">
-			Application - Computer Database </a>
+			<my:link target="${ pageContext.request.contextPath }/home" baliseClass="navbar-brand">
+			Application - Computer Database </my:link>
 		</div>
 	</header>
 
@@ -74,7 +74,7 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="Add" id="submitButton" class="btn btn-primary" disabled="disabled" >
-							or <a <my:link target="${ pageContext.request.contextPath }/home"/> class="btn btn-default">Cancel</a>
+							or <my:link target="${ pageContext.request.contextPath }/home" baliseClass="btn btn-default"> Cancel</my:link>
 						</div>
 					</form>
 				</div>
