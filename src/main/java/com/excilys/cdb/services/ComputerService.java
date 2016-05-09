@@ -6,6 +6,8 @@ import java.util.List;
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.entities.Computer;
+import com.excilys.cdb.util.PageRequest;
+import com.excilys.cdb.util.Sort;
 import com.excilys.cdb.util.UtilDate;
 
 public enum ComputerService {
@@ -167,7 +169,7 @@ public enum ComputerService {
      * @return all computers which name contains search
      */
     public Page<Computer> searchByName(String search, int offset, int limit,
-            String order, boolean asc) {
+            String order, String asc) {
         List<Computer> computers = computerDAO.findByName(search, offset, limit,
                 order, asc);
         Page.Builder<Computer> builder = new Page.Builder<Computer>(
@@ -188,6 +190,24 @@ public enum ComputerService {
      */
     public int getSearchedCount(String search) {
         return computerDAO.getSearchCount(search);
+    }
+
+    /**
+     * Construct and return a page based on PageRequest.
+     *
+     * @param request
+     *            a PageRequest
+     * @return a page filled with request results
+     */
+    public Page<Computer> getPage(PageRequest request) {
+        int limit = request.getLimit();
+        int pageNumber = request.getPageNumber();
+        int offset = pageNumber * limit;
+        Sort sort = request.getSorting();
+        Page<Computer> page = searchByName(request.getSearch(), offset, limit,
+                sort.getField(), sort.getDirection());
+        page.setPageNumber(pageNumber);
+        return page;
     }
 
 }

@@ -12,6 +12,8 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.services.ComputerService;
+import com.excilys.cdb.util.PageRequest;
+import com.excilys.cdb.util.Sort;
 
 /**
  * Servlet implementation class Home.
@@ -23,7 +25,6 @@ public class Home extends HttpServlet {
     private static ComputerMapper computerMapper;
     private int limit;
     private int pageNumber;
-    private boolean asc;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -43,44 +44,13 @@ public class Home extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         Page<Computer> page;
 
-        // get request parameters
-        String paramLimit = request.getParameter("limit");
-        String paramPage = request.getParameter("page");
-        String paramSearch = request.getParameter("search");
-        String paramOrder = request.getParameter("order");
-        String paramAsc = request.getParameter("asc");
+        // parsing request
+        PageRequest pageRequest = new PageRequest(request);
 
-        if (paramLimit != null && !paramLimit.equals("")) {
-            limit = Integer.parseInt(paramLimit);
-        } else {
-            limit = 10;
-        }
-
-        if (paramPage != null && !paramPage.equals("")) {
-            pageNumber = Integer.parseInt(paramPage);
-        } else {
-            pageNumber = 0;
-        }
-
-        if (paramSearch == null) {
-            paramSearch = "";
-        }
-        if (paramOrder == null) {
-            paramOrder = "";
-        }
-        if (paramAsc == null || paramAsc.equals("true")) {
-            page = computerService.searchByName(paramSearch, pageNumber * limit,
-                    limit, paramOrder, true);
-            asc = false;
-        } else {
-            page = computerService.searchByName(paramSearch, pageNumber * limit,
-                    limit, paramOrder, false);
-            asc = true;
-        }
-
-        // page construction
-        // page = computerService.getComputerList(pageNumber, limit);
-
+        // get request results
+        page = computerService.getPage(pageRequest);
+        limit = page.getLimit();
+        pageNumber = page.getPageNumber();
         // Mapping into DTO
         Page.Builder<ComputerDTO> dtoPageBuilder = new Page.Builder<ComputerDTO>(
                 page.getNbResults()).pageNumber(pageNumber).limit(limit);
@@ -88,14 +58,18 @@ public class Home extends HttpServlet {
         dtoPage.setList(computerMapper.convertPageList(page.getList()));
 
         // attach attributes to request
+        String paramSearch = pageRequest.getSearch();
         request.setAttribute("pageNumber", pageNumber);
         request.setAttribute("limit", limit);
         request.setAttribute("search", paramSearch);
-        request.setAttribute("order", paramOrder);
-        request.setAttribute("asc", asc);
-        request.setAttribute("computersCount",
-                computerService.getSearchedCount(paramSearch));
+        Sort sort = pageRequest.getSorting();
+        request.setAttribute("order", sort.getField());
+        request.setAttribute("asc", sort.getDirection()); // TODO check field to
+                                                          // decide direction
+        request.setAttribute("computersCount", page.getNbResults());
         request.setAttribute("page", dtoPage);
+        // TODO tmp
+        request.setAttribute("nbPages", page.getNbPages());
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
                 response);
 

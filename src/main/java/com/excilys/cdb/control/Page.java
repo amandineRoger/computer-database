@@ -12,10 +12,6 @@ public class Page<T> {
         return nbPages;
     }
 
-    public void setNbPages(int nbPages) {
-        this.nbPages = nbPages;
-    }
-
     public void setNbResults(int nbResults) {
         this.nbResults = nbResults;
     }
@@ -94,7 +90,7 @@ public class Page<T> {
          * Page Builder constructor.
          *
          * @param count
-         *            required param to build a page
+         *            required parameter to build a page
          */
         public Builder(int count) {
             this.nbResults = count;

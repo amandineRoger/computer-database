@@ -287,49 +287,24 @@ public enum ComputerDAO implements UtilDate {
      * @return all computers which name contains search
      */
     public List<Computer> findByName(String search, int offset, int limit,
-            String order, boolean asc) {
+            String order, String asc) {
         LOGGER.debug("f_findByName");
         List<Computer> computers = new ArrayList<>();
 
-        // prepare query
-        String request = null;
-        switch (order) {
-            case "name":
-                request = "c.name";
-                break;
-            case "introduced":
-                request = "c.introduced";
-                break;
-            case "discontinued":
-                request = "c.discontinued";
-                break;
-            case "company_id":
-                request = "o.id";
-                break;
-            case "id":
-            default:
-                request = "c.id";
-                break;
-        }
-        if (!asc) {
-            request = String.format(FIND_BY_NAME, request, "DESC");
-        } else {
-            request = String.format(FIND_BY_NAME, request, "ASC");
-        }
-
-        // connect = singleConnect.getConnection();
         manager.init();
         connect = manager.get();
         PreparedStatement ps = null;
         ResultSet results = null;
 
+        // prepare query
+        String request = String.format(FIND_BY_NAME, order, asc);
+
         try {
-            // query execution
             ps = connect.prepareStatement(request);
             ps.setString(1, "%" + search + "%");
             ps.setInt(2, offset);
             ps.setInt(3, limit);
-
+            // query execution
             results = ps.executeQuery();
             manager.commit();
             // Mapping
@@ -341,7 +316,6 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
             manager.close();
         }
         return computers;
@@ -361,7 +335,6 @@ public enum ComputerDAO implements UtilDate {
         ResultSet results = null;
 
         try {
-            // connect = singleConnect.getConnection();
             manager.init();
             connect = manager.get();
             ps = connect.prepareStatement(COUNT_SEARCH_RESULT);
@@ -378,14 +351,13 @@ public enum ComputerDAO implements UtilDate {
         } finally {
             singleConnect.closeObject(ps);
             singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
             manager.close();
         }
         return count;
     }
 
     /**
-     * Delete all computers which are provided by a company
+     * Delete all computers which are provided by a company.
      *
      * @param companyId
      *            the id of the company
