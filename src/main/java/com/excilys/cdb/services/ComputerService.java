@@ -1,6 +1,5 @@
 package com.excilys.cdb.services;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.excilys.cdb.control.Page;
@@ -8,7 +7,6 @@ import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.util.PageRequest;
 import com.excilys.cdb.util.Sort;
-import com.excilys.cdb.util.UtilDate;
 
 public enum ComputerService {
     INSTANCE;
@@ -113,44 +111,6 @@ public enum ComputerService {
      */
     public long getCount() {
         return computerDAO.getCount();
-    }
-
-    /**
-     * Back validation to add or update a computer in DB.
-     *
-     * @param computer
-     *            the computer to test
-     * @return true if the computer is valid, false else
-     */
-    public boolean validateComputer(Computer computer) {
-        boolean check = true;
-        // Validate name
-        String name = computer.getName();
-        if (name == null || name.equals("")) {
-            check = false;
-        }
-
-        // validate dates
-        LocalDate intro = computer.getIntroduced();
-        LocalDate disco = computer.getDiscontinued();
-
-        if (intro != null && disco != null) {
-            if (!UtilDate.checkDates(intro, disco)) {
-                check = false;
-            }
-        } else {
-            if (intro != null) {
-                if (!UtilDate.checkDBCompat(intro)) {
-                    check = false;
-                }
-            }
-            if (disco != null) {
-                if (!UtilDate.checkDBCompat(disco)) {
-                    check = false;
-                }
-            }
-        }
-        return check;
     }
 
     /**

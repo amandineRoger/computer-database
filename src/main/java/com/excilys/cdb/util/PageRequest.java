@@ -3,8 +3,6 @@ package com.excilys.cdb.util;
 import javax.servlet.http.HttpServletRequest;
 
 public class PageRequest {
-    private static final String INT_REGEX = "\\d+";
-
     int pageNumber = 0;
     int limit = 10;
     String search;
@@ -64,11 +62,13 @@ public class PageRequest {
         setSorting(request.getParameter("order"), request.getParameter("asc"));
 
         String paramLimit = request.getParameter("limit");
-        if (paramLimit != null && paramLimit.matches(INT_REGEX)) {
+        if (paramLimit != null
+                && paramLimit.matches(validators.Constants.REGEX_INT)) {
             limit = Integer.parseInt(paramLimit);
         }
         String paramPage = request.getParameter("page");
-        if (paramPage != null && paramPage.matches(INT_REGEX)) {
+        if (paramPage != null
+                && paramPage.matches(validators.Constants.REGEX_INT)) {
             pageNumber = Integer.parseInt(paramPage);
         }
     }

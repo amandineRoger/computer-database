@@ -8,11 +8,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.services.CompanyService;
 import com.excilys.cdb.services.ComputerService;
+import com.excilys.cdb.util.Errors;
 import com.excilys.cdb.util.UtilDate;
+
+import validators.ComputerValidator;
+import validators.DTOValidator;
 
 /**
  * Servlet implementation class AddComputer.
@@ -55,27 +60,41 @@ public class AddComputer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        ComputerDTO dto = new ComputerDTO();
+        dto.setName(request.getParameter("computerName"));
+        dto.setIntroduced(request.getParameter("introduced"));
+        dto.setDiscontinued(request.getParameter("discontinued"));
+        // TODO possible d'avoir company invalide ? (liste déroulante)
 
-        Computer.Builder builder = new Computer.Builder(
-                request.getParameter("computerName"));
-        String tmp = request.getParameter("introduced");
-        if (!tmp.equals("")) {
-            builder.introduced(UtilDate.stringToLocalDate(tmp));
-        }
-        tmp = request.getParameter("discontinued");
-        if (!tmp.equals("")) {
-            builder.discontinued(UtilDate.stringToLocalDate(tmp));
-        }
-        long id = Long.parseLong(request.getParameter("companyId"));
-        if (id > 0) {
-            Company company = companyService.getCompanyById(id);
-            builder.company(company);
+        Errors errors = new Errors();
+        DTOValidator dtoValidator = new DTOValidator(errors);
+        dtoValidator.validate(dto);
+        Computer computer = null;
+
+        if (errors.isEmpty()) {
+            Computer.Builder builder = new Computer.Builder(dto.getName());
+            String tmp = request.getParameter("introduced");
+            if (!tmp.equals("")) {
+                builder.introduced(UtilDate.stringToLocalDate(tmp));
+            }
+            tmp = request.getParameter("discontinued");
+            if (!tmp.equals("")) {
+                builder.discontinued(UtilDate.stringToLocalDate(tmp));
+            }
+            // TODO check in DTOValidation
+            long id = Long.parseLong(request.getParameter("companyId"));
+            if (id > 0) {
+                Company company = companyService.getCompanyById(id);
+                builder.company(company);
+            }
+
+            computer = builder.build();
+            ComputerValidator computerValidator = new ComputerValidator(errors);
+            computerValidator.validate(computer);
         }
 
-        Computer computer = builder.build();
-        if (computer != null && computerService.validateComputer(computer)) {
+        if (computer != null && !errors.isEmpty()) {
             computerService.createComputer(computer);
-
             request.setAttribute("companiesList", companies);
             request.setAttribute("postMessage", "true");
             request.setAttribute("messageLevel", "success");
@@ -85,6 +104,9 @@ public class AddComputer extends HttpServlet {
 
             request.getRequestDispatcher("/WEB-INF/views/addComputer.jsp")
                     .forward(request, response);
+        } else if (!errors.isEmpty()) {
+            request.setAttribute("errorsMap", errors);
+            doGet(request, response);
         } else {
             request.getRequestDispatcher("/WEB-INF/views/500.html")
                     .forward(request, response);
