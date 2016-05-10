@@ -26,9 +26,6 @@ public class ComputerTest {
 
     @Test
     public void testGetId() {
-        /*
-         * long id = computer.getId(); assertNull(id);
-         */
         assertEquals(0, computer.getId());
     }
 

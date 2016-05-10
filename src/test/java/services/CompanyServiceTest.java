@@ -37,36 +37,6 @@ public class CompanyServiceTest {
         assertNotNull(service);
     }
 
-    /*
-     * @Test
-     * 
-     * public void testGetCompanyList() { initialize(); page =
-     * service.getCompanyList(); assertNotNull(page.getList());
-     * assertTrue(page.getList().size() <= page.getLimit()); assertEquals(0,
-     * page.getPageNumber());
-     *
-     * }
-     */
-
-    /*
-     * @Test public void testGetNextPage() { initialize(); page =
-     * service.getCompanyList();
-     *
-     * if (page.getNbPages() > 1) { company = page.getList().get(0); page =
-     * service.getNextPage(); assertNotNull(page.getList());
-     * assertTrue(page.getList().size() <= page.getLimit()); assertEquals(1,
-     * page.getPageNumber()); another = page.getList().get(0);
-     * assertNotEquals(company, another); }
-     *
-     * }
-     *
-     * @Test public void testGetPreviousPage() { initialize();
-     * testGetNextPage(); page = service.getPreviousPage();
-     * assertNotNull(page.getList()); assertEquals(0, page.getPageNumber()); if
-     * (page.getNbPages() > 1) { assertNotEquals(company, another); another =
-     * page.getList().get(0); assertEquals(company, another); } }
-     */
-
     @Test
     public void testGetCompanyById() {
         initialize();
@@ -75,5 +45,9 @@ public class CompanyServiceTest {
         // test on company name ?
 
     }
+
+    /*
+     * TODO tests: - getAllCompanies - getCount - deleteCompany
+     */
 
 }

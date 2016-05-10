@@ -163,4 +163,8 @@ public class ComputerServiceTest {
 
     }
 
+    /*
+     * TODO tests: getCount,searchByName, getPage
+     */
+
 }

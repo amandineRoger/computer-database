@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.excilys.cdb.control.ConnectionManager;
-import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.DAOException;
@@ -14,7 +13,6 @@ public enum CompanyService {
     INSTANCE;
 
     private static CompanyDAO companyDAO;
-    private Page<Company> currentPage;
     private int nbItems;
     private static ConnectionManager manager;
 
@@ -29,17 +27,6 @@ public enum CompanyService {
     }
 
     /**
-     * Get paginated results of Company list.
-     *
-     * @return page which contains Page.NUMBER_OF_RESULTS Companies
-     */
-    public Page<Company> getCompanyList() {
-        // currentPage = new Page<>(companyDAO.getCount());
-        getPageContent();
-        return currentPage;
-    }
-
-    /**
      * Get all companies.
      *
      * @return List of all companies in DB
@@ -47,41 +34,6 @@ public enum CompanyService {
     public List<Company> getAllCompanies() {
         List<Company> companies = companyDAO.getAllCompanyList();
         return companies;
-    }
-
-    /**
-     * Get the next page of results.
-     *
-     * @return the next Page.NUMBER_OF_RESULTS Companies
-     */
-    public Page<Company> getNextPage() {
-        currentPage.next();
-        getPageContent();
-        return currentPage;
-    }
-
-    /**
-     * Get the previous page of results.
-     *
-     * @return the previous Page.NUMBER_OF_RESULTS Companies
-     */
-    public Page<Company> getPreviousPage() {
-        currentPage.previous();
-        getPageContent();
-        return currentPage;
-    }
-
-    /**
-     * set companies in page list.
-     */
-    public void getPageContent() {
-        int i = currentPage.getPageNumber();
-        int limit = currentPage.getLimit();
-        currentPage.setList(companyDAO.getCompanyList(i * limit, limit));
-    }
-
-    public Page<Company> getCurrentPage() {
-        return currentPage;
     }
 
     /**
@@ -112,23 +64,16 @@ public enum CompanyService {
      *            id of the company to delete
      */
     public void deleteCompany(long id) {
-        // companyDAO.deleteCompany(id);
-        // ConnectionFactory singleConnect = ConnectionFactory.INSTANCE;
-        // Connection connect = singleConnect.getConnection();
         manager.init();
         Connection connect = manager.get();
         try {
-            // connect.setAutoCommit(false);
-
             ComputerDAO computerDAO = ComputerDAO.INSTANCE;
             computerDAO.deleteComputersByCompany(id, connect);
             companyDAO.deleteCompany(id, connect);
             manager.commit();
-            // connect.commit();
         } catch (DAOException e) {
             manager.rollback();
         } finally {
-            // singleConnect.closeObject(connect);
             manager.close();
         }
     }

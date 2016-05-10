@@ -23,7 +23,6 @@ public class CompanyTest {
 
     @Test
     public void testGetId() {
-        // assertNull(company.getId());
         assertEquals(0, company.getId());
     }
 
