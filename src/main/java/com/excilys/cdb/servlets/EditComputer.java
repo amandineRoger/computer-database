@@ -85,8 +85,8 @@ public class EditComputer extends HttpServlet {
         }
 
         Computer computer = builder.build();
-
-        if (computer != null && computerService.validateComputer(computer)) {
+        // TODO build dto, validateDTO, map, validate computer, update
+        if (computer != null /* && computerService.validateComputer(computer) */) {
             computer.setId(id);
             computerService.updateComputer(computer);
 

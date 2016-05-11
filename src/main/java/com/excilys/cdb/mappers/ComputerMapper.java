@@ -192,4 +192,29 @@ public enum ComputerMapper implements AbstractMapper<Computer> {
         }
         return dtos;
     }
+
+    public Computer dtoToComputer(ComputerDTO dto) {
+        String tmp = dto.getName();
+        Computer.Builder builder = new Computer.Builder(tmp);
+
+        tmp = dto.getIntroduced();
+        if (tmp != null && !tmp.trim().isEmpty()) {
+            builder.introduced(UtilDate.stringToLocalDate(tmp));
+        }
+
+        tmp = dto.getDiscontinued();
+        if (tmp != null && !tmp.trim().isEmpty()) {
+            builder.discontinued(UtilDate.stringToLocalDate(tmp));
+        }
+
+        tmp = dto.getCompanyId();
+        if (tmp != null && !tmp.trim().isEmpty()) {
+            Company c = new Company();
+            c.setId(Long.parseLong(tmp));
+            c.setName(dto.getCompanyName());
+            builder.company(c);
+        }
+
+        return builder.build();
+    }
 }

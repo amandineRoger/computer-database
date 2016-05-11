@@ -42,10 +42,11 @@ public class Master {
                 break;
             case 2:
                 // get companies list
-                TerminalView.displayResults(
-                        companyService.getCompanyList().getList()); // FIXME
-                                                                    // implements
-                                                                    // displayPage
+                /*
+                 * TerminalView.displayResults(
+                 * companyService.getCompanyList().getList());
+                 */ // FIXME implements displayPage
+                TerminalView.displayResults(companyService.getAllCompanies());
                 break;
             case 3:
                 // get computer details
