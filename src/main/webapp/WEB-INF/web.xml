@@ -36,4 +36,8 @@
     <servlet-name>DeleteComputer</servlet-name>
     <url-pattern>/delete</url-pattern>
   </servlet-mapping>
+
+    <listener>
+      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 </web-app>

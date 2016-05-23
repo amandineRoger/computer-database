@@ -5,6 +5,8 @@ import java.util.InputMismatchException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
@@ -12,8 +14,12 @@ import com.excilys.cdb.services.CompanyService;
 import com.excilys.cdb.services.ComputerService;
 
 public class Master {
-    private static ComputerService computerService = ComputerService.INSTANCE;
-    private static CompanyService companyService = CompanyService.INSTANCE;
+    @Autowired
+    @Qualifier("computerService")
+    private ComputerService computerService;
+    @Autowired
+    @Qualifier("companyService")
+    private CompanyService companyService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 
@@ -24,7 +30,7 @@ public class Master {
      *            user entry from keyboard
      * @return boolean true if command is valid, false otherwise
      */
-    public static boolean menuManager(int command) {
+    public boolean menuManager(int command) {
         LOGGER.debug("f_menuManager( {} )", command);
         boolean commandOk = true;
         long id;
@@ -110,7 +116,7 @@ public class Master {
      *
      * @return computer entity which was just created
      */
-    public static Computer getComputerFromUser() {
+    public Computer getComputerFromUser() {
         LOGGER.debug("f_getComputerFromUser");
 
         System.out.println(
@@ -149,7 +155,7 @@ public class Master {
      *
      * @return LocalDate which was just created
      */
-    private static LocalDate getDateFromUser() {
+    private LocalDate getDateFromUser() {
         LOGGER.debug("f_getDateFromUser");
         LocalDate date = null;
         System.out.print(" *   : year ");
@@ -181,7 +187,7 @@ public class Master {
      *            which type of treatment is waited for the integer
      * @return wanted value
      */
-    private static int getIntFromUser(int type) {
+    private int getIntFromUser(int type) {
         LOGGER.debug("f_getIntFromUser");
         int value = 0;
         boolean formatOK = false;
@@ -247,7 +253,7 @@ public class Master {
      *
      * @return the computer which was updated (with modifications)
      */
-    public static Computer getComputerUpdateFromUser() {
+    public Computer getComputerUpdateFromUser() {
         LOGGER.debug("f_getComputerUpdateFromUser");
         System.out.println(
                 "*** Computer update : Please insert following informations ...");

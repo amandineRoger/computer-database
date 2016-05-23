@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Page<T> {
     private int limit = 10;
-    private int nbResults;
+    private long nbResults;
     private int nbPages;
     private int pageNumber = 0;
 
@@ -12,13 +12,13 @@ public class Page<T> {
         return nbPages;
     }
 
-    public void setNbResults(int nbResults) {
+    public void setNbResults(long nbResults) {
         this.nbResults = nbResults;
     }
 
     private List<T> list;
 
-    public int getNbResults() {
+    public long getNbResults() {
         return nbResults;
     }
 
@@ -83,17 +83,17 @@ public class Page<T> {
     public static class Builder<T> {
         // params
         private int limit = 10;
-        private int nbResults;
+        private long nbResults;
         private int pageNumber = 0;
 
         /**
          * Page Builder constructor.
          *
-         * @param count
+         * @param nbItem
          *            required parameter to build a page
          */
-        public Builder(int count) {
-            this.nbResults = count;
+        public Builder(long nbItem) {
+            this.nbResults = nbItem;
         }
 
         /**

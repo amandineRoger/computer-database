@@ -6,13 +6,19 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.services.CompanyService;
 
+@ContextConfiguration("/home/excilys/workspace/computer-database/src/main/webapp/WEB-INF/applicationContext.xml")
 public class CompanyServiceTest {
 
+    @Autowired
+    @Qualifier("companyService")
     CompanyService service;
     Page<Company> page;
     Company company;
@@ -27,7 +33,7 @@ public class CompanyServiceTest {
     }
 
     private void initialize() {
-        service = CompanyService.INSTANCE;
+        // service = CompanyService.INSTANCE;
     }
 
     @Test

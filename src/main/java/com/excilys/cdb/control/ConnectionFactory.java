@@ -8,24 +8,26 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-public enum ConnectionFactory {
-    INSTANCE;
-
+@Component("connectionFactory")
+@Scope("singleton")
+public class ConnectionFactory {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ConnectionFactory.class);
 
-    private static final String PROPERTIES_FILE = "sql.properties";
-    private static String url;
-    private static String user;
-    private static String password;
+    private final String PROPERTIES_FILE = "sql.properties";
+    private String url;
+    private String user;
+    private String password;
 
     // Attributes
-    private static HikariDataSource poolSql;
+    private HikariDataSource poolSql;
 
-    static {
+    public ConnectionFactory() {
         try {
             // Load driver jdbc
             Class.forName("com.mysql.jdbc.Driver");
@@ -38,7 +40,7 @@ public enum ConnectionFactory {
         // Open properties file
         Properties properties = new Properties();
         InputStream propertiesFile = ConnectionFactory.class.getClassLoader()
-                .getResourceAsStream(ConnectionFactory.PROPERTIES_FILE);
+                .getResourceAsStream(PROPERTIES_FILE);
         try {
             properties.load(propertiesFile);
         } catch (IOException e) {
@@ -54,19 +56,16 @@ public enum ConnectionFactory {
         password = properties.getProperty("PASSWORD");
 
         // init connection pool
-        ConnectionFactory.poolSql = new HikariDataSource();
-        ConnectionFactory.poolSql.setJdbcUrl(url);
-        ConnectionFactory.poolSql.setUsername(user);
-        ConnectionFactory.poolSql.setPassword(password);
-        // set chache of prepStmts (with recommended value from Hikari)
-        ConnectionFactory.poolSql.addDataSourceProperty("cachePrepStmts",
-                "true");
+        poolSql = new HikariDataSource();
+        poolSql.setJdbcUrl(url);
+        poolSql.setUsername(user);
+        poolSql.setPassword(password);
+        // set cache of prepStmts (with recommended value from Hikari)
+        poolSql.addDataSourceProperty("cachePrepStmts", "true");
         // the default is 25
-        ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSize",
-                "10");
+        poolSql.addDataSourceProperty("prepStmtCacheSize", "10");
         // the default is 256
-        ConnectionFactory.poolSql.addDataSourceProperty("prepStmtCacheSqlLimit",
-                "2048");
+        poolSql.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
     }
 
     // Getters
@@ -79,7 +78,7 @@ public enum ConnectionFactory {
     public Connection getConnection() {
         LOGGER.debug("f_getConnection");
         try {
-            return ConnectionFactory.poolSql.getConnection();
+            return poolSql.getConnection();
         } catch (SQLException e) {
             LOGGER.error("SingleConnect says : SQLException in getConnection "
                     + e.getMessage());
@@ -103,6 +102,12 @@ public enum ConnectionFactory {
         } catch (Exception e) {
             LOGGER.error("Impossible to close object! _ " + e.getMessage());
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        poolSql.close();
+        super.finalize();
     }
 
 }

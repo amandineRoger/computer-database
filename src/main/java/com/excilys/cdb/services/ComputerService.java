@@ -2,28 +2,34 @@ package com.excilys.cdb.services;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.util.PageRequest;
 import com.excilys.cdb.util.Sort;
 
-public enum ComputerService {
-    INSTANCE;
+@Service("computerService")
+@Scope("singleton")
+public class ComputerService {
+    @Autowired
+    @Qualifier("computerDAO")
+    private ComputerDAO computerDAO;
+    private long nbItem;
 
-    private static ComputerDAO computerDAO;
-    private int nbItem;
-
-    public int getNbItem() {
+    public long getNbItem() {
         return nbItem;
     }
 
-    /**
-     * private constructor for ComputerService (Singleton pattern).
-     */
-    static {
-        computerDAO = ComputerDAO.INSTANCE;
-        INSTANCE.nbItem = computerDAO.getCount();
+    @PostConstruct
+    public void postConstructInit() {
+        nbItem = getCount();
     }
 
     /**

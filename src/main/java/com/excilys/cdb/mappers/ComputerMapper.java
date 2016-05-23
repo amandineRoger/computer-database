@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.entities.Company;
@@ -23,8 +25,9 @@ import com.excilys.cdb.util.UtilDate;
  * @author Amandine Roger
  *
  */
-public enum ComputerMapper implements AbstractMapper<Computer> {
-    INSTANCE;
+@Component("computerMapper")
+@Scope("singleton")
+public class ComputerMapper implements AbstractMapper<Computer> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerMapper.class);

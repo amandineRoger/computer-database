@@ -1,4 +1,4 @@
-package validators;
+package com.excilys.cdb.validators;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,16 +41,17 @@ public class ComputerValidator {
                 listDisco = errorsMap.getListForKey(Errors.INTRODUCED);
 
         String s;
-        if (introduced.isAfter(discontinued)) {
+        if (introduced != null && discontinued != null
+                && introduced.isAfter(discontinued)) {
             s = "Introduced date must be before discontinued date";
             listIntro.add(s);
             listDisco.add(s);
         }
         s = "Date must be include between 1970-01-01 and 2037-12-31";
-        if (!UtilDate.checkDBCompat(introduced)) {
+        if (introduced != null && !UtilDate.checkDBCompat(introduced)) {
             listIntro.add(s);
         }
-        if (!UtilDate.checkDBCompat(discontinued)) {
+        if (discontinued != null && !UtilDate.checkDBCompat(discontinued)) {
             listDisco.add(s);
         }
 

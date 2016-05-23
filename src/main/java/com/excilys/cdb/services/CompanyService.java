@@ -3,27 +3,38 @@ package com.excilys.cdb.services;
 import java.sql.Connection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.control.ConnectionManager;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.entities.Company;
 
-public enum CompanyService {
-    INSTANCE;
+@Service("companyService")
+@Scope("singleton")
+public class CompanyService {
 
-    private static CompanyDAO companyDAO;
+    @Autowired
+    @Qualifier("companyDAO")
+    private CompanyDAO companyDAO;
     private int nbItems;
-    private static ConnectionManager manager;
+    @Autowired
+    @Qualifier("connectionManager")
+    private ConnectionManager manager;
 
     public int getNbItems() {
         return nbItems;
     }
 
-    static {
-        companyDAO = CompanyDAO.INSTANCE;
-        INSTANCE.nbItems = companyDAO.getCount();
-        manager = ConnectionManager.INSTANCE;
+    @PostConstruct
+    public void postConstructInit() {
+        nbItems = companyDAO.getCount();
     }
 
     /**
@@ -63,11 +74,14 @@ public enum CompanyService {
      * @param id
      *            id of the company to delete
      */
+    @Autowired
+    @Qualifier("computerDAO")
+    ComputerDAO computerDAO;
+
     public void deleteCompany(long id) {
         manager.init();
         Connection connect = manager.get();
         try {
-            ComputerDAO computerDAO = ComputerDAO.INSTANCE;
             computerDAO.deleteComputersByCompany(id, connect);
             companyDAO.deleteCompany(id, connect);
             manager.commit();
@@ -75,6 +89,7 @@ public enum CompanyService {
             manager.rollback();
         } finally {
             manager.close();
+            computerDAO = null;
         }
     }
 

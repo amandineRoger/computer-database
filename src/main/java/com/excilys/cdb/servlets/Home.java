@@ -2,10 +2,15 @@ package com.excilys.cdb.servlets;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dto.ComputerDTO;
@@ -21,19 +26,14 @@ import com.excilys.cdb.util.Sort;
 
 public class Home extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static ComputerService computerService;
-    private static ComputerMapper computerMapper;
+    @Autowired
+    @Qualifier("computerService")
+    private ComputerService computerService;
+    @Autowired
+    @Qualifier("computerMapper")
+    private ComputerMapper computerMapper;
     private int limit;
     private int pageNumber;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Home() {
-        super();
-        computerService = ComputerService.INSTANCE;
-        computerMapper = ComputerMapper.INSTANCE;
-    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -73,6 +73,13 @@ public class Home extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request,
                 response);
 
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     /**

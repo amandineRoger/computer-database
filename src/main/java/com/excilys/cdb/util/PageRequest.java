@@ -63,12 +63,12 @@ public class PageRequest {
 
         String paramLimit = request.getParameter("limit");
         if (paramLimit != null
-                && paramLimit.matches(validators.Constants.REGEX_INT)) {
+                && paramLimit.matches(com.excilys.cdb.validators.Constants.REGEX_INT)) {
             limit = Integer.parseInt(paramLimit);
         }
         String paramPage = request.getParameter("page");
         if (paramPage != null
-                && paramPage.matches(validators.Constants.REGEX_INT)) {
+                && paramPage.matches(com.excilys.cdb.validators.Constants.REGEX_INT)) {
             pageNumber = Integer.parseInt(paramPage);
         }
     }

@@ -1,4 +1,4 @@
-package validators;
+package com.excilys.cdb.validators;
 
 public class Constants {
     public static final String REGEX_INT = "\\d+";

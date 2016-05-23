@@ -2,10 +2,15 @@ package com.excilys.cdb.servlets;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.cdb.services.ComputerService;
 
@@ -15,15 +20,9 @@ import com.excilys.cdb.services.ComputerService;
 
 public class DeleteComputer extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static ComputerService computerService;
-
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeleteComputer() {
-        super();
-        computerService = ComputerService.INSTANCE;
-    }
+    @Autowired
+    @Qualifier("computerService")
+    private ComputerService computerService;
 
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -48,6 +47,13 @@ public class DeleteComputer extends HttpServlet {
         response.sendRedirect("home");
         // request.getRequestDispatcher("home").forward(request, response);
         // //FIXME reste sur /delete
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
 }

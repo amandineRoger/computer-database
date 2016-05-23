@@ -24,8 +24,8 @@ public class CLI {
         while (menuCommand != 0) {
             TerminalView.displayMenu();
             menuCommand = scan.nextInt();
-
-            if (!Master.menuManager(menuCommand)) {
+            Master master = new Master();
+            if (!master.menuManager(menuCommand)) {
                 TerminalView.displayTypingError();
             }
         }

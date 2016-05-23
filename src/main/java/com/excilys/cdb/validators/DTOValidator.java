@@ -1,4 +1,4 @@
-package validators;
+package com.excilys.cdb.validators;
 
 import java.util.List;
 
@@ -74,7 +74,8 @@ public class DTOValidator {
      *            the string date to test
      */
     private void validateDate(String type, String date) {
-        if (date != null && !date.matches(Constants.REGEX_DATE)) {
+        if (date != null && !date.equals("")
+                && !date.matches(Constants.REGEX_DATE)) {
             List<String> list = errorsMap.getListForKey(type);
             list.add("The date format is invalid !");
         }
@@ -87,13 +88,15 @@ public class DTOValidator {
      *            the company id to check
      */
     private void validateCompanyID(String id) {
-        List<String> list = errorsMap.getListForKey(Errors.COMPANY);
-        if (!id.matches(Constants.REGEX_INT)) {
-            list.add("Company ID is not a number !");
-        } else {
-            long tmp = Long.parseLong(id);
-            if (tmp < 1) {
-                list.add("Company ID can't be negative !");
+        if (id != null && !id.equals("")) {
+            List<String> list = errorsMap.getListForKey(Errors.COMPANY);
+            if (!id.matches(Constants.REGEX_INT)) {
+                list.add("Company ID is not a number !");
+            } else {
+                long tmp = Long.parseLong(id);
+                if (tmp < 1) {
+                    list.add("Company ID can't be negative !");
+                }
             }
         }
     }

@@ -10,6 +10,10 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.control.ConnectionFactory;
 import com.excilys.cdb.control.ConnectionManager;
@@ -17,9 +21,9 @@ import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.util.UtilDate;
 
-public enum ComputerDAO implements UtilDate {
-
-    INSTANCE;
+@Repository("computerDAO")
+@Scope("singleton")
+public class ComputerDAO implements UtilDate {
 
     // QUERIES
     private static final String COMPUTER_TABLE = "computer";
@@ -47,16 +51,16 @@ public enum ComputerDAO implements UtilDate {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);
 
-    private static ConnectionFactory singleConnect;
-    private static Connection connect;
-    private static ComputerMapper computerMapper;
-    private static ConnectionManager manager;
-
-    static {
-        singleConnect = ConnectionFactory.INSTANCE;
-        computerMapper = ComputerMapper.INSTANCE;
-        manager = ConnectionManager.INSTANCE;
-    }
+    @Autowired
+    @Qualifier("connectionFactory")
+    private ConnectionFactory singleConnect;
+    private Connection connect;
+    @Autowired
+    @Qualifier("computerMapper")
+    private ComputerMapper computerMapper;
+    @Autowired
+    @Qualifier("connectionManager")
+    private ConnectionManager manager;
 
     /**
      * Get computers from select request.

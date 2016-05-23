@@ -10,19 +10,25 @@ import java.time.LocalDate;
 
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.services.ComputerService;
 
+@ContextConfiguration("/home/excilys/workspace/computer-database/src/main/webapp/WEB-INF/applicationContext.xml")
 public class ComputerServiceTest {
+    @Autowired
+    @Qualifier("computerService")
     ComputerService service;
     Page<Computer> page;
     Computer computer;
     Computer another;
 
     private void initialize() {
-        service = ComputerService.INSTANCE;
+        // service = ComputerService.INSTANCE;
     }
 
     @After
