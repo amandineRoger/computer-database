@@ -26,15 +26,6 @@
 		<mysql.version>5.1.38</mysql.version>
 		<java.version>1.8</java.version>
 		<spring.version>4.2.6.RELEASE</spring.version>
-
-		<!-- groupId -->
-		<junit.id>junit</junit.id>
-		<mockito.id>org.mockito</mockito.id>
-		<selenium.id>org.seleniumhq.selenium</selenium.id>
-		<slf4j.id>org.slf4j</slf4j.id>
-		<logback.id>ch.qos.logback</logback.id>
-		<servlet.id>javax.servlet</servlet.id>
-		<spring.id>org.springframework</spring.id>
 	</properties>
 
 	<dependencies>
@@ -55,19 +46,19 @@
 
 		<!-- Selenium -->
 		<dependency>
-			<groupId>${selenium.id}</groupId>
+			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>2.53.0</version>
 		</dependency>
 		<dependency>
-			<groupId>${selenium.id}</groupId>
+			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-htmlunit-driver</artifactId>
 			<version>2.52.0</version>
 		</dependency>
 
 		<!-- Logs -->
 		<dependency>
-			<groupId>${slf4j.id}</groupId>
+			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
@@ -79,21 +70,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${slf4j.id}</groupId>
+			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>${logback.id}</groupId>
+			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>${logback.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>${logback.id}</groupId>
+			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 			<scope>runtime</scope>
@@ -159,6 +150,12 @@
 	        <artifactId>spring-jdbc</artifactId>
 	        <version>${spring.version}</version>
         </dependency>
+        
+        <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

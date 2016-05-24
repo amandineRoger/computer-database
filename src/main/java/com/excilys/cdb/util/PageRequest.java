@@ -1,6 +1,8 @@
 package com.excilys.cdb.util;
 
-import javax.servlet.http.HttpServletRequest;
+import static com.excilys.cdb.validators.Constants.REGEX_INT;
+
+import java.util.Map;
 
 public class PageRequest {
     int pageNumber = 0;
@@ -50,26 +52,30 @@ public class PageRequest {
     }
 
     /**
-     * Page request constructor: parse an HttpServletRequest and create a
+     * Page request constructor: parse a requestMap from Controller and create a
      * PageRequest.
      *
-     * @param request
-     *            the HttpServletRequest to parse
+     * @param requestMap
+     *            the request Map from controller
      */
-    public PageRequest(HttpServletRequest request) {
-        search = request.getParameter("search");
+    public PageRequest(Map<String, String> requestMap) {
+        // Search field
+        search = requestMap.get("search");
         search = search == null ? "" : search;
-        setSorting(request.getParameter("order"), request.getParameter("asc"));
 
-        String paramLimit = request.getParameter("limit");
-        if (paramLimit != null
-                && paramLimit.matches(com.excilys.cdb.validators.Constants.REGEX_INT)) {
-            limit = Integer.parseInt(paramLimit);
+        // Sorting fields
+        setSorting(requestMap.get("order"), requestMap.get("asc"));
+
+        // Page params fields
+        String param = requestMap.get("limit");
+        if (param != null && !param.isEmpty() && param.matches(REGEX_INT)) {
+            limit = Integer.parseInt(param);
         }
-        String paramPage = request.getParameter("page");
-        if (paramPage != null
-                && paramPage.matches(com.excilys.cdb.validators.Constants.REGEX_INT)) {
-            pageNumber = Integer.parseInt(paramPage);
+
+        param = requestMap.get("page");
+        if (param != null && !param.isEmpty() && param.matches(REGEX_INT)) {
+            pageNumber = Integer.parseInt(param);
         }
+
     }
 }

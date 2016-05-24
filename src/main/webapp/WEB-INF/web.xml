@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
-  <display-name>computer-database</display-name>
-  <welcome-file-list>
-    <welcome-file>home.jsp</welcome-file>
-  </welcome-file-list>
-  <servlet>
-    <servlet-name>Home</servlet-name>
-    <servlet-class>com.excilys.cdb.servlets.Home</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Home</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>AddComputer</servlet-name>
-    <servlet-class>com.excilys.cdb.servlets.AddComputer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AddComputer</servlet-name>
-    <url-pattern>/newComputer</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>EditComputer</servlet-name>
-    <servlet-class>com.excilys.cdb.servlets.EditComputer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>EditComputer</servlet-name>
-    <url-pattern>/edit</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>DeleteComputer</servlet-name>
-    <servlet-class>com.excilys.cdb.servlets.DeleteComputer</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DeleteComputer</servlet-name>
-    <url-pattern>/delete</url-pattern>
-  </servlet-mapping>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+         id="WebApp_ID" version="3.0">
+    <display-name>computer-database</display-name>
+    <welcome-file-list>
+        <welcome-file>home.jsp</welcome-file>
+    </welcome-file-list>
+    <servlet>
+        <servlet-name>Dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+  
+    <error-page>
+        <error-code>404</error-code>
+        <location>/views/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/views/500.jsp</location>
+    </error-page>
 
     <listener>
       <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
