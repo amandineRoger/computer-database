@@ -7,13 +7,34 @@
 	<version>0.5.0-SNAPSHOT</version>
 	<name>ComputerDatabase Webapp</name>
 	<url>http://maven.apache.org</url>
-
+	<repositories>
+		<repository>
+			<id>version99</id>
+			<!-- highly available repository serving empty artifacts -->
+			<url>http://version99.qos.ch/</url>
+		</repository>
+	</repositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
-		<logbackVersion>1.1.7</logbackVersion>
-		<javaVersion>1.8</javaVersion>
-		<springVersion>4.2.6.RELEASE</springVersion>
+		<!-- versions -->
+		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
+		<selenium.version></selenium.version>
+		<slf4j.version>1.7.21</slf4j.version>
+		<logback.version>1.1.7</logback.version>
+		<mysql.version>5.1.38</mysql.version>
+		<java.version>1.8</java.version>
+		<spring.version>4.2.6.RELEASE</spring.version>
+
+		<!-- groupId -->
+		<junit.id>junit</junit.id>
+		<mockito.id>org.mockito</mockito.id>
+		<selenium.id>org.seleniumhq.selenium</selenium.id>
+		<slf4j.id>org.slf4j</slf4j.id>
+		<logback.id>ch.qos.logback</logback.id>
+		<servlet.id>javax.servlet</servlet.id>
+		<spring.id>org.springframework</spring.id>
 	</properties>
 
 	<dependencies>
@@ -21,55 +42,69 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>1.10.19</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Selenium -->
 		<dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>2.53.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>htmlunit-driver</artifactId>
-            <version>2.20</version>
-        </dependency>
+			<groupId>${selenium.id}</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.53.0</version>
+		</dependency>
+		<dependency>
+			<groupId>${selenium.id}</groupId>
+			<artifactId>selenium-htmlunit-driver</artifactId>
+			<version>2.52.0</version>
+		</dependency>
 
 		<!-- Logs -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
+			<groupId>${slf4j.id}</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.21</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>99-empty</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${slf4j.id}</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${logback.id}</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logbackVersion}</version>
+			<version>${logback.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
+			<groupId>${logback.id}</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logbackVersion}</version>
+			<version>${logback.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+
 
 		<!-- Database -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.38</version>
+			<version>${mysql.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -86,55 +121,47 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-	
+
 		<!-- Connection pool -->
 		<dependency>
-		    <groupId>com.zaxxer</groupId>
-		    <artifactId>HikariCP</artifactId>
-		    <version>2.4.5</version>
-		    <scope>compile</scope>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>2.4.5</version>
 		</dependency>
-		
+
 		<!-- Spring -->
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-core</artifactId>
-		    <version>${springVersion}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-web</artifactId>
-		    <version>${springVersion}</version>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>${springVersion}</version>
-		    <scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-test</artifactId>
-		    <version>${springVersion}</version>
-		</dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-jdbc</artifactId>
+	        <version>${spring.version}</version>
+        </dependency>
 	</dependencies>
-	
+
 	<build>
-	<resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-	
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -152,8 +179,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-					<source>${javaVersion}</source>
-					<target>${javaVersion}</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 		</plugins>
