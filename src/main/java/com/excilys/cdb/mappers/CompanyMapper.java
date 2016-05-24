@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.entities.Company;
@@ -23,7 +24,8 @@ import com.excilys.cdb.entities.Company;
 
 @Component("companyMapper")
 @Scope("singleton")
-public class CompanyMapper implements AbstractMapper<Company> {
+public class CompanyMapper
+        implements AbstractMapper<Company>, RowMapper<Company> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyMapper.class);
@@ -72,4 +74,18 @@ public class CompanyMapper implements AbstractMapper<Company> {
             final Company entity, final boolean hasToBeCreated) {
     }
 
+    @Override
+    public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Company company = null;
+        try {
+            company = new Company();
+            company.setId(rs.getLong(COL_ID));
+            company.setName(rs.getString(COL_NAME));
+        } catch (SQLException e) {
+            LOGGER.error("CompanyMapper says : SQLException in toEntity "
+                    + e.getMessage());
+            // TODO wrap and throw new mapperException();
+        }
+        return company;
+    }
 }

@@ -1,22 +1,25 @@
 package com.excilys.cdb.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.control.ConnectionFactory;
-import com.excilys.cdb.control.ConnectionManager;
+import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
 import com.excilys.cdb.util.UtilDate;
@@ -32,8 +35,10 @@ public class ComputerDAO implements UtilDate {
             + " o ON c.company_id = o.id ";
     private final String ALL_COMPUTERS_P = ALL_COMPUTERS + " LIMIT ?, ?";
     private final String COMPUTER_BY_ID = ALL_COMPUTERS + " WHERE c.id = ?";
-    private final String CREATE_COMPUTER = "INSERT INTO " + COMPUTER_TABLE
-            + " (name, introduced, discontinued, company_id ) VALUES ( ?, ?, ?, ?)";
+    /*
+     * private final String CREATE_COMPUTER = "INSERT INTO " + COMPUTER_TABLE +
+     * " (name, introduced, discontinued, company_id ) VALUES ( ?, ?, ?, ?)";
+     */
     private final String UPDATE_COMPUTER = "UPDATE " + COMPUTER_TABLE
             + " SET name = ?, introduced = ?,"
             + "discontinued = ?, company_id = ? WHERE id = ?";
@@ -52,15 +57,18 @@ public class ComputerDAO implements UtilDate {
             .getLogger(ComputerDAO.class);
 
     @Autowired
-    @Qualifier("connectionFactory")
-    private ConnectionFactory singleConnect;
-    private Connection connect;
-    @Autowired
     @Qualifier("computerMapper")
     private ComputerMapper computerMapper;
+
     @Autowired
-    @Qualifier("connectionManager")
-    private ConnectionManager manager;
+    private JdbcTemplate jdbcTemplate;
+
+    private DataSource dataSource;
+
+    @Autowired
+    public ComputerDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     /**
      * Get computers from select request.
@@ -73,31 +81,18 @@ public class ComputerDAO implements UtilDate {
      */
     public ArrayList<Computer> getComputerList(int offset, int limit) {
         LOGGER.debug("f_getComputerList");
-        // connect = singleConnect.getConnection();
-        manager.init();
-        connect = manager.get();
         ArrayList<Computer> computers = new ArrayList<>(limit);
-        ResultSet results = null;
-        PreparedStatement ps = null;
         try {
+            // Args for query building
+            Object[] args = { offset, limit };
             // query execution
-            ps = connect.prepareStatement(ALL_COMPUTERS_P);
-            ps.setInt(1, offset);
-            ps.setInt(2, limit);
-            results = ps.executeQuery();
-            manager.commit();
-            // Mapping
-            computers = (ArrayList<Computer>) computerMapper
-                    .convertResultSet(results);
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in getComputerList "
-                    + e.getMessage());
+            computers = (ArrayList<Computer>) jdbcTemplate
+                    .query(ALL_COMPUTERS_P, args, computerMapper);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in getComputerList "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return computers;
     }
@@ -111,30 +106,18 @@ public class ComputerDAO implements UtilDate {
      */
     public Computer getComputerDetail(long id) {
         LOGGER.debug("f_getComputerDetail");
-        // connect = singleConnect.getConnection();
-        manager.init();
-        connect = manager.get();
         Computer computer = null;
-        ResultSet results = null;
-        PreparedStatement ps = null;
-
         try {
+            // Args for query building
+            Object[] args = { id };
             // query execution
-            ps = connect.prepareStatement(COMPUTER_BY_ID);
-            ps.setLong(1, id);
-            results = ps.executeQuery();
-            manager.commit();
-            // Mapping
-            computer = computerMapper.toEntity(results);
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in getComputerDetail "
-                    + e.getMessage());
+            computer = jdbcTemplate.queryForObject(COMPUTER_BY_ID, args,
+                    computerMapper);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in getComputerDetail "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return computer;
     }
@@ -149,30 +132,29 @@ public class ComputerDAO implements UtilDate {
      */
     public Computer createComputer(Computer computer) {
         LOGGER.debug("f_createComputer");
-        // connect = singleConnect.getConnection();
-        manager.init();
-        connect = manager.get();
-        PreparedStatement ps = null;
-        ResultSet results = null;
+        // Args for query building
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName(COMPUTER_TABLE).usingGeneratedKeyColumns("id")
+                .usingColumns("name", "introduced", "discontinued",
+                        "company_id");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", computer.getName());
+        LocalDate date = computer.getIntroduced();
+        parameters.put("introduced", date == null ? null : Date.valueOf(date));
+        date = computer.getDiscontinued();
+        parameters.put("discontinued",
+                date == null ? null : Date.valueOf(date));
+        Company company = computer.getCompany();
+        parameters.put("company_id", company == null ? null : company.getId());
         try {
             // Query execution
-            ps = connect.prepareStatement(CREATE_COMPUTER,
-                    Statement.RETURN_GENERATED_KEYS);
-            computerMapper.attachEntityToRequest(ps, computer, true);
-            ps.executeUpdate();
-            manager.commit();
-            results = ps.getGeneratedKeys();
-            results.next();
-            computer.setId(results.getLong(1));
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in createComputer "
-                    + e.getMessage());
+            Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
+            computer.setId(id);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in createComputer "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return computer;
     }
@@ -187,25 +169,21 @@ public class ComputerDAO implements UtilDate {
      */
     public Computer updateComputer(Computer computer) {
         LOGGER.debug("f_updateComputer");
-        // Query execution
-        // connect = singleConnect.getConnection();
-        manager.init();
-        connect = manager.get();
-        PreparedStatement ps = null;
+        Object[] args = { computer.getName(),
+                (computer.getIntroduced() == null ? null
+                        : Date.valueOf(computer.getIntroduced())),
+                (computer.getDiscontinued() == null ? null
+                        : Date.valueOf(computer.getDiscontinued())),
+                (computer.getCompany() == null ? null
+                        : computer.getCompany().getId()),
+                computer.getId() };
         try {
-            ps = connect.prepareStatement(UPDATE_COMPUTER);
-            computerMapper.attachEntityToRequest(ps, computer, false);
-            ps.executeUpdate();
-            manager.commit();
-            connect.close();
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in updateComputer "
-                    + e.getMessage());
+            jdbcTemplate.update(UPDATE_COMPUTER, args);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in updateComputer "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return computer;
     }
@@ -220,24 +198,14 @@ public class ComputerDAO implements UtilDate {
     public Computer deleteComputer(long id) {
         LOGGER.debug("f_deleteComputer");
         Computer computer = getComputerDetail(id);
-        PreparedStatement ps = null;
-        // query execution
+        Object[] args = { id };
         try {
-            // connect = singleConnect.getConnection();
-            manager.init();
-            connect = manager.get();
-            ps = connect.prepareStatement(DELETE_COMPUTER);
-            ps.setLong(1, id);
-            ps.executeUpdate();
-            manager.commit();
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in deleteComputer "
-                    + e.getMessage());
+            jdbcTemplate.update(DELETE_COMPUTER, args);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in deleteComputer "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return computer;
     }
@@ -250,27 +218,12 @@ public class ComputerDAO implements UtilDate {
     public int getCount() {
         LOGGER.debug("f_getCount");
         int count = 0;
-        PreparedStatement ps = null;
-        ResultSet results = null;
         try {
-            // connect = singleConnect.getConnection();
-            manager.init();
-            connect = manager.get();
-            ps = connect.prepareStatement(COUNT_COMPUTERS);
-            results = ps.executeQuery();
-            manager.commit();
-            if (results.next()) {
-                count = results.getInt(1);
-            }
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in getCount "
+            count = jdbcTemplate.queryForObject(COUNT_COMPUTERS, Integer.class);
+        } catch (DataAccessException e) {
+            LOGGER.error("ComputerDAO says : DataAccessException in getCount "
                     + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            // singleConnect.closeObject(connect);
-            manager.close();
         }
         return count;
     }
@@ -293,34 +246,18 @@ public class ComputerDAO implements UtilDate {
     public List<Computer> findByName(String search, int offset, int limit,
             String order, String asc) {
         LOGGER.debug("f_findByName");
-        List<Computer> computers = new ArrayList<>();
-
-        manager.init();
-        connect = manager.get();
-        PreparedStatement ps = null;
-        ResultSet results = null;
-
+        List<Computer> computers = null;
         // prepare query
         String request = String.format(FIND_BY_NAME, order, asc);
-
+        // Args for query building
+        Object[] args = { "%" + search + "%", offset, limit };
         try {
-            ps = connect.prepareStatement(request);
-            ps.setString(1, "%" + search + "%");
-            ps.setInt(2, offset);
-            ps.setInt(3, limit);
             // query execution
-            results = ps.executeQuery();
-            manager.commit();
-            // Mapping
-            computers = computerMapper.convertResultSet(results);
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in findByName "
+            computers = jdbcTemplate.query(request, args, computerMapper);
+        } catch (DataAccessException e) {
+            LOGGER.error("ComputerDAO says : DataAccessException in findByName "
                     + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            manager.close();
         }
         return computers;
     }
@@ -335,27 +272,15 @@ public class ComputerDAO implements UtilDate {
     public int getSearchCount(String search) {
         LOGGER.debug("f_getSearchCount");
         int count = 0;
-        PreparedStatement ps = null;
-        ResultSet results = null;
-
+        Object[] args = { "%" + search + "%" };
         try {
-            manager.init();
-            connect = manager.get();
-            ps = connect.prepareStatement(COUNT_SEARCH_RESULT);
-            ps.setString(1, "%" + search + "%");
-            results = ps.executeQuery();
-            manager.commit();
-            if (results.next()) {
-                count = results.getInt(1);
-            }
-        } catch (SQLException e) {
-            LOGGER.error("ComputerDAO says : SQLException in getSearchCount "
-                    + e.getMessage());
+            count = jdbcTemplate.queryForObject(COUNT_SEARCH_RESULT, args,
+                    Integer.class);
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in getSearchCount "
+                            + e.getMessage());
             // TODO wrap in computerDAOException
-        } finally {
-            singleConnect.closeObject(ps);
-            singleConnect.closeObject(results);
-            manager.close();
         }
         return count;
     }
@@ -365,17 +290,11 @@ public class ComputerDAO implements UtilDate {
      *
      * @param companyId
      *            the id of the company
-     * @param connection
-     *            connection provided by service, (autocommit has to be set to
-     *            false if you want to roll back!)
      */
-    public void deleteComputersByCompany(long companyId,
-            Connection connection) {
-        PreparedStatement ps = null;
+    public void deleteComputersByCompany(long companyId) {
+        Object[] args = { companyId };
         try {
-            ps = connection.prepareStatement(DELETE_BY_COMPANY);
-            ps.setLong(1, companyId);
-            int count = ps.executeUpdate();
+            int count = jdbcTemplate.update(DELETE_BY_COMPANY, args);
             if (count > 0) {
                 System.out.println(count + " computers deleted !");
                 LOGGER.debug(count + " computers deleted !");
@@ -385,12 +304,11 @@ public class ComputerDAO implements UtilDate {
                 LOGGER.error("Fail to delete computers with company_id = "
                         + companyId);
             }
-        } catch (SQLException e) {
-            LOGGER.error("SQLException in deleteComputersByCompany "
-                    + e.getMessage());
+        } catch (DataAccessException e) {
+            LOGGER.error(
+                    "ComputerDAO says : DataAccessException in deleteComputersByCompany "
+                            + e.getMessage());
             throw new DAOException();
-        } finally {
-            singleConnect.closeObject(ps);
         }
     }
 }

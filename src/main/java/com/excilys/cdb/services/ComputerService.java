@@ -6,8 +6,8 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.control.Page;
 import com.excilys.cdb.dao.ComputerDAO;
@@ -16,7 +16,7 @@ import com.excilys.cdb.util.PageRequest;
 import com.excilys.cdb.util.Sort;
 
 @Service("computerService")
-@Scope("singleton")
+@Transactional
 public class ComputerService {
     @Autowired
     @Qualifier("computerDAO")

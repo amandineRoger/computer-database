@@ -11,6 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.dto.ComputerDTO;
@@ -27,7 +28,8 @@ import com.excilys.cdb.util.UtilDate;
  */
 @Component("computerMapper")
 @Scope("singleton")
-public class ComputerMapper implements AbstractMapper<Computer> {
+public class ComputerMapper
+        implements AbstractMapper<Computer>, RowMapper<Computer> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerMapper.class);
@@ -219,5 +221,39 @@ public class ComputerMapper implements AbstractMapper<Computer> {
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
+        LOGGER.debug("f_mapRow");
+        long idCompany;
+        Company tmpCompany;
+        Computer tmpComputer = null;
+
+        try {
+            Computer.Builder builder = new Computer.Builder(
+                    rs.getString(COL_NAME));
+            idCompany = rs.getLong(COL_COMPANY_ID);
+            // Company insertion
+            if (idCompany != 0) {
+                tmpCompany = new Company();
+                tmpCompany.setId(idCompany);
+                tmpCompany.setName(rs.getString(COL_COMPANY_NAME));
+                builder.company(tmpCompany);
+            }
+
+            tmpComputer = builder
+                    .introduced(UtilDate.timeStampToLocalDate(
+                            rs.getTimestamp(COL_INTRODUCED)))
+                    .discontinued(UtilDate.timeStampToLocalDate(
+                            rs.getTimestamp(COL_DISCONTINUED)))
+                    .build();
+            tmpComputer.setId(rs.getLong(COL_ID));
+        } catch (SQLException e) {
+            LOGGER.error("ComputerMapper says : SQLException in mapRow "
+                    + e.getMessage());
+            // TODO wrap and throw new mapperException();
+        }
+        return tmpComputer;
     }
 }

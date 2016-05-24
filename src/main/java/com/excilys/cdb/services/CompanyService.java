@@ -1,32 +1,27 @@
 package com.excilys.cdb.services;
 
-import java.sql.Connection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.cdb.control.ConnectionManager;
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
 import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.entities.Company;
 
 @Service("companyService")
-@Scope("singleton")
+@Transactional
 public class CompanyService {
 
     @Autowired
     @Qualifier("companyDAO")
     private CompanyDAO companyDAO;
     private int nbItems;
-    @Autowired
-    @Qualifier("connectionManager")
-    private ConnectionManager manager;
 
     public int getNbItems() {
         return nbItems;
@@ -79,16 +74,14 @@ public class CompanyService {
     ComputerDAO computerDAO;
 
     public void deleteCompany(long id) {
-        manager.init();
-        Connection connect = manager.get();
+
         try {
-            computerDAO.deleteComputersByCompany(id, connect);
-            companyDAO.deleteCompany(id, connect);
-            manager.commit();
+            computerDAO.deleteComputersByCompany(id);
+            companyDAO.deleteCompany(id);
         } catch (DAOException e) {
-            manager.rollback();
+            // rollback ? //FIXME
         } finally {
-            manager.close();
+            // set to null for set computerDAO eligible for gc
             computerDAO = null;
         }
     }
