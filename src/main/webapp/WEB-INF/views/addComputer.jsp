@@ -2,10 +2,11 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="my" tagdir="/WEB-INF/tags/mytags" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
+<title><spring:message code="header.title"/></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="resources/css/bootstrap.min.css" rel="stylesheet"
@@ -18,7 +19,7 @@
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<my:link target="${ pageContext.request.contextPath }/home" baliseClass="navbar-brand">
-			Application - Computer Database </my:link>
+			<spring:message code="header.home"/></my:link>
 		</div>
 	</header>
 
@@ -40,29 +41,29 @@
 					
 					
                     
-                    <h1>Add Computer</h1>
+                    <h1><spring:message code="index.add"/></h1>
 					
 					<form action="newComputer" method="POST">
 						<fieldset>
 							<div class="form-group ">
-								<label class="control-label" for="computerName">Computer name
+								<label class="control-label" for="computerName"><spring:message code="computer.name"/>
 								    <span style="color: red;">*</span>
 								</label>
-								<input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name">
-								<span class="help-block hide" id="errorComputerName">You must specify a name !</span>
+								<input type="text" class="form-control" id="computerName" name="computerName" placeholder='<spring:message code="computer.name"/>'>
+								<span class="help-block hide" id="errorComputerName"><spring:message code="error.name"/></span>
                             </div>
 							<div class="form-group ">
-								<label class="control-label" for="introduced">Introduced date</label> 
-								<input type="date" class="form-control" id="introduced"	name="introduced" placeholder="Introduced date">
-                                <span class="help-block hide" id="errorIntroduced" >Date format must be like YYYY-MM-DD</span>
+								<label class="control-label" for="introduced"><spring:message code="computer.introduced"/></label> 
+								<input type="date" class="form-control" id="introduced"	name="introduced" placeholder='<spring:message code="computer.introduced"/>'>
+                                <span class="help-block hide" id="errorIntroduced" ><spring:message code="error.date"/></span>
 							</div>
 							<div class="form-group">
-								<label class="control-label" for="discontinued">Discontinued date</label>
-								<input type="date" class="form-control" id="discontinued" name="discontinued" placeholder="Discontinued date">
-                                <span class="help-block hide" id="errorDiscontinued" >Date format must be like YYYY-MM-DD</span>
+								<label class="control-label" for="discontinued"><spring:message code="computer.discontinued"/></label>
+								<input type="date" class="form-control" id="discontinued" name="discontinued" placeholder='<spring:message code="computer.discontinued"/>'>
+                                <span class="help-block hide" id="errorDiscontinued" ><spring:message code="error.date"/></span>
 							</div>
 							<div class="form-group">
-								<label for="companyId">Company</label>
+								<label for="companyId"><spring:message code="computer.company"/></label>
 								<select class="form-control" id="companyId" name="companyId">
 									<option value="0">--</option>
 									<c:forEach items="${ companiesList }" var="company">
@@ -73,8 +74,8 @@
 							</div>
 						</fieldset>
 						<div class="actions pull-right">
-							<input type="submit" value="Add" id="submitButton" class="btn btn-primary" disabled="disabled" >
-							or <my:link target="${ pageContext.request.contextPath }/home" baliseClass="btn btn-default"> Cancel</my:link>
+							<input type="submit" value="<spring:message code="confirm.add"/>" id="submitButton" class="btn btn-primary" disabled="disabled" >
+							<spring:message code="confirm.or"/> <my:link target="${ pageContext.request.contextPath }/home" baliseClass="btn btn-default"> <spring:message code="confirm.cancel"/></my:link>
 						</div>
 					</form>
 				</div>

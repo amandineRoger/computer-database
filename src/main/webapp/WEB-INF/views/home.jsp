@@ -2,10 +2,11 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="my" tagdir="/WEB-INF/tags/mytags" %>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
+<title><spring:message code="header.title"/></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
@@ -18,7 +19,9 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-		<a href="home" class="navbar-brand">Application - Computer Database</a>
+		
+		
+		<a href="home" class="navbar-brand"><spring:message code="header.home"/></a>
 			
 		</div>
 	</header>
@@ -27,24 +30,24 @@
 		<div class="container">
 			<h1 id="homeTitle">
 				<c:out value=" ${computersCount}" />
-				Computers found
+				<spring:message code="index.nbComputers"/>
 			</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder='<spring:message code="placeholder.search"/>' /> <input
+							type="submit" id="searchsubmit" value='<spring:message code="index.filter"/>'
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
 					   <my:link baliseClass="btn btn-success" target="${ pageContext.request.contextPath }/newComputer" baliseId="addComputer"> 
-					   Add Computer
+					   <spring:message code="index.add"/>
 					</my:link>
 					<a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						onclick="$.fn.toggleEditMode();"><spring:message code="index.edit"/></a>
 				</div>
 			</div>
 		</div>
@@ -62,23 +65,23 @@
 						<th class="editMode" style="width: 60px; height: 22px;"><input
 							type="checkbox" id="selectall" /> <span
 							style="vertical-align: top;"> - <a href="#"
-								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
+								id="deleteSelected" onclick="$.fn.deleteSelected('<spring:message code="confirm.delete"/>');"> <i
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
 						<th>
-						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="name" asc="${ asc }">Computer name</my:link>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="name" asc="${ asc }"><spring:message code="computer.name"/></my:link>
                         </th>
 						<th> 
-						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="introduced" asc="${ asc }">Introduced date</my:link>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="introduced" asc="${ asc }"><spring:message code="computer.introduced"/></my:link>
 						</th>
 						<!-- Table header for Discontinued Date -->
 						<th>
-						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="discontinued" asc="${ asc }">Discontinued date</my:link>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="discontinued" asc="${ asc }"><spring:message code="computer.discontinued"/></my:link>
 						</th>
 						<!-- Table header for Company -->
 						<th>
-						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="company_id" asc="${ asc }">Company</my:link>
+						  <my:link target="" currentPageNumber="${ pageNumber }" search="${ search }" limit="${ limit }" order="company_id" asc="${ asc }"><spring:message code="computer.company"/></my:link>
 						</th>
 					</tr>
 				</thead>
