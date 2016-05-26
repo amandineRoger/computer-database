@@ -1,9 +1,19 @@
 package com.excilys.cdb.dto;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.excilys.cdb.validators.Constants;
+
 public class ComputerDTO {
     private String id;
+
+    @NotEmpty(message = "error.name")
     private String name;
+    @Pattern(regexp = Constants.REGEX_DATE)
     private String introduced;
+    @Pattern(regexp = Constants.REGEX_DATE)
     private String discontinued;
     private String companyId;
     private String companyName;
