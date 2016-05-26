@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 public class TerminalView {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(TerminalView.class);
+    public static final String CARET_LINE = "--------------------------------------------------------------------------------------------------";
 
     /**
      * Display menu on CLI.
@@ -33,11 +34,11 @@ public class TerminalView {
      * @param list
      *            an ArrayList of Objects
      */
-    public void displayResults(List<?> list) {
+    public void displayList(List<?> list) {
         LOGGER.debug("f_displayResults");
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            System.out.println(list.get(i).toString());
+            System.out.println("| " + list.get(i).toString());
         }
     }
 
@@ -58,6 +59,24 @@ public class TerminalView {
     public void displayTypingError() {
         LOGGER.debug("f_displayTypingError");
         System.out.println("Invalid command ! please retry with valid one !");
+    }
+
+    /**
+     * Display page content with navigation instructions
+     *
+     * @param page
+     *            the page to display
+     */
+    public void displayPage(Page<?> page) {
+        System.out.println(CARET_LINE);
+        System.out.println("| \t\t\t\t\t Page " + (page.getPageNumber() + 1)
+                + " / " + page.getNbPages());
+        System.out.println(CARET_LINE);
+        // Display page content
+        displayList(page.getList());
+        System.out.println(CARET_LINE);
+        System.out.print(
+                "| \t\tType the page number (0 to stop) or +/- to navigate : ");
     }
 
 }

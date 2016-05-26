@@ -13,6 +13,7 @@ import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.services.CompanyService;
 import com.excilys.cdb.services.ComputerService;
+import com.excilys.cdb.validators.Constants;
 
 @Component("master")
 public class Master {
@@ -44,10 +45,12 @@ public class Master {
                 // quit program
                 break;
             case 1:
-                // get computers list
-                terminalView.displayResults(
-                        computerService.getComputerList(0, 10).getList()); // FIXME
-                                                                           // pagination
+                // get first page of computers
+                // Page<Computer> page = computerService.getComputerList(0, 10);
+                // terminalView.displayList(page.getList()); // FIXME
+                // pagination
+                // terminalView.displayPage(page);
+                paginationLoop();
                 break;
             case 2:
                 // get companies list
@@ -55,7 +58,7 @@ public class Master {
                  * TerminalView.displayResults(
                  * companyService.getCompanyList().getList());
                  */ // FIXME implements displayPage
-                terminalView.displayResults(companyService.getAllCompanies());
+                terminalView.displayList(companyService.getAllCompanies());
                 break;
             case 3:
                 // get computer details
@@ -180,8 +183,8 @@ public class Master {
     private static final int COMPANY_ID = 4;
     private static final int COMPUTER_ID = 5;
 
-    private static Company tmpCompany;
-    private static Computer tmpComputer;
+    private Company tmpCompany;
+    private Computer tmpComputer;
 
     /**
      * Manage the integer entry by user, loop while format is not valid.
@@ -310,6 +313,42 @@ public class Master {
         }
 
         return tmpComputer;
+    }
+
+    public void paginationLoop() {
+        boolean keepGoing = true;
+        int pageNumber = 0, pageMax;
+        String userTyping;
+        Page<Computer> page;
+        do {
+            page = computerService.getComputerList(pageNumber, 10);
+            terminalView.displayPage(page);
+            pageMax = page.getNbPages();
+
+            userTyping = CLI.scan.next();
+            if (userTyping.matches(Constants.REGEX_INT)) {
+                pageNumber = Integer.parseInt(userTyping) - 1;
+                if (pageNumber < 0 || pageNumber >= pageMax) {
+                    keepGoing = false;
+                }
+            } else {
+                if (userTyping.trim().equals("+")) {
+                    pageNumber++;
+                    if (pageNumber >= pageMax) {
+                        pageNumber = 0;
+                    }
+                } else if (userTyping.trim().equals("-")) {
+                    pageNumber--;
+                    if (pageNumber < 0) {
+                        pageNumber = pageMax - 1;
+                    }
+                } else {
+                    keepGoing = false;
+                }
+            }
+        } while (keepGoing);
+        System.out.println(TerminalView.CARET_LINE);
+
     }
 
 }
