@@ -62,6 +62,10 @@ public class CompanyService {
         return companyDAO.getCount();
     }
 
+    @Autowired
+    @Qualifier("computerDAO")
+    ComputerDAO computerDAO;
+
     /**
      * Call transaction to delete a company by its id and delete all computers
      * from this company.
@@ -69,10 +73,6 @@ public class CompanyService {
      * @param id
      *            id of the company to delete
      */
-    @Autowired
-    @Qualifier("computerDAO")
-    ComputerDAO computerDAO;
-
     public void deleteCompany(long id) {
 
         try {

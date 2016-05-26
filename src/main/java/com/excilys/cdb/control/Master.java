@@ -7,12 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.services.CompanyService;
 import com.excilys.cdb.services.ComputerService;
 
+@Component("master")
 public class Master {
     @Autowired
     @Qualifier("computerService")
@@ -20,6 +22,7 @@ public class Master {
     @Autowired
     @Qualifier("companyService")
     private CompanyService companyService;
+    private TerminalView terminalView = new TerminalView();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Master.class);
 
@@ -42,7 +45,7 @@ public class Master {
                 break;
             case 1:
                 // get computers list
-                TerminalView.displayResults(
+                terminalView.displayResults(
                         computerService.getComputerList(0, 10).getList()); // FIXME
                                                                            // pagination
                 break;
@@ -52,7 +55,7 @@ public class Master {
                  * TerminalView.displayResults(
                  * companyService.getCompanyList().getList());
                  */ // FIXME implements displayPage
-                TerminalView.displayResults(companyService.getAllCompanies());
+                terminalView.displayResults(companyService.getAllCompanies());
                 break;
             case 3:
                 // get computer details
@@ -63,14 +66,14 @@ public class Master {
                 if (computerEntity == null) {
                     commandOk = false;
                 } else {
-                    TerminalView.displayObject(computerEntity);
+                    terminalView.displayObject(computerEntity);
                 }
                 break;
             case 4:
                 // create computer
                 computerEntity = getComputerFromUser();
                 System.out.println("You just create the following computer : ");
-                TerminalView.displayObject(
+                terminalView.displayObject(
                         computerService.createComputer(computerEntity));
                 computerEntity = null;
                 break;
@@ -78,7 +81,7 @@ public class Master {
                 // update computer
                 computerEntity = getComputerUpdateFromUser();
                 System.out.println("You just update the following computer : ");
-                TerminalView.displayObject(
+                terminalView.displayObject(
                         computerService.updateComputer(computerEntity));
                 computerEntity = null;
                 break;
@@ -93,7 +96,7 @@ public class Master {
                 } else {
                     System.out.println(
                             "You just delete the following computer : ");
-                    TerminalView.displayObject(computerEntity);
+                    terminalView.displayObject(computerEntity);
                 }
                 break;
             case 7:

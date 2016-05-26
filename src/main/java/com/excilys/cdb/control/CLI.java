@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CLI {
     public static Scanner scan = new Scanner(System.in);
@@ -20,15 +23,21 @@ public class CLI {
         scan.useDelimiter("\\n");
         int menuCommand = -1;
 
+        // Get application context
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "applicationContext.xml");
+        Master master = (Master) applicationContext.getBean("master");
+
+        TerminalView terminalView = new TerminalView();
         // Execution loop
         while (menuCommand != 0) {
-            TerminalView.displayMenu();
+            terminalView.displayMenu();
             menuCommand = scan.nextInt();
-            Master master = new Master();
             if (!master.menuManager(menuCommand)) {
-                TerminalView.displayTypingError();
+                terminalView.displayTypingError();
             }
         }
+        ((ConfigurableApplicationContext) applicationContext).close();
         scan.close();
         LOGGER.debug("End of run loop, scanner closed");
     }

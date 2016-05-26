@@ -12,7 +12,7 @@ public class TerminalView {
     /**
      * Display menu on CLI.
      */
-    public static void displayMenu() {
+    public void displayMenu() {
         LOGGER.debug("f_displayMenu");
         System.out.println(" ********  Menu  ******* ");
         System.out.println(" 0 - Quit program");
@@ -33,7 +33,7 @@ public class TerminalView {
      * @param list
      *            an ArrayList of Objects
      */
-    public static void displayResults(List<?> list) {
+    public void displayResults(List<?> list) {
         LOGGER.debug("f_displayResults");
         int size = list.size();
         for (int i = 0; i < size; i++) {
@@ -47,7 +47,7 @@ public class TerminalView {
      * @param o
      *            the object to display
      */
-    public static void displayObject(Object o) {
+    public void displayObject(Object o) {
         LOGGER.debug("f_displayObject");
         System.out.println(o.toString());
     }
@@ -55,7 +55,7 @@ public class TerminalView {
     /**
      * Display error message when user entry was invalid.
      */
-    public static void displayTypingError() {
+    public void displayTypingError() {
         LOGGER.debug("f_displayTypingError");
         System.out.println("Invalid command ! please retry with valid one !");
     }

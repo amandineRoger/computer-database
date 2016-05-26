@@ -6,7 +6,7 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.util.Errors;
 
 /**
- * Validate data format only
+ * Validate data format only.
  *
  * @author Amandine Roger
  *
@@ -14,6 +14,12 @@ import com.excilys.cdb.util.Errors;
 public class DTOValidator {
     private Errors errorsMap;
 
+    /**
+     * Constructor of DTOValidator.
+     *
+     * @param errorsMap
+     *            the map to fill with errors message
+     */
     public DTOValidator(Errors errorsMap) {
         this.errorsMap = errorsMap;
     }

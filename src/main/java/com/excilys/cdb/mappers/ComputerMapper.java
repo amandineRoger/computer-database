@@ -198,6 +198,13 @@ public class ComputerMapper
         return dtos;
     }
 
+    /**
+     * convert a computerDTO into a Computer.
+     *
+     * @param dto
+     *            the computerDTO to convert
+     * @return A computer instance corresponding to the DTO
+     */
     public Computer dtoToComputer(ComputerDTO dto) {
         String tmp = dto.getName();
         Computer.Builder builder = new Computer.Builder(tmp);
