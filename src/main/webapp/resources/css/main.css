@@ -31,3 +31,7 @@ input[type='checkbox'] {
 .hide{
 	display:none;
 }
+
+#flag-fr, #flag-en{
+	width: 30px;
+}

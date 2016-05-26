@@ -19,10 +19,14 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-		
-		
-		<a href="home" class="navbar-brand"><spring:message code="header.home"/></a>
-			
+            <a href="home" class="navbar-brand"><spring:message code="header.home"/></a>
+            <a href="home?lang=fr" class="navbar-brand navbar-right">
+                <img alt="French" src="${pageContext.request.contextPath}/resources/flag-fr.png" id="flag-fr">
+            </a>
+             <a href="home?lang=en" class="navbar-brand navbar-right">
+                <img alt="English" src="${pageContext.request.contextPath}/resources/flag-en.png" id="flag-en">
+            </a>
+            
 		</div>
 	</header>
 
@@ -47,7 +51,7 @@
 					   <spring:message code="index.add"/>
 					</my:link>
 					<a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();"><spring:message code="index.edit"/></a>
+						onclick="$.fn.toggleEditMode('<spring:message code="index.edit"/>','<spring:message code="index.editOn"/>' );"><spring:message code="index.edit"/></a>
 				</div>
 			</div>
 		</div>
