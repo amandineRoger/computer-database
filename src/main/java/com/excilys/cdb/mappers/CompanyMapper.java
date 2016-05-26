@@ -29,10 +29,11 @@ public class CompanyMapper
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyMapper.class);
+    private static final String TAG = "CompanyMapper says _ ";
 
     @Override
     public List<Company> convertResultSet(final ResultSet rs) {
-        LOGGER.debug("f_convertResultSet");
+        LOGGER.debug(TAG + "f_convertResultSet");
         ArrayList<Company> companies = new ArrayList<>();
         Company tmp = null;
         try {
@@ -44,16 +45,15 @@ public class CompanyMapper
             }
         } catch (SQLException e) {
             LOGGER.error(
-                    "CompanyMapper says : SQLException in convertResultSet "
-                            + e.getMessage());
-            // TODO wrap and throw new mapperException();
+                    TAG + "SQLException in convertResultSet " + e.getMessage());
+            throw new MapperException(e);
         }
         return companies;
     }
 
     @Override
     public Company toEntity(final ResultSet rs) {
-        LOGGER.debug("f_convertIntoEntity");
+        LOGGER.debug(TAG + "f_convertIntoEntity");
         Company company = null;
         try {
             if (rs.next()) {
@@ -62,9 +62,8 @@ public class CompanyMapper
                 company.setName(rs.getString(COL_NAME));
             }
         } catch (SQLException e) {
-            LOGGER.error("CompanyMapper says : SQLException in toEntity "
-                    + e.getMessage());
-            // TODO wrap and throw new mapperException();
+            LOGGER.error(TAG + "SQLException in toEntity " + e.getMessage());
+            throw new MapperException(e);
         }
         return company;
     }
@@ -76,15 +75,15 @@ public class CompanyMapper
 
     @Override
     public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
+        LOGGER.debug(TAG + "f_mapRow");
         Company company = null;
         try {
             company = new Company();
             company.setId(rs.getLong(COL_ID));
             company.setName(rs.getString(COL_NAME));
         } catch (SQLException e) {
-            LOGGER.error("CompanyMapper says : SQLException in toEntity "
-                    + e.getMessage());
-            // TODO wrap and throw new mapperException();
+            LOGGER.error(TAG + "SQLException in toEntity " + e.getMessage());
+            throw new MapperException(e);
         }
         return company;
     }

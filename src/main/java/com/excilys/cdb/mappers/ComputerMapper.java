@@ -33,10 +33,11 @@ public class ComputerMapper
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerMapper.class);
+    private static final String TAG = "ComputerMapper says _ ";
 
     @Override
     public final List<Computer> convertResultSet(final ResultSet rs) {
-        LOGGER.debug("f_convertResultSet");
+        LOGGER.debug(TAG + "f_convertResultSet");
         long idCompany;
         Company tmpCompany;
         Computer tmp;
@@ -65,16 +66,15 @@ public class ComputerMapper
             }
         } catch (SQLException e) {
             LOGGER.error(
-                    "ComputerMapper says : SQLException in convertResultSet "
-                            + e.getMessage());
-            // TODO wrap and throw new mapperException();
+                    TAG + "SQLException in convertResultSet " + e.getMessage());
+            throw new MapperException(e);
         }
         return computers;
     }
 
     @Override
     public final Computer toEntity(final ResultSet rs) {
-        LOGGER.debug("f_convertIntoEntity");
+        LOGGER.debug(TAG + "f_convertIntoEntity");
         long idCompany;
         Company tmpCompany;
         Computer tmpComputer = null;
@@ -101,9 +101,8 @@ public class ComputerMapper
                 tmpComputer.setId(rs.getLong(COL_ID));
             }
         } catch (SQLException e) {
-            LOGGER.error("ComputerMapper says : SQLException in toEntity "
-                    + e.getMessage());
-            // TODO wrap and throw new mapperException();
+            LOGGER.error(TAG + "SQLException in toEntity " + e.getMessage());
+            throw new MapperException(e);
         }
         return tmpComputer;
     }
@@ -111,7 +110,7 @@ public class ComputerMapper
     @Override
     public final void attachEntityToRequest(final PreparedStatement ps,
             final Computer entity, final boolean hasToBeCreated) {
-        LOGGER.debug("f_attachEntityToRequest");
+        LOGGER.debug(TAG + "f_attachEntityToRequest");
         try {
             ps.setString(1, entity.getName());
             LocalDate date = entity.getIntroduced();
@@ -138,10 +137,9 @@ public class ComputerMapper
                 ps.setLong(5, entity.getId());
             }
         } catch (SQLException e) {
-            LOGGER.error(
-                    "ComputerMapper says : SQLException in attachEntityToRequest "
-                            + e.getMessage());
-            // TODO wrap and throw new mapperException();
+            LOGGER.error(TAG + "SQLException in attachEntityToRequest "
+                    + e.getMessage());
+            throw new MapperException(e);
         }
     }
 
@@ -153,6 +151,7 @@ public class ComputerMapper
      * @return computerDTO based on computer
      */
     public ComputerDTO computerToDTO(Computer computer) {
+        LOGGER.debug(TAG + "f_computerToDTO ");
         ComputerDTO dto = null;
 
         if (computer != null) {
@@ -184,6 +183,7 @@ public class ComputerMapper
      * @return List of computerDTO
      */
     public List<ComputerDTO> convertPageList(List<Computer> computers) {
+        LOGGER.debug(TAG + "f_convertPage");
         ArrayList<ComputerDTO> dtos = null;
 
         if (computers != null && (!computers.isEmpty())) {
@@ -206,6 +206,7 @@ public class ComputerMapper
      * @return A computer instance corresponding to the DTO
      */
     public Computer dtoToComputer(ComputerDTO dto) {
+        LOGGER.debug(TAG + "f_dtoToComputer");
         String tmp = dto.getName();
         Computer.Builder builder = new Computer.Builder(tmp);
 
@@ -232,7 +233,7 @@ public class ComputerMapper
 
     @Override
     public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
-        LOGGER.debug("f_mapRow");
+        LOGGER.debug(TAG + "f_mapRow");
         long idCompany;
         Company tmpCompany;
         Computer tmpComputer = null;
@@ -257,9 +258,8 @@ public class ComputerMapper
                     .build();
             tmpComputer.setId(rs.getLong(COL_ID));
         } catch (SQLException e) {
-            LOGGER.error("ComputerMapper says : SQLException in mapRow "
-                    + e.getMessage());
-            // TODO wrap and throw new mapperException();
+            LOGGER.error(TAG + "SQLException in mapRow " + e.getMessage());
+            throw new MapperException(e);
         }
         return tmpComputer;
     }
