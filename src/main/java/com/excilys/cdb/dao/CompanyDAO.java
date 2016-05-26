@@ -36,6 +36,7 @@ public class CompanyDAO {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyDAO.class);
+    private static final String TAG = "CompanyDAO says _ ";
 
     @Autowired
     @Qualifier("companyMapper")
@@ -67,7 +68,7 @@ public class CompanyDAO {
      * @return companies from offset+1 to offset+limit+1;
      */
     public List<Company> getCompanyList(final int offset, final int limit) {
-        LOGGER.debug("f_getCompanyList");
+        LOGGER.debug(TAG + "f_getCompanyList");
         List<Company> list = null;
         // ARGS for query building
         Object[] args = { offset, limit };
@@ -75,10 +76,9 @@ public class CompanyDAO {
             // Query execution
             list = jdbcTemplate.query(ALL_COMPANIES_P, args, companyMapper);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "CompanyDAO says : DataAccessException in getCompanyList "
-                            + e.getMessage());
-            // TODO wrap in CompanyDAOException
+            LOGGER.error(TAG + "DataAccessException in getCompanyList "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return list;
     }
@@ -89,15 +89,14 @@ public class CompanyDAO {
      * @return List of all companies
      */
     public List<Company> getAllCompanyList() {
-        LOGGER.debug("f_getAllCompanyList");
+        LOGGER.debug(TAG + "f_getAllCompanyList");
         List<Company> list = null;
         try {
             list = jdbcTemplate.query(ALL_COMPANIES, companyMapper);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "CompanyDAO says : DataAccessException in getAllCompanyList "
-                            + e.getMessage());
-            // TODO wrap in CompanyDAOException
+            LOGGER.error(TAG + "DataAccessException in getAllCompanyList "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return list;
     }
@@ -110,7 +109,7 @@ public class CompanyDAO {
      * @return wanted company
      */
     public Company getCompanyById(long id) {
-        LOGGER.debug("f_getCompanyById");
+        LOGGER.debug(TAG + "f_getCompanyById");
         Company company = null;
         if (id != 0) {
             // Args for query building
@@ -120,9 +119,10 @@ public class CompanyDAO {
                 company = jdbcTemplate.queryForObject(COMPANY_BY_ID, args,
                         companyMapper);
             } catch (DataAccessException e) {
-                System.out.println(
-                        "Company DAO says : DataAccessException in getCompanyById "
+                System.out
+                        .println(TAG + "DataAccessException in getCompanyById "
                                 + e.getMessage());
+                throw new DAOException(e);
             }
         }
         return company;
@@ -134,15 +134,15 @@ public class CompanyDAO {
      * @return number of companies in database
      */
     public int getCount() {
-        LOGGER.debug("f_getCount");
+        LOGGER.debug(TAG + "f_getCount");
         int count = 0;
         try {
             // Query execution
             count = jdbcTemplate.queryForObject(COUNT_COMPANIES, Integer.class);
         } catch (DataAccessException e) {
             System.out.println(
-                    "Company DAO says : DataAccessException in getCount "
-                            + e.getMessage());
+                    TAG + "DataAccessException in getCount " + e.getMessage());
+            throw new DAOException(e);
         }
         return count;
     }
@@ -155,7 +155,7 @@ public class CompanyDAO {
      *            id of the company to delete
      */
     public void deleteCompany(long id) {
-        LOGGER.debug("f_deleteCompany");
+        LOGGER.debug(TAG + "f_deleteCompany");
 
         int count = 0;
         // Args for query building
@@ -166,16 +166,16 @@ public class CompanyDAO {
             if (count > 0) {
                 System.out
                         .println("Company " + id + " was successfully deleted");
-                LOGGER.debug("company " + id + " was successfully deleted");
+                LOGGER.debug(
+                        TAG + "company " + id + " was successfully deleted");
             } else {
                 System.out.println("Fail to delete company " + id);
-                LOGGER.error("Fail to delete company " + id);
+                LOGGER.error(TAG + "Fail to delete company " + id);
             }
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "Company DAO says : DataAccessException in deleteCompany "
-                            + e.getMessage());
-            // TODO wrap in DAOException and throw it
+            LOGGER.error(TAG + "DataAccessException in deleteCompany "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
     }
 }

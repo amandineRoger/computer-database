@@ -27,7 +27,6 @@ import com.excilys.cdb.util.UtilDate;
 @Repository("computerDAO")
 @Scope("singleton")
 public class ComputerDAO implements UtilDate {
-
     // QUERIES
     private static final String COMPUTER_TABLE = "computer";
     private final String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
@@ -55,6 +54,7 @@ public class ComputerDAO implements UtilDate {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);
+    private static final String TAG = "ComputerDAO says _ ";
 
     @Autowired
     @Qualifier("computerMapper")
@@ -86,7 +86,7 @@ public class ComputerDAO implements UtilDate {
      * @return computers from offset+1 to offset+limit+1;
      */
     public ArrayList<Computer> getComputerList(int offset, int limit) {
-        LOGGER.debug("f_getComputerList");
+        LOGGER.debug(TAG + "f_getComputerList");
         ArrayList<Computer> computers = new ArrayList<>(limit);
         try {
             // Args for query building
@@ -95,10 +95,9 @@ public class ComputerDAO implements UtilDate {
             computers = (ArrayList<Computer>) jdbcTemplate
                     .query(ALL_COMPUTERS_P, args, computerMapper);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in getComputerList "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in getComputerList "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return computers;
     }
@@ -111,7 +110,7 @@ public class ComputerDAO implements UtilDate {
      * @return the wanted computer
      */
     public Computer getComputerDetail(long id) {
-        LOGGER.debug("f_getComputerDetail");
+        LOGGER.debug(TAG + "f_getComputerDetail");
         Computer computer = null;
         try {
             // Args for query building
@@ -120,10 +119,9 @@ public class ComputerDAO implements UtilDate {
             computer = jdbcTemplate.queryForObject(COMPUTER_BY_ID, args,
                     computerMapper);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in getComputerDetail "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in getComputerDetail "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return computer;
     }
@@ -137,7 +135,7 @@ public class ComputerDAO implements UtilDate {
      * @return created computer
      */
     public Computer createComputer(Computer computer) {
-        LOGGER.debug("f_createComputer");
+        LOGGER.debug(TAG + "f_createComputer");
         // Args for query building
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName(COMPUTER_TABLE).usingGeneratedKeyColumns("id")
@@ -157,10 +155,9 @@ public class ComputerDAO implements UtilDate {
             Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
             computer.setId(id);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in createComputer "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in createComputer "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return computer;
     }
@@ -174,7 +171,7 @@ public class ComputerDAO implements UtilDate {
      * @return updated computer
      */
     public Computer updateComputer(Computer computer) {
-        LOGGER.debug("f_updateComputer");
+        LOGGER.debug(TAG + "f_updateComputer");
         Object[] args = { computer.getName(),
                 (computer.getIntroduced() == null ? null
                         : Date.valueOf(computer.getIntroduced())),
@@ -186,10 +183,9 @@ public class ComputerDAO implements UtilDate {
         try {
             jdbcTemplate.update(UPDATE_COMPUTER, args);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in updateComputer "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in updateComputer "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return computer;
     }
@@ -202,16 +198,15 @@ public class ComputerDAO implements UtilDate {
      * @return deleted computer
      */
     public Computer deleteComputer(long id) {
-        LOGGER.debug("f_deleteComputer");
+        LOGGER.debug(TAG + "f_deleteComputer");
         Computer computer = getComputerDetail(id);
         Object[] args = { id };
         try {
             jdbcTemplate.update(DELETE_COMPUTER, args);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in deleteComputer "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in deleteComputer "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return computer;
     }
@@ -222,14 +217,14 @@ public class ComputerDAO implements UtilDate {
      * @return number of computers in database
      */
     public int getCount() {
-        LOGGER.debug("f_getCount");
+        LOGGER.debug(TAG + "f_getCount");
         int count = 0;
         try {
             count = jdbcTemplate.queryForObject(COUNT_COMPUTERS, Integer.class);
         } catch (DataAccessException e) {
-            LOGGER.error("ComputerDAO says : DataAccessException in getCount "
-                    + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(
+                    TAG + "DataAccessException in getCount " + e.getMessage());
+            throw new DAOException(e);
         }
         return count;
     }
@@ -251,7 +246,7 @@ public class ComputerDAO implements UtilDate {
      */
     public List<Computer> findByName(String search, int offset, int limit,
             String order, String asc) {
-        LOGGER.debug("f_findByName");
+        LOGGER.debug(TAG + "f_findByName");
         List<Computer> computers = null;
         // prepare query
         String request = String.format(FIND_BY_NAME, order, asc);
@@ -261,9 +256,9 @@ public class ComputerDAO implements UtilDate {
             // query execution
             computers = jdbcTemplate.query(request, args, computerMapper);
         } catch (DataAccessException e) {
-            LOGGER.error("ComputerDAO says : DataAccessException in findByName "
+            LOGGER.error(TAG + "DataAccessException in findByName "
                     + e.getMessage());
-            // TODO wrap in computerDAOException
+            throw new DAOException(e);
         }
         return computers;
     }
@@ -276,17 +271,16 @@ public class ComputerDAO implements UtilDate {
      * @return the number of computers
      */
     public int getSearchCount(String search) {
-        LOGGER.debug("f_getSearchCount");
+        LOGGER.debug(TAG + "f_getSearchCount");
         int count = 0;
         Object[] args = { "%" + search + "%" };
         try {
             count = jdbcTemplate.queryForObject(COUNT_SEARCH_RESULT, args,
                     Integer.class);
         } catch (DataAccessException e) {
-            LOGGER.error(
-                    "ComputerDAO says : DataAccessException in getSearchCount "
-                            + e.getMessage());
-            // TODO wrap in computerDAOException
+            LOGGER.error(TAG + "DataAccessException in getSearchCount "
+                    + e.getMessage());
+            throw new DAOException(e);
         }
         return count;
     }
@@ -298,23 +292,24 @@ public class ComputerDAO implements UtilDate {
      *            the id of the company
      */
     public void deleteComputersByCompany(long companyId) {
+        LOGGER.debug(TAG + "f_deleteComputersByCompany");
         Object[] args = { companyId };
         try {
             int count = jdbcTemplate.update(DELETE_BY_COMPANY, args);
             if (count > 0) {
                 System.out.println(count + " computers deleted !");
-                LOGGER.debug(count + " computers deleted !");
+                LOGGER.debug(TAG + count + " computers deleted !");
             } else {
                 System.out.println("Fail to delete computers with company_id = "
                         + companyId);
-                LOGGER.error("Fail to delete computers with company_id = "
+                LOGGER.error(TAG + "Fail to delete computers with company_id = "
                         + companyId);
             }
         } catch (DataAccessException e) {
             LOGGER.error(
-                    "ComputerDAO says : DataAccessException in deleteComputersByCompany "
+                    TAG + "DataAccessException in deleteComputersByCompany "
                             + e.getMessage());
-            throw new DAOException();
+            throw new DAOException(e);
         }
     }
 }
