@@ -9,9 +9,20 @@
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
+  
+  
+  <appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
+-       <file>debug.log</file>
+-       <encoder>
+-           <pattern>%d{dd/MM - HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
+-           </pattern>
+-       </encoder>
+-   </appender>
+  
+  
 
   <root level="debug">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="DEBUG_FILE" />
   </root>
 
 </configuration>
