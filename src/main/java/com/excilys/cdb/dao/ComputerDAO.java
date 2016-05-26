@@ -65,6 +65,12 @@ public class ComputerDAO implements UtilDate {
 
     private DataSource dataSource;
 
+    /**
+     * ComputerDAO constructor with datasource injection.
+     *
+     * @param dataSource
+     *            autowired datasource
+     */
     @Autowired
     public ComputerDAO(DataSource dataSource) {
         this.dataSource = dataSource;

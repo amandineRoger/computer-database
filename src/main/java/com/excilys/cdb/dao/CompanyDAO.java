@@ -46,6 +46,12 @@ public class CompanyDAO {
 
     private DataSource dataSource;
 
+    /**
+     * CompanyDAO constructor with datasource injection.
+     *
+     * @param dataSource
+     *            autowired datasource
+     */
     @Autowired
     public CompanyDAO(DataSource dataSource) {
         this.dataSource = dataSource;
