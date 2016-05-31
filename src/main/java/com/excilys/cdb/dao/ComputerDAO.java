@@ -1,32 +1,34 @@
 package com.excilys.cdb.dao;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.entities.Company;
 import com.excilys.cdb.entities.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
-import com.excilys.cdb.util.UtilDate;
 
 @Repository("computerDAO")
-@Scope("singleton")
-public class ComputerDAO implements UtilDate {
+public class ComputerDAO implements ComputerDAOInterface {
     // QUERIES
     private static final String COMPUTER_TABLE = "computer";
     private final String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
@@ -60,6 +62,32 @@ public class ComputerDAO implements UtilDate {
     @Qualifier("computerMapper")
     private ComputerMapper computerMapper;
 
+    protected EntityManager entityManager;
+    private CriteriaBuilder criteriaBuilder;
+    private CriteriaQuery<Computer> criteriaQuery;
+    private Root<Computer> rootType;
+    private Metamodel metamodel;
+    private EntityType<Computer> Computer_;
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @PostConstruct
+    public void init() {
+        criteriaBuilder = entityManager.getCriteriaBuilder();
+        criteriaQuery = criteriaBuilder.createQuery(Computer.class);
+        // Define type of results
+        rootType = criteriaQuery.from(Computer.class);
+        metamodel = entityManager.getMetamodel();
+        Computer_ = metamodel.entity(Computer.class);
+    }
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -76,100 +104,49 @@ public class ComputerDAO implements UtilDate {
         this.dataSource = dataSource;
     }
 
-    /**
-     * Get computers from select request.
-     *
-     * @param offset
-     *            offset in request
-     * @param limit
-     *            number of results
-     * @return computers from offset+1 to offset+limit+1;
-     */
-    public ArrayList<Computer> getComputerList(int offset, int limit) {
+    @Override
+    public List<Computer> getComputerList(int offset, int limit) {
         LOGGER.debug(TAG + "f_getComputerList");
-        ArrayList<Computer> computers = new ArrayList<>(limit);
-        try {
-            // Args for query building
-            Object[] args = { offset, limit };
-            // query execution
-            computers = (ArrayList<Computer>) jdbcTemplate
-                    .query(ALL_COMPUTERS_P, args, computerMapper);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in getComputerList "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
+        List<Computer> computers = null;
+
+        criteriaQuery.select(rootType);
+        TypedQuery<Computer> typedQuery = entityManager
+                .createQuery(criteriaQuery).setFirstResult(offset)
+                .setMaxResults(limit);
+
+        computers = typedQuery.getResultList();
+
         return computers;
     }
 
-    /**
-     * Find a computer by its id.
-     *
-     * @param id
-     *            the id of the wanted computer
-     * @return the wanted computer
-     */
+    @Override
     public Computer getComputerDetail(long id) {
         LOGGER.debug(TAG + "f_getComputerDetail");
         Computer computer = null;
-        try {
-            // Args for query building
-            Object[] args = { id };
-            // query execution
-            computer = jdbcTemplate.queryForObject(COMPUTER_BY_ID, args,
-                    computerMapper);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in getComputerDetail "
-                    + e.getMessage());
-            throw new DAOException(e);
+
+        if (id != 0) {
+            criteriaQuery.where(criteriaBuilder
+                    .equal(rootType.get(Computer_.getId(long.class)), id));
+            TypedQuery<Computer> query = entityManager
+                    .createQuery(criteriaQuery);
+            computer = query.getSingleResult();
         }
+
         return computer;
     }
 
-    /**
-     * Create a computer from user entry.
-     *
-     * @param computer
-     *            the entity newly created
-     *
-     * @return created computer
-     */
+    @Override
     public Computer createComputer(Computer computer) {
         LOGGER.debug(TAG + "f_createComputer");
-        // Args for query building
-        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName(COMPUTER_TABLE).usingGeneratedKeyColumns("id")
-                .usingColumns("name", "introduced", "discontinued",
-                        "company_id");
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("name", computer.getName());
-        LocalDate date = computer.getIntroduced();
-        parameters.put("introduced", date == null ? null : Date.valueOf(date));
-        date = computer.getDiscontinued();
-        parameters.put("discontinued",
-                date == null ? null : Date.valueOf(date));
-        Company company = computer.getCompany();
-        parameters.put("company_id", company == null ? null : company.getId());
-        try {
-            // Query execution
-            Long id = jdbcInsert.executeAndReturnKey(parameters).longValue();
-            computer.setId(id);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in createComputer "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
+
+        entityManager.persist(computer);
+        entityManager.flush();
+        entityManager.clear();
+
         return computer;
     }
 
-    /**
-     * Update a computer (user choice).
-     *
-     * @param computer
-     *            the updated computer (Caution! update is based on computer.id)
-     *
-     * @return updated computer
-     */
+    @Override
     public Computer updateComputer(Computer computer) {
         LOGGER.debug(TAG + "f_updateComputer");
         Object[] args = { computer.getName(),
@@ -190,32 +167,36 @@ public class ComputerDAO implements UtilDate {
         return computer;
     }
 
-    /**
-     * Delete a computer by its id.
-     *
-     * @param id
-     *            id of wanted computer to delete
-     * @return deleted computer
-     */
+    @Override
     public Computer deleteComputer(long id) {
         LOGGER.debug(TAG + "f_deleteComputer");
         Computer computer = getComputerDetail(id);
-        Object[] args = { id };
-        try {
-            jdbcTemplate.update(DELETE_COMPUTER, args);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in deleteComputer "
-                    + e.getMessage());
-            throw new DAOException(e);
+
+        int count = 0;
+
+        CriteriaDelete<Computer> criteriaDelete = criteriaBuilder
+                .createCriteriaDelete(Computer.class);
+        Root<Computer> root = criteriaDelete.from(Computer.class);
+        criteriaDelete.where(criteriaBuilder.equal(root.get("id"), id));
+
+        LOGGER.debug(TAG + " entity manager transaction joined : "
+                + entityManager.isJoinedToTransaction() + " _ entity is open : "
+                + entityManager.isOpen());
+
+        count = entityManager.createQuery(criteriaDelete).executeUpdate();
+
+        if (count > 0) {
+            System.out.println("Computer " + id + " was successfully deleted");
+            LOGGER.debug(TAG + "computer " + id + " was successfully deleted");
+        } else {
+            System.out.println("Fail to delete computer " + id);
+            LOGGER.error(TAG + "Fail to delete computer " + id);
         }
+
         return computer;
     }
 
-    /**
-     * Get the number of computers in database.
-     *
-     * @return number of computers in database
-     */
+    @Override
     public int getCount() {
         LOGGER.debug(TAG + "f_getCount");
         int count = 0;
@@ -229,21 +210,7 @@ public class ComputerDAO implements UtilDate {
         return count;
     }
 
-    /**
-     * Search computers by name.
-     *
-     * @param search
-     *            the name to search
-     * @param offset
-     *            offset to put in query
-     * @param limit
-     *            number of results
-     * @param order
-     *            field used for order results
-     * @param asc
-     *            true if ascendant order, false else
-     * @return all computers which name contains search
-     */
+    @Override
     public List<Computer> findByName(String search, int offset, int limit,
             String order, String asc) {
         LOGGER.debug(TAG + "f_findByName");
@@ -263,13 +230,7 @@ public class ComputerDAO implements UtilDate {
         return computers;
     }
 
-    /**
-     * Get the number of computers which correspond to search.
-     *
-     * @param search
-     *            search parameter
-     * @return the number of computers
-     */
+    @Override
     public int getSearchCount(String search) {
         LOGGER.debug(TAG + "f_getSearchCount");
         int count = 0;
@@ -285,15 +246,11 @@ public class ComputerDAO implements UtilDate {
         return count;
     }
 
-    /**
-     * Delete all computers which are provided by a company.
-     *
-     * @param companyId
-     *            the id of the company
-     */
+    @Override
     public void deleteComputersByCompany(long companyId) {
         LOGGER.debug(TAG + "f_deleteComputersByCompany");
         Object[] args = { companyId };
+
         try {
             int count = jdbcTemplate.update(DELETE_BY_COMPANY, args);
             if (count > 0) {

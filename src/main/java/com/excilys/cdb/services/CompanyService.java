@@ -21,9 +21,9 @@ public class CompanyService {
     @Autowired
     @Qualifier("companyDAO")
     private CompanyDAO companyDAO;
-    private int nbItems;
+    private long nbItems;
 
-    public int getNbItems() {
+    public long getNbItems() {
         return nbItems;
     }
 
@@ -82,7 +82,7 @@ public class CompanyService {
             // rollback ? //FIXME
         } finally {
             // set to null for set computerDAO eligible for gc
-            computerDAO = null;
+            // computerDAO = null;
         }
     }
 

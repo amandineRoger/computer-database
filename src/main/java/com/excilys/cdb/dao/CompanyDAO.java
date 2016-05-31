@@ -2,6 +2,17 @@ package com.excilys.cdb.dao;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -9,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.entities.Company;
@@ -41,11 +50,33 @@ public class CompanyDAO {
     @Autowired
     @Qualifier("companyMapper")
     private CompanyMapper companyMapper;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     private DataSource dataSource;
+
+    protected EntityManager entityManager;
+    private CriteriaBuilder criteriaBuilder;
+    private CriteriaQuery<Company> criteriaQuery;
+    private Root<Company> rootType;
+    private Metamodel metamodel;
+    private EntityType<Company> Company_;
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @PostConstruct
+    public void init() {
+        criteriaBuilder = entityManager.getCriteriaBuilder();
+        criteriaQuery = criteriaBuilder.createQuery(Company.class);
+        // Define type of results
+        rootType = criteriaQuery.from(Company.class);
+        metamodel = entityManager.getMetamodel();
+        Company_ = metamodel.entity(Company.class);
+    }
 
     /**
      * CompanyDAO constructor with datasource injection.
@@ -59,45 +90,22 @@ public class CompanyDAO {
     }
 
     /**
-     * Get companies from select request.
-     *
-     * @param offset
-     *            offset in request
-     * @param limit
-     *            number of results
-     * @return companies from offset+1 to offset+limit+1;
-     */
-    public List<Company> getCompanyList(final int offset, final int limit) {
-        LOGGER.debug(TAG + "f_getCompanyList");
-        List<Company> list = null;
-        // ARGS for query building
-        Object[] args = { offset, limit };
-        try {
-            // Query execution
-            list = jdbcTemplate.query(ALL_COMPANIES_P, args, companyMapper);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in getCompanyList "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
-        return list;
-    }
-
-    /**
      * Get companies from select * request.
      *
      * @return List of all companies
      */
     public List<Company> getAllCompanyList() {
         LOGGER.debug(TAG + "f_getAllCompanyList");
+        LOGGER.error(TAG + " entity manager transaction joined : "
+                + entityManager.isJoinedToTransaction());
         List<Company> list = null;
-        try {
-            list = jdbcTemplate.query(ALL_COMPANIES, companyMapper);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in getAllCompanyList "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
+
+        // Set the query root
+        criteriaQuery.select(rootType);
+        TypedQuery<Company> typedQuery = entityManager
+                .createQuery(criteriaQuery);
+        list = typedQuery.getResultList();
+
         return list;
     }
 
@@ -112,18 +120,11 @@ public class CompanyDAO {
         LOGGER.debug(TAG + "f_getCompanyById");
         Company company = null;
         if (id != 0) {
-            // Args for query building
-            Object[] args = { id };
-            try {
-                // Query execution
-                company = jdbcTemplate.queryForObject(COMPANY_BY_ID, args,
-                        companyMapper);
-            } catch (DataAccessException e) {
-                System.out
-                        .println(TAG + "DataAccessException in getCompanyById "
-                                + e.getMessage());
-                throw new DAOException(e);
-            }
+            criteriaQuery.where(criteriaBuilder
+                    .equal(rootType.get(Company_.getId(long.class)), id));
+            TypedQuery<Company> query = entityManager
+                    .createQuery(criteriaQuery);
+            company = query.getSingleResult();
         }
         return company;
     }
@@ -133,17 +134,14 @@ public class CompanyDAO {
      *
      * @return number of companies in database
      */
-    public int getCount() {
+    public long getCount() {
         LOGGER.debug(TAG + "f_getCount");
-        int count = 0;
-        try {
-            // Query execution
-            count = jdbcTemplate.queryForObject(COUNT_COMPANIES, Integer.class);
-        } catch (DataAccessException e) {
-            System.out.println(
-                    TAG + "DataAccessException in getCount " + e.getMessage());
-            throw new DAOException(e);
-        }
+        long count = 0;
+
+        CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
+        cq.select(criteriaBuilder.count(cq.from(Company.class)));
+        count = entityManager.createQuery(cq).getSingleResult();
+
         return count;
     }
 
@@ -156,26 +154,27 @@ public class CompanyDAO {
      */
     public void deleteCompany(long id) {
         LOGGER.debug(TAG + "f_deleteCompany");
-
         int count = 0;
-        // Args for query building
-        Object[] args = { id };
-        try {
-            // Query execution
-            count = jdbcTemplate.update(DELETE_COMPANY, args);
-            if (count > 0) {
-                System.out
-                        .println("Company " + id + " was successfully deleted");
-                LOGGER.debug(
-                        TAG + "company " + id + " was successfully deleted");
-            } else {
-                System.out.println("Fail to delete company " + id);
-                LOGGER.error(TAG + "Fail to delete company " + id);
-            }
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in deleteCompany "
-                    + e.getMessage());
-            throw new DAOException(e);
+
+        if (!entityManager.isJoinedToTransaction()) {
+            entityManager.joinTransaction();
+            System.out.println(TAG + " Join transaction");
+        }
+
+        CriteriaDelete<Company> criteriaDelete = criteriaBuilder
+                .createCriteriaDelete(Company.class);
+        criteriaDelete.from(Company.class);
+        criteriaDelete.where(criteriaBuilder
+                .equal(rootType.get(Company_.getId(long.class)), id));
+
+        count = entityManager.createQuery(criteriaDelete).executeUpdate();
+
+        if (count > 0) {
+            System.out.println("Company " + id + " was successfully deleted");
+            LOGGER.debug(TAG + "company " + id + " was successfully deleted");
+        } else {
+            System.out.println("Fail to delete company " + id);
+            LOGGER.error(TAG + "Fail to delete company " + id);
         }
     }
 }

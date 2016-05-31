@@ -1,12 +1,29 @@
 package com.excilys.cdb.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Computer {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "computer")
+public class Computer implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
     private LocalDate introduced;
     private LocalDate discontinued;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
     private Company company;
 
     public long getId() {
@@ -206,6 +223,9 @@ public class Computer {
         this.introduced = builder.introduced;
         this.discontinued = builder.discontinued;
         this.company = builder.company;
+    }
+
+    private Computer() {
     }
 
 }
