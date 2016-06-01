@@ -60,7 +60,7 @@ public interface ComputerDAOInterface {
      *
      * @return number of computers in database
      */
-    public int getCount();
+    public long getCount();
 
     /**
      * Search computers by name.
@@ -87,7 +87,7 @@ public interface ComputerDAOInterface {
      *            search parameter
      * @return the number of computers
      */
-    public int getSearchCount(String search);
+    public long getSearchCount(String search);
 
     /**
      * Delete all computers which are provided by a company.

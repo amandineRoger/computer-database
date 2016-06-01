@@ -46,7 +46,6 @@ public class EditComputerController {
     protected String doGet(
             @RequestParam(required = true, value = "id") String dtoID,
             Model model) {
-        System.err.println("DO GET _ EditComputerController");
         long id = Long.parseLong(dtoID);
 
         // get computer by its ID
@@ -87,10 +86,11 @@ public class EditComputerController {
         if (computer != null) {
             computer.setId(id);
             computerService.updateComputer(computer);
-            response = "home";
+            response = "redirect:/home";
         } else {
             response = "500";
         }
+
         return response;
     }
 }

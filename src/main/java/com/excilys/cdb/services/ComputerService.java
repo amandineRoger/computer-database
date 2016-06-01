@@ -154,7 +154,7 @@ public class ComputerService {
      *            search parameter
      * @return the number of results
      */
-    public int getSearchedCount(String search) {
+    public long getSearchedCount(String search) {
         return computerDAO.getSearchCount(search);
     }
 

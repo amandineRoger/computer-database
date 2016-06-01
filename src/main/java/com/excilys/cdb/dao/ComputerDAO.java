@@ -11,6 +11,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
@@ -20,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -149,21 +150,23 @@ public class ComputerDAO implements ComputerDAOInterface {
     @Override
     public Computer updateComputer(Computer computer) {
         LOGGER.debug(TAG + "f_updateComputer");
-        Object[] args = { computer.getName(),
-                (computer.getIntroduced() == null ? null
-                        : Date.valueOf(computer.getIntroduced())),
-                (computer.getDiscontinued() == null ? null
-                        : Date.valueOf(computer.getDiscontinued())),
-                (computer.getCompany() == null ? null
-                        : computer.getCompany().getId()),
-                computer.getId() };
-        try {
-            jdbcTemplate.update(UPDATE_COMPUTER, args);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in updateComputer "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
+
+        CriteriaUpdate<Computer> update = criteriaBuilder
+                .createCriteriaUpdate(Computer.class);
+        Root<Computer> root = update.from(Computer.class);
+
+        update.set("name", computer.getName())
+                .set("introduced",
+                        (computer.getIntroduced() == null ? null
+                                : Date.valueOf(computer.getIntroduced())))
+                .set("discontinued", (computer.getDiscontinued() == null ? null
+                        : Date.valueOf(computer.getDiscontinued())))
+                .set("company", (computer.getCompany() == null ? null
+                        : computer.getCompany()));
+        update.where(criteriaBuilder.equal(root.get("id"), computer.getId()));
+
+        entityManager.createQuery(update).executeUpdate();
+
         return computer;
     }
 
@@ -179,11 +182,8 @@ public class ComputerDAO implements ComputerDAOInterface {
         Root<Computer> root = criteriaDelete.from(Computer.class);
         criteriaDelete.where(criteriaBuilder.equal(root.get("id"), id));
 
-        LOGGER.debug(TAG + " entity manager transaction joined : "
-                + entityManager.isJoinedToTransaction() + " _ entity is open : "
-                + entityManager.isOpen());
-
         count = entityManager.createQuery(criteriaDelete).executeUpdate();
+        entityManager.flush();
 
         if (count > 0) {
             System.out.println("Computer " + id + " was successfully deleted");
@@ -197,16 +197,15 @@ public class ComputerDAO implements ComputerDAOInterface {
     }
 
     @Override
-    public int getCount() {
+    public long getCount() {
         LOGGER.debug(TAG + "f_getCount");
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(COUNT_COMPUTERS, Integer.class);
-        } catch (DataAccessException e) {
-            LOGGER.error(
-                    TAG + "DataAccessException in getCount " + e.getMessage());
-            throw new DAOException(e);
-        }
+
+        long count = 0;
+
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+        query.select(criteriaBuilder.count(query.from(Computer.class)));
+        count = entityManager.createQuery(query).getSingleResult();
+
         return count;
     }
 
@@ -215,58 +214,71 @@ public class ComputerDAO implements ComputerDAOInterface {
             String order, String asc) {
         LOGGER.debug(TAG + "f_findByName");
         List<Computer> computers = null;
-        // prepare query
-        String request = String.format(FIND_BY_NAME, order, asc);
-        // Args for query building
-        Object[] args = { "%" + search + "%", offset, limit };
-        try {
-            // query execution
-            computers = jdbcTemplate.query(request, args, computerMapper);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in findByName "
-                    + e.getMessage());
-            throw new DAOException(e);
+
+        CriteriaQuery<Computer> query = criteriaBuilder
+                .createQuery(Computer.class);
+        Root<Computer> root = query.from(Computer.class);
+        query.select(root);
+        query.where(criteriaBuilder.like(root.get("name"), "%" + search + "%"));
+
+        Order ordering;
+        if (order != null && !order.isEmpty()) {
+            if (asc.equals("DESC")) {
+                ordering = criteriaBuilder.desc(root.get(order));
+            } else {
+                ordering = criteriaBuilder.asc(root.get(order));
+            }
+
+        } else {
+            ordering = criteriaBuilder.asc(root.get("id"));
         }
+        criteriaQuery.orderBy(ordering);
+
+        TypedQuery<Computer> typedQuery = entityManager.createQuery(query)
+                .setFirstResult(offset).setMaxResults(limit);
+
+        computers = typedQuery.getResultList();
+
         return computers;
     }
 
     @Override
-    public int getSearchCount(String search) {
+    public long getSearchCount(String search) {
         LOGGER.debug(TAG + "f_getSearchCount");
-        int count = 0;
-        Object[] args = { "%" + search + "%" };
-        try {
-            count = jdbcTemplate.queryForObject(COUNT_SEARCH_RESULT, args,
-                    Integer.class);
-        } catch (DataAccessException e) {
-            LOGGER.error(TAG + "DataAccessException in getSearchCount "
-                    + e.getMessage());
-            throw new DAOException(e);
-        }
+        long count = 0;
+
+        CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
+        Root<Computer> root = query.from(Computer.class);
+        query.select(criteriaBuilder.count(root)).where(
+                criteriaBuilder.like(root.get("name"), "%" + search + "%"));
+
+        count = entityManager.createQuery(query).getSingleResult();
+
         return count;
     }
 
     @Override
     public void deleteComputersByCompany(long companyId) {
         LOGGER.debug(TAG + "f_deleteComputersByCompany");
-        Object[] args = { companyId };
+        int count = 0;
 
-        try {
-            int count = jdbcTemplate.update(DELETE_BY_COMPANY, args);
-            if (count > 0) {
-                System.out.println(count + " computers deleted !");
-                LOGGER.debug(TAG + count + " computers deleted !");
-            } else {
-                System.out.println("Fail to delete computers with company_id = "
-                        + companyId);
-                LOGGER.error(TAG + "Fail to delete computers with company_id = "
-                        + companyId);
-            }
-        } catch (DataAccessException e) {
-            LOGGER.error(
-                    TAG + "DataAccessException in deleteComputersByCompany "
-                            + e.getMessage());
-            throw new DAOException(e);
+        CriteriaDelete<Computer> criteriaDelete = criteriaBuilder
+                .createCriteriaDelete(Computer.class);
+        Root<Computer> root = criteriaDelete.from(Computer.class);
+        criteriaDelete
+                .where(criteriaBuilder.equal(root.get("company"), companyId));
+
+        count = entityManager.createQuery(criteriaDelete).executeUpdate();
+
+        if (count > 0) {
+            System.out.println(count + " computers deleted !");
+            LOGGER.debug(TAG + count + " computers deleted !");
+        } else {
+            System.out.println(
+                    "Fail to delete computers with company_id = " + companyId);
+            LOGGER.error(TAG + "Fail to delete computers with company_id = "
+                    + companyId);
         }
+
     }
 }

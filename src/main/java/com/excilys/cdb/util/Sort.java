@@ -55,20 +55,20 @@ public class Sort {
             }
             switch (field) {
                 case "name":
-                    this.field = "c.name";
+                    this.field = "name";
                     break;
                 case "introduced":
-                    this.field = "c.introduced";
+                    this.field = "introduced";
                     break;
                 case "discontinued":
-                    this.field = "c.discontinued";
+                    this.field = "discontinued";
                     break;
                 case "company_id":
-                    this.field = "o.id";
+                    this.field = "company";
                     break;
                 case "id":
                 default:
-                    this.field = "c.id";
+                    this.field = "id";
                     break;
             }
         }
