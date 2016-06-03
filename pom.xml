@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.excilys</groupId>
 	<artifactId>computer-database</artifactId>
-	<packaging>war</packaging>
-	<version>0.5.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>ComputerDatabase Webapp</name>
 	<url>http://maven.apache.org</url>
 	<repositories>
@@ -28,6 +28,15 @@
 		<spring.version>4.2.6.RELEASE</spring.version>
 		<hibernate.version>5.1.0.Final</hibernate.version>
 	</properties>
+
+	<modules>
+		<module>cdb-core</module>
+		<module>cdb-binding</module>
+		<module>cdb-persistence</module>
+		<module>cdb-service</module>
+		<module>cdb-webapp</module>
+		<module>cdb-console</module>
+	</modules>
 
 	<dependencies>
 		<!-- Unit tests -->
@@ -113,6 +122,12 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+		
+		<dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
 
 		<!-- Connection pool -->
 		<dependency>
@@ -220,15 +235,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<url>http://localhost:8080/manager/text</url>
-					<server>tomcatserver</server>
-				</configuration>
-			</plugin>
+
 
 			<!-- maven-compile-plugin to force use of java 8 -->
 			<plugin>

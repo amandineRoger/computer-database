@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<artifactId>cdb-persistence</artifactId>
+	<groupId>com.excilys</groupId>
+	<modelVersion>4.0.0</modelVersion>
+	<name>Persistence module</name>
+	<packaging>jar</packaging>
+
+	<parent>
+		<artifactId>computer-database</artifactId>
+		<groupId>com.excilys</groupId>
+		<version>0.5.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<artifactId>cdb-core</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>cdb-binding</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+</project>
