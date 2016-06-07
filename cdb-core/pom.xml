@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<artifactId>cdb-core</artifactId>
 	<groupId>com.excilys</groupId>
@@ -9,8 +10,26 @@
 	<parent>
 		<artifactId>computer-database</artifactId>
 		<groupId>com.excilys</groupId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>${parent.version}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+	
+	<dependencies>
+	       <!-- Hibernate / JPA-Criteria -->
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+            </dependency>
+            
+			<!-- Validation -->
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+            </dependency>
+	</dependencies>
 
 </project>
