@@ -15,7 +15,7 @@ public interface ComputerDAOInterface {
      *            number of results
      * @return computers from offset+1 to offset+limit+1;
      */
-    public List<Computer> getComputerList(int offset, int limit);
+    List<Computer> getComputerList(int offset, int limit);
 
     /**
      * Find a computer by its id.
@@ -24,17 +24,17 @@ public interface ComputerDAOInterface {
      *            the id of the wanted computer
      * @return the wanted computer
      */
-    public Computer getComputerDetail(long id);
+    Computer getComputerDetail(long id);
 
     /**
-     * Create a computer from user entry.@PersistenceContext
+     * Create a computer from user entry.
      *
      * @param computer
      *            the entity newly created
      *
      * @return created computer
      */
-    public Computer createComputer(Computer computer);
+    Computer createComputer(Computer computer);
 
     /**
      * Update a computer (user choice).
@@ -44,7 +44,7 @@ public interface ComputerDAOInterface {
      *
      * @return updated computer
      */
-    public Computer updateComputer(Computer computer);
+    Computer updateComputer(Computer computer);
 
     /**
      * Delete a computer by its id.
@@ -53,14 +53,14 @@ public interface ComputerDAOInterface {
      *            id of wanted computer to delete
      * @return deleted computer
      */
-    public Computer deleteComputer(long id);
+    Computer deleteComputer(long id);
 
     /**
      * Get the number of computers in database.
      *
      * @return number of computers in database
      */
-    public long getCount();
+    long getCount();
 
     /**
      * Search computers by name.
@@ -77,7 +77,7 @@ public interface ComputerDAOInterface {
      *            true if ascendant order, false else
      * @return all computers which name contains search
      */
-    public List<Computer> findByName(String search, int offset, int limit,
+    List<Computer> findByName(String search, int offset, int limit,
             String order, String asc);
 
     /**
@@ -87,7 +87,7 @@ public interface ComputerDAOInterface {
      *            search parameter
      * @return the number of computers
      */
-    public long getSearchCount(String search);
+    long getSearchCount(String search);
 
     /**
      * Delete all computers which are provided by a company.
@@ -95,5 +95,5 @@ public interface ComputerDAOInterface {
      * @param companyId
      *            the id of the company
      */
-    public void deleteComputersByCompany(long companyId);
+    void deleteComputersByCompany(long companyId);
 }

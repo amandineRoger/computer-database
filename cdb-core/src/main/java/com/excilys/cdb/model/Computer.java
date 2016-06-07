@@ -225,6 +225,10 @@ public class Computer implements Serializable {
         this.company = builder.company;
     }
 
+    /**
+     * private constructor without arguments (required for bean creation and
+     * entity management).
+     */
     private Computer() {
     }
 

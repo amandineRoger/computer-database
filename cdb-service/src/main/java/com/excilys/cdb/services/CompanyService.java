@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dao.CompanyDAO;
 import com.excilys.cdb.dao.ComputerDAO;
-import com.excilys.cdb.dao.DAOException;
 import com.excilys.cdb.model.Company;
 
 @Service("companyService")
@@ -74,16 +73,8 @@ public class CompanyService {
      *            id of the company to delete
      */
     public void deleteCompany(long id) {
-
-        try {
-            computerDAO.deleteComputersByCompany(id);
-            companyDAO.deleteCompany(id);
-        } catch (DAOException e) {
-            // rollback ? //FIXME
-        } finally {
-            // set to null for set computerDAO eligible for gc
-            // computerDAO = null;
-        }
+        computerDAO.deleteComputersByCompany(id);
+        companyDAO.deleteCompany(id);
     }
 
 }

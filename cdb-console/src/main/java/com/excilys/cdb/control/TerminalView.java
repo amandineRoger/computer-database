@@ -64,7 +64,7 @@ public class TerminalView {
     }
 
     /**
-     * Display page content with navigation instructions
+     * Display page content with navigation instructions.
      *
      * @param page
      *            the page to display

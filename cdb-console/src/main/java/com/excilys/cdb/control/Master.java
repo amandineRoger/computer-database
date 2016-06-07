@@ -308,6 +308,9 @@ public class Master {
         return tmpComputer;
     }
 
+    /**
+     * Launch the pagination management which permit to navigate between pages.
+     */
     public void paginationLoop() {
         boolean keepGoing = true;
         int pageNumber = 0, pageMax;

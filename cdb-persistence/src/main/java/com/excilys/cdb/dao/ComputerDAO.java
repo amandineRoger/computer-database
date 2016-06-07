@@ -14,47 +14,19 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.mappers.ComputerMapper;
+import com.excilys.cdb.model.Computer;
 
 @Repository("computerDAO")
 public class ComputerDAO implements ComputerDAOInterface {
-    // QUERIES
-    private static final String COMPUTER_TABLE = "computer";
-    private final String ALL_COMPUTERS = "SELECT c.id, c.name, c.introduced, c.discontinued, o.id, o.name FROM "
-            + COMPUTER_TABLE + " c LEFT JOIN company"
-            + " o ON c.company_id = o.id ";
-    private final String ALL_COMPUTERS_P = ALL_COMPUTERS + " LIMIT ?, ?";
-    private final String COMPUTER_BY_ID = ALL_COMPUTERS + " WHERE c.id = ?";
-    /*
-     * private final String CREATE_COMPUTER = "INSERT INTO " + COMPUTER_TABLE +
-     * " (name, introduced, discontinued, company_id ) VALUES ( ?, ?, ?, ?)";
-     */
-    private final String UPDATE_COMPUTER = "UPDATE " + COMPUTER_TABLE
-            + " SET name = ?, introduced = ?,"
-            + "discontinued = ?, company_id = ? WHERE id = ?";
-    private final String DELETE_COMPUTER = "DELETE FROM " + COMPUTER_TABLE
-            + " WHERE id = ?";
-    private final String COUNT_COMPUTERS = "SELECT COUNT(*) FROM "
-            + COMPUTER_TABLE;
-    private final String FIND_BY_NAME = ALL_COMPUTERS
-            + " WHERE c.name LIKE ? ORDER BY %s %s LIMIT ?, ?";
-    private final String COUNT_SEARCH_RESULT = "SELECT COUNT(*) FROM "
-            + COMPUTER_TABLE + " WHERE name LIKE ?";
-    public static final String DELETE_BY_COMPANY = "DELETE FROM "
-            + COMPUTER_TABLE + " WHERE company_id = ?";
-
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ComputerDAO.class);
     private static final String TAG = "ComputerDAO says _ ";
@@ -66,9 +38,6 @@ public class ComputerDAO implements ComputerDAOInterface {
     protected EntityManager entityManager;
     private CriteriaBuilder criteriaBuilder;
     private CriteriaQuery<Computer> criteriaQuery;
-   // private Root<Computer> rootType;
-    private Metamodel metamodel;
-    private EntityType<Computer> Computer_;
 
     public EntityManager getEntityManager() {
         return entityManager;
@@ -83,14 +52,7 @@ public class ComputerDAO implements ComputerDAOInterface {
     public void init() {
         criteriaBuilder = entityManager.getCriteriaBuilder();
         criteriaQuery = criteriaBuilder.createQuery(Computer.class);
-        // Define type of results
-//        Root<Computer> rootType = criteriaQuery.from(Computer.class);
-  //      metamodel = entityManager.getMetamodel();
-    //    Computer_ = metamodel.entity(Computer.class);
     }
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     private DataSource dataSource;
 
@@ -127,8 +89,7 @@ public class ComputerDAO implements ComputerDAOInterface {
         criteriaQuery = criteriaBuilder.createQuery(Computer.class);
         Root<Computer> rootType = criteriaQuery.from(Computer.class);
         if (id != 0) {
-            criteriaQuery.where(criteriaBuilder
-                    .equal(rootType.get("id"), id));
+            criteriaQuery.where(criteriaBuilder.equal(rootType.get("id"), id));
             TypedQuery<Computer> query = entityManager
                     .createQuery(criteriaQuery);
             computer = query.getSingleResult();
@@ -202,7 +163,7 @@ public class ComputerDAO implements ComputerDAOInterface {
         LOGGER.debug(TAG + "f_getCount");
 
         long count = 0;
-        
+
         CriteriaQuery<Long> query = criteriaBuilder.createQuery(Long.class);
 
         Root<Computer> rootType = query.from(Computer.class);
