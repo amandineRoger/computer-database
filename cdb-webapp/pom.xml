@@ -99,6 +99,12 @@
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
+		
+		<!-- JSTL -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 	<plugins>
