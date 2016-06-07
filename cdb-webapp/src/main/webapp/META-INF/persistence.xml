@@ -3,13 +3,14 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    
-    
     <persistence-unit name="JpaPersistenceUnit"
         transaction-type="RESOURCE_LOCAL">
+        
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         
         <class>com.excilys.cdb.model.Computer</class>
         <class>com.excilys.cdb.model.Company</class>
+        <class>com.excilys.cdb.model.User</class>
+
     </persistence-unit>
 </persistence>

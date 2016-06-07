@@ -97,7 +97,7 @@
 							<td class="editMode"><input type="checkbox" id="${ computer.name }_id" name="cb"
 								class="cb" value="${ computer.id }"></td>
 							<td>
-							 <my:link target="http://localhost:8080/cdb/edit" baliseId="${ computer.name }_name" id="${ computer.id }"><c:out value="${ computer.name }" /></my:link>
+							 <my:link target="${pageContext.request.contextPath}/edit" baliseId="${ computer.name }_name" id="${ computer.id }"><c:out value="${ computer.name }" /></my:link>
 							</td>
 							<td><c:out value="${ computer.introduced }" /></td>
 							<td><c:out value="${ computer.discontinued }" /></td>
