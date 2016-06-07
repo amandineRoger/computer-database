@@ -12,7 +12,7 @@
   
   
   <appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
--       <file>debug.log</file>
+-       <file>workspace/computer-database/debug.log</file>
 -       <encoder>
 -           <pattern>%d{dd/MM - HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n
 -           </pattern>
@@ -22,8 +22,8 @@
   
 
   <root level="debug">
-    <appender-ref ref="DEBUG_FILE" />
-    <!-- appender-ref ref="STDOUT" /> -->
+    <appender-ref ref="DEBUG_FILE" /> 
+    <!-- appender-ref ref="STDOUT" />  --> 
   </root>
 
 </configuration>
