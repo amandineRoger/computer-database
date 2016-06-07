@@ -11,8 +11,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -22,8 +20,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.model.Company;
 import com.excilys.cdb.mappers.CompanyMapper;
+import com.excilys.cdb.model.Company;
 
 /**
  * Data Access Object for Company objects and requests Singleton pattern.
@@ -34,14 +32,6 @@ import com.excilys.cdb.mappers.CompanyMapper;
 @Repository("companyDAO")
 @Scope("singleton")
 public class CompanyDAO {
-
-    // Queries
-    String COMPANY_TABLE = "company";
-    String ALL_COMPANIES = "SELECT id, name FROM " + COMPANY_TABLE;
-    String ALL_COMPANIES_P = ALL_COMPANIES + " LIMIT ?, ?";
-    String COMPANY_BY_ID = ALL_COMPANIES + " WHERE id = ?";
-    String COUNT_COMPANIES = "SELECT COUNT(*) FROM " + COMPANY_TABLE;
-    String DELETE_COMPANY = "DELETE FROM " + COMPANY_TABLE + " WHERE id = ?";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CompanyDAO.class);
@@ -55,9 +45,6 @@ public class CompanyDAO {
     protected EntityManager entityManager;
     private CriteriaBuilder criteriaBuilder;
     private CriteriaQuery<Company> criteriaQuery;
-    //private Root<Company> rootType;
-    private Metamodel metamodel;
-    private EntityType<Company> Company_;
 
     public EntityManager getEntityManager() {
         return entityManager;
@@ -72,10 +59,6 @@ public class CompanyDAO {
     public void init() {
         criteriaBuilder = entityManager.getCriteriaBuilder();
         criteriaQuery = criteriaBuilder.createQuery(Company.class);
-        // Define type of results
-       // rootType = criteriaQuery.from(Company.class);
-        //metamodel = entityManager.getMetamodel();
-        //Company_ = metamodel.entity(Company.class);
     }
 
     /**
@@ -124,8 +107,7 @@ public class CompanyDAO {
         criteriaQuery = criteriaBuilder.createQuery(Company.class);
         Root<Company> rootType = criteriaQuery.from(Company.class);
         if (id != 0) {
-            criteriaQuery.where(criteriaBuilder
-                    .equal(rootType.get("id"), id));
+            criteriaQuery.where(criteriaBuilder.equal(rootType.get("id"), id));
             TypedQuery<Company> query = entityManager
                     .createQuery(criteriaQuery);
             company = query.getSingleResult();
@@ -168,8 +150,7 @@ public class CompanyDAO {
         CriteriaDelete<Company> criteriaDelete = criteriaBuilder
                 .createCriteriaDelete(Company.class);
         criteriaDelete.from(Company.class);
-        criteriaDelete.where(criteriaBuilder
-                .equal(rootType.get("id"), id));
+        criteriaDelete.where(criteriaBuilder.equal(rootType.get("id"), id));
 
         count = entityManager.createQuery(criteriaDelete).executeUpdate();
 
