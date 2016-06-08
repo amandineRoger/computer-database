@@ -26,8 +26,6 @@ public class CLI {
         // Get application context
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "applicationContext.xml");
-        // EntityManagerFactory em = (EntityManagerFactory)
-        // applicationContext.getBean("entityManagerFactory");
         Master master = (Master) applicationContext.getBean("master");
 
         TerminalView terminalView = new TerminalView();
