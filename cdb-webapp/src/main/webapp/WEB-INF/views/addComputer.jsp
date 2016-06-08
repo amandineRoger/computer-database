@@ -44,6 +44,7 @@
                     <h1><spring:message code="index.add"/></h1>
 					
 					<form action="newComputer" method="POST">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" class="form-control" />
 						<fieldset>
 							<div class="form-group ">
 								<label class="control-label" for="computerName"><spring:message code="computer.name"/>

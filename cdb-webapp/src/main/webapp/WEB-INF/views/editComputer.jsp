@@ -29,7 +29,9 @@
                     <h1><spring:message code="edit.title"/></h1>
 
                     <form action="edit" method="POST">
-                        <input id="id" type="hidden" name="computerId" value="${ computer.id }"/>
+                        <input id="id" type="hidden" value="${computer.id}" name="computerId" />
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" class="form-control" />
+                        
                         <fieldset>
                             <div class="form-group ">
                                 <label class="control-label" for="computerName"><spring:message code="computer.name"/>

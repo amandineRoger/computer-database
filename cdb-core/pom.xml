@@ -2,7 +2,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<artifactId>cdb-core</artifactId>
-	<groupId>com.excilys</groupId>
 	<modelVersion>4.0.0</modelVersion>
 	<name>Core module</name>
 	<packaging>jar</packaging>
@@ -30,6 +29,14 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
             </dependency>
+            
+            <!-- Annotations  -->
+	       <dependency>
+	           <groupId>org.springframework</groupId>
+	           <artifactId>spring-aspects</artifactId>
+	       </dependency>
+	      
+            
 	</dependencies>
 
 </project>
